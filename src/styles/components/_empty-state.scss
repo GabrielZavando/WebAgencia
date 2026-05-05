@@ -22,7 +22,7 @@
 }
 
 .empty-title {
-  font-size: 1.5rem;
+  font-size: var(--text-md); // Reducido de var(--text-xl) para consistencia
   font-weight: 700;
   color: var(--color-text);
   margin-bottom: 0.5rem;
@@ -30,7 +30,7 @@
 
 .empty-message {
   color: var(--color-text-secondary);
-  font-size: 1rem;
+  font-size: var(--text-base);
   max-width: 400px;
   line-height: 1.5;
 }

@@ -8,7 +8,7 @@
   margin-bottom: 2.5rem;
   
   h2 {
-    font-size: 1.875rem;
+    font-size: var(--text-lg);
     font-weight: 700;
     color: var(--color-text);
   }
@@ -65,7 +65,7 @@
   border-right: none;
   background: var(--color-surface-secondary); 
   color: var(--color-text); 
-  font-size: 0.95rem; 
+  font-size: var(--text-sm); 
   outline: none;
   transition: border-color 0.2s;
   
@@ -108,7 +108,7 @@
   border: none; 
   background: transparent !important;
   color: var(--color-text); 
-  font-size: 0.95rem; 
+  font-size: var(--text-sm); 
   cursor: pointer; 
   appearance: none !important; 
   -webkit-appearance: none !important;
@@ -134,7 +134,7 @@
 .post-image { height: 100%; width: 100%; background-size: cover; background-position: center; }
 
 .post-status-badge {
-  position: absolute; top: 1rem; right: 1rem; padding: 0.25rem 0.75rem; font-size: 0.7rem;
+  position: absolute; top: 1rem; right: 1rem; padding: 0.25rem 0.75rem; font-size: var(--text-xs);
   font-weight: 700; text-transform: uppercase; color: white; border-radius: 0;
   
   &.status-published { background: #10b981; }
@@ -143,9 +143,9 @@
 
 .post-content { padding: 1.25rem; display: flex; flex-direction: column; flex-grow: 1; }
 .post-meta-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; }
-.post-category-tag { font-size: 0.75rem; font-weight: 600; color: var(--color-accent, #00FFE0); }
-.post-date-text { font-size: 0.8rem; color: var(--color-text-muted); display: flex; align-items: center; gap: 0.4rem; }
-.post-title { margin: 0 0 1.25rem 0; font-size: 1.2rem; font-weight: 600; line-height: 1.4; color: var(--color-text); min-height: 3.4rem; }
+.post-category-tag { font-size: var(--text-xs); font-weight: 600; color: var(--color-accent, #00FFE0); }
+.post-date-text { font-size: var(--text-xs); color: var(--color-text-muted); display: flex; align-items: center; gap: 0.4rem; }
+.post-title { margin: 0 0 1.25rem 0; font-size: var(--text-md); font-weight: 600; line-height: 1.4; color: var(--color-text); min-height: 3.4rem; }
 
 .post-actions-footer {
   margin-top: auto; display: flex; justify-content: space-between; align-items: center; gap: 1rem;

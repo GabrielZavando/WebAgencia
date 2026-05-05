@@ -20,11 +20,11 @@
     }
   }
 
-  .page-header h1 { margin: 0 0 0.5rem; font-size: 2rem; font-weight: 700; color: var(--color-text); }
-  .text-muted { color: var(--color-text-muted); margin: 0; font-size: 1.05rem; }
+  .page-header h1 { margin: 0 0 0.5rem; font-size: var(--text-lg); font-weight: 700; color: var(--color-text); }
+  .text-muted { color: var(--color-text-muted); margin: 0; font-size: var(--text-base); }
   .text-danger:hover { color: var(--color-error); opacity: 0.8; }
   .toggle-col-text { display: flex; flex-direction: column; }
-  .toggle-hint-text { font-size: 0.8rem; color: var(--color-text-muted); font-weight: 400; }
+  .toggle-hint-text { font-size: var(--text-xs); color: var(--color-text-muted); font-weight: 400; }
 
   /* Cuota Storage - Alineación unificada a la derecha */
   #storageBanner, .storage-banner, .storage-banner-wrapper { 
@@ -51,8 +51,8 @@
   .circle-bg { fill: none; stroke: rgba(255, 255, 255, 0.05); stroke-width: 3.8; }
   .circle { fill: none; stroke-width: 3.8; stroke-linecap: round; stroke: var(--color-primary); transition: stroke-dasharray 1s ease-out; }
   .storage-data-files { display: flex; flex-direction: column; gap: 0.25rem; }
-  .percent-label { font-size: 1.5rem; font-weight: 800; color: var(--color-white); }
-  .storage-text-files { font-size: 0.95rem; color: var(--color-text-muted); margin: 0; }
+  .percent-label { font-size: var(--text-xl); font-weight: 800; color: var(--color-white); }
+  .storage-text-files { font-size: var(--text-sm); color: var(--color-text-muted); margin: 0; }
 
   
   /* Controles */
@@ -94,8 +94,8 @@
   .files-table :global(.loading-state span.material-symbols-outlined), .files-table :global(.empty-state span.material-symbols-outlined) {
     font-size: 3rem; margin-bottom: 1.5rem; display: block; opacity: 0.4;
   }
-  .files-table :global(.empty-state h3) { margin: 0 0 0.5rem; color: var(--color-text); font-size: 1.25rem; font-weight: 600; }
-  .files-table :global(.empty-state p) { margin: 0; font-size: 0.95rem; }
+  .files-table :global(.empty-state h3) { margin: 0 0 0.5rem; color: var(--color-text); font-size: var(--text-lg); font-weight: 600; }
+  .files-table :global(.empty-state p) { margin: 0; font-size: var(--text-sm); }
 
   /* Modal de Subida - Mejoras UI/UX */
   .modal__header {

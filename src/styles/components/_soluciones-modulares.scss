@@ -22,7 +22,7 @@
 
   .modulares-subtitle {
     color: var(--color-text-secondary);
-    font-size: 1.125rem;
+    font-size: var(--text-md);
     line-height: 1.6;
     margin-top: var(--space-sm);
   }
@@ -76,7 +76,7 @@
 
   &__title {
     font-family: var(--font-headings);
-    font-size: 1.25rem;
+    font-size: var(--text-lg);
     color: var(--color-text);
     margin-bottom: var(--space-sm);
   }
@@ -84,7 +84,7 @@
   &__description {
     color: var(--color-text-secondary);
     line-height: 1.6;
-    font-size: 0.95rem;
+    font-size: var(--text-sm);
     text-align: left;
     margin-bottom: var(--space-md);
     flex-grow: 1;
@@ -94,7 +94,7 @@
     color: var(--color-primary);
     font-weight: 600;
     text-decoration: none;
-    font-size: 0.95rem;
+    font-size: var(--text-sm);
     display: inline-flex;
     align-items: center;
     transition: color var(--transition-fast) ease;

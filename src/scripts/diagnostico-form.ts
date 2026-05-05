@@ -18,29 +18,29 @@ interface DiagnosticoResultado {
 
 const QUESTIONS: Question[] = [
   // 1. Cultura y Organización
-  { id: "q1", text: "¿Dedico (o mi equipo dedica) tiempo formal cada semana a aprender y experimentar con nuevas herramientas digitales?", pilar: "Cultura y Organización" },
-  { id: "q2", text: "¿Existe un plan o disposición clara para para capacitar al equipo en nuevas competencias tecnológicas de forma regular?", pilar: "Cultura y Organización" },
-  { id: "q3", text: "¿El liderazgo del negocio promueve activamente la adopción de nuevas tecnologías y está abierto a abandonar procesos antiguos?", pilar: "Cultura y Organización" },
+  { id: "q1", text: "¿Dedicas (o tu equipo dedica) tiempo formal cada semana a aprender y experimentar con nuevas herramientas digitales?", pilar: "Cultura y Organización" },
+  { id: "q2", text: "¿Tienes un plan o disposición clara para capacitar al equipo en nuevas competencias tecnológicas de forma regular?", pilar: "Cultura y Organización" },
+  { id: "q3", text: "¿Promueves activamente la adopción de nuevas tecnologías y estas abierto/a a abandonar procesos antiguos?", pilar: "Cultura y Organización" },
   
   // 2. Estrategia
   { id: "q4", text: "¿Tienes una visión escrita de los objetivos digitales que quieres alcanzar en los próximos 12 meses?", pilar: "Estrategia" },
-  { id: "q5", text: "¿Cuentas con un presupuesto mensual asignado exclusivamente para software, servicios digitales o consultoría estratégica?", pilar: "Estrategia" },
-  { id: "q6", text: "¿Colaboro activamente con socios tecnológicos, proveedores digitales o utilizo plataformas externas para innovar y fortalecer mi oferta de valor?", pilar: "Estrategia" },
+  { id: "q5", text: "¿Cuentas con un presupuesto mensual asignado exclusivamente para software o servicios digitales?", pilar: "Estrategia" },
+  { id: "q6", text: "¿Colaboras activamente con socios tecnológicos, proveedores digitales o utilizas plataformas externas para innovar y fortalecer tu oferta de valor?", pilar: "Estrategia" },
 
   // 3. Operaciones y Procesos
-  { id: "q7", text: "¿Están mis procesos de venta, entrega y soporte documentados paso a paso (aunque sea de forma simple)?", pilar: "Operaciones y Procesos" },
-  { id: "q8", text: "¿He identificado claramente las 3 tareas manuales que más tiempo consumen a la semana y que podrían automatizarse?", pilar: "Operaciones y Procesos" },
-  { id: "q9", text: "¿Todo el equipo utiliza las mismas herramientas oficiales del negocio, evitando el uso de cuadernos personales o chats informales?", pilar: "Operaciones y Procesos" },
+  { id: "q7", text: "¿Tus procesos (de venta, entrega, post venta, etc.) están documentados paso a paso, aunque sea en papel?", pilar: "Operaciones y Procesos" },
+  { id: "q8", text: "¿Has identificado claramente las 3 tareas manuales que más tiempo consumen a la semana?", pilar: "Operaciones y Procesos" },
+  { id: "q9", text: "¿Todo tu equipo utiliza las mismas herramientas oficiales del negocio, evitando el uso de cuadernos personales o chats informales?", pilar: "Operaciones y Procesos" },
   
   // 4. Datos y Analítica
-  { id: "q10", text: "¿Toda la información de mis clientes vive en una base de datos centralizada y digital en lugar de agendas o WhatsApp?", pilar: "Datos y Analítica" },
-  { id: "q11", text: "¿Reviso al menos una vez al mes indicadores clave de rendimiento (KPIs) para decidir el rumbo del negocio?", pilar: "Datos y Analítica" },
-  { id: "q12", text: "¿Puedo conocer el margen de utilidad y los costos de mi operación de forma digital y actualizada en tiempo real?", pilar: "Datos y Analítica" },
+  { id: "q10", text: "¿Toda la información de tus clientes vive en una base de datos centralizada y digital en lugar de agendas o WhatsApp?", pilar: "Datos y Analítica" },
+  { id: "q11", text: "¿Revisas al menos una vez al mes indicadores clave de rendimiento (KPIs) para decidir el rumbo de tu empresa o proyecto?", pilar: "Datos y Analítica" },
+  { id: "q12", text: "¿Puedes conocer el margen de utilidad y los costos de tu operación de forma digital y actualizada en tiempo real?", pilar: "Datos y Analítica" },
 
   // 5. Tecnología
-  { id: "q13", text: "¿Soy el dueño absoluto de mis dominios, correos corporativos y accesos a todas mis plataformas?", pilar: "Tecnología" },
-  { id: "q14", text: "¿Mis herramientas principales están conectadas entre sí (ej: el sitio web envía datos al CRM) sin intervención humana?", pilar: "Tecnología" },
-  { id: "q15", text: "¿Uso gestores de contraseñas y cuento con respaldos automáticos en la nube de toda mi información crítica?", pilar: "Tecnología" }
+  { id: "q13", text: "¿Eres el dueño absoluto de tus dominios, correos corporativos y accesos de todas tus plataformas?", pilar: "Tecnología" },
+  { id: "q14", text: "¿Tus herramientas digitales están conectadas entre sí (ej: el sitio web envía datos al CRM) sin intervención humana?", pilar: "Tecnología" },
+  { id: "q15", text: "¿Usas gestores de contraseñas y cuentas con respaldos automáticos en la nube de toda tu información crítica?", pilar: "Tecnología" }
 ];
 
 const LEVELS = {
@@ -262,6 +262,13 @@ class DiagnosticoForm extends HTMLElement {
         </div>
       </div>
 
+      <div class="aform__progress-header-bar">
+        <div class="aform__progress-bar-container">
+          <div class="aform__progress-bar" style="width: ${progress}%"></div>
+        </div>
+        <div class="aform__progress-label">Progreso del Diagnóstico — ${progress}% completado</div>
+      </div>
+
       <div class="aform__questions">
         ${questions.map((q, idx) => {
           const absoluteIdx = QUESTIONS.indexOf(q) + 1;
@@ -297,13 +304,6 @@ class DiagnosticoForm extends HTMLElement {
           <span class="material-symbols-outlined" style="color: white">arrow_forward</span>
         </button>
       </div>
-
-      <div class="aform__progress-footer">
-        <div class="aform__progress-bar-container">
-          <div class="aform__progress-bar" style="width: ${progress}%"></div>
-        </div>
-        <div class="aform__progress-label">Progreso del Diagnóstico — ${progress}% completado</div>
-      </div>
     `;
   }
 
@@ -320,6 +320,13 @@ class DiagnosticoForm extends HTMLElement {
           <p class="aform__subtitle">
             Ingresa tus datos para recibir el reporte estratégico en PDF directamente en tu bandeja de entrada.
           </p>
+        </div>
+
+        <div class="aform__progress-header-bar" style="grid-column: 1 / -1; margin-top: var(--space-lg);">
+          <div class="aform__progress-bar-container">
+            <div class="aform__progress-bar" style="width: 100%"></div>
+          </div>
+          <div class="aform__progress-label">Fase final — 100% completado</div>
         </div>
 
         <form class="aform__contact-form" id="contact-form">
@@ -375,13 +382,6 @@ class DiagnosticoForm extends HTMLElement {
             </button>
           </div>
         </form>
-      </div>
-
-      <div class="aform__progress-footer">
-        <div class="aform__progress-bar-container">
-          <div class="aform__progress-bar" style="width: 100%"></div>
-        </div>
-        <div class="aform__progress-label">Fase final — 100% completado</div>
       </div>
     `;
   }

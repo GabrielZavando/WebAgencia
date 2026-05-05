@@ -15,13 +15,17 @@
 
 .services-header {
   text-align: center;
-  margin-bottom: var(--space-2xl);
+  margin-bottom: var(--space-xl);
   max-width: #{container(max)};
   margin-left: auto;
   margin-right: auto;
 
+  @include respond-to(md) {
+    margin-bottom: var(--space-2xl);
+  }
+
   .title-section {
-    margin-bottom: 1.5rem; // Reducido para acercar la descripción
+    margin-bottom: 1rem; // Reducido para acercar la descripción
   }
 }
 
@@ -47,18 +51,14 @@
   text-align: center;
   margin-top: var(--space-md);
   color: var(--color-text-secondary);
-  font-size: 0.9rem;
+  font-size: var(--text-base);
   font-weight: 500;
-  
-  @include respond-to(md) {
-    font-size: 1rem;
-  }
 }
 
 // Nueva Sección de Diagnóstico
 .services-diagnostic {
-  margin-top: var(--space-2xl);
-  padding: var(--space-xl);
+  margin-top: var(--space-xl);
+  padding: var(--space-lg);
   background: linear-gradient(135deg, rgba(var(--color-primary-rgb), 0.05) 0%, rgba(var(--color-accent-rgb), 0.05) 100%);
   border: 1px solid var(--color-border);
   position: relative;
@@ -92,14 +92,10 @@
   }
 
   &__question {
-    font-size: 1.5rem;
+    font-size: var(--text-xl);
     font-weight: 700;
     color: var(--color-text);
     font-family: var(--font-headings);
-
-    @include respond-to(md) {
-      font-size: 2rem;
-    }
   }
 
   &__info {
@@ -107,7 +103,7 @@
   }
 
   &__text {
-    font-size: 1.125rem;
+    font-size: var(--text-md);
     color: var(--color-text-secondary);
     margin-bottom: var(--space-md);
 
@@ -131,7 +127,7 @@
       align-items: flex-start;
       gap: var(--space-sm);
       color: var(--color-text);
-      font-size: 1rem;
+      font-size: var(--text-base);
       margin-bottom: var(--space-xs);
 
       .check {
@@ -188,7 +184,7 @@
     color: var(--color-text);
     line-height: 1.7;
     margin-bottom: var(--space-md);
-    font-size: 1.125rem;
+    font-size: var(--text-md);
 
     @include respond-to(md) {
       grid-column: 1 / -1;
@@ -212,7 +208,7 @@
       font-family: var(--font-headings);
       font-weight: 700;
       margin-bottom: var(--space-md);
-      font-size: 1.25rem;
+      font-size: var(--text-lg);
       display: flex;
       align-items: center;
       gap: var(--space-xs);
@@ -234,7 +230,7 @@
         margin-bottom: var(--space-sm);
         color: var(--color-text);
         line-height: 1.6;
-        font-size: 1rem;
+        font-size: var(--text-base);
       }
     }
   }
@@ -257,7 +253,7 @@
   &__hook {
     color: var(--color-primary);
     font-weight: 600;
-    font-size: 1.15rem;
+    font-size: var(--text-md);
     text-align: center;
     margin-top: var(--space-md);
     font-style: italic;

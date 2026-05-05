@@ -82,7 +82,7 @@
       p {
         margin: 0;
         color: var(--color-text);
-        font-size: 1.05rem;
+        font-size: var(--text-base);
         line-height: 1.5;
         text-align: left; // Alineación a la izquierda para legibilidad
 
@@ -110,7 +110,7 @@
   
   h3 {
     font-family: var(--font-headings);
-    font-size: 1.25rem;
+    font-size: var(--text-lg);
     color: var(--color-text);
     margin-bottom: var(--space-sm);
     display: flex;
@@ -125,7 +125,7 @@
     .badge-price {
       color: var(--color-text-secondary);
       font-weight: 400;
-      font-size: 1rem;
+      font-size: var(--text-base);
     }
   }
 
@@ -153,7 +153,7 @@
   padding: var(--space-md) 0;
 
   p {
-    font-size: 1.1rem;
+    font-size: var(--text-md);
     margin-bottom: var(--space-sm);
     color: var(--color-text);
 
@@ -213,7 +213,7 @@
 .pack-microcopy {
   text-align: left;
   color: var(--color-text-secondary);
-  font-size: 0.9rem;
+  font-size: var(--text-sm);
   margin-top: var(--space-sm);
   display: flex;
   align-items: center;

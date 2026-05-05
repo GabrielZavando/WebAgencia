@@ -12,8 +12,7 @@ const { image = banner, size = 'full', align = 'center' } = Astro.props;
 
 const name = "Transformación Digital";
 const chargeLine1 = "Orden digital para tu empresa.";
-const chargeLine2 = "Con un socio que garantiza que siga funcionando.";
-const subtitle = "Escala tu negocio sin multiplicar tu carga de trabajo. Sistemas digitales que cuidan tu tiempo mientras tú haces crecer tu marca.";
+const subtitle = "Sistemas digitales que cuidan tu tiempo mientras tú haces crecer tu marca.";
 ---
 
 <section id="inicio" class={`banner banner--${size}`}>
@@ -34,8 +33,8 @@ const subtitle = "Escala tu negocio sin multiplicar tu carga de trabajo. Sistema
     <div class={`banner__container align-${align}`}>
         <slot>
             <h1 class="banner__title fade-in">
-                <span class="title-xl">{name}</span>
-                <span class="title-md">{chargeLine1}<br/>{chargeLine2}</span>
+                <span class="title-2xl">{name}</span>
+                <span class="title-md">{chargeLine1}</span>
             </h1>
             <p class="parrafo fade-in fade-in-delay-1">
                 {subtitle}

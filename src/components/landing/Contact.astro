@@ -83,11 +83,11 @@ const TURNSTILE_SITE_KEY = import.meta.env.DEV
       <!-- Campo oculto para timestamp de carga de página (anti-bot) -->
       <input type="hidden" name="formLoadTime" id="formLoadTime" value="" />
 
-      <!-- Cloudflare Turnstile (invisible) -->
+      <!-- Cloudflare Turnstile (Managed) -->
       <div
         class="cf-turnstile"
         data-sitekey={TURNSTILE_SITE_KEY}
-        data-size="invisible"
+        data-size="flexible"
       ></div>
 
       <!-- Campos ocultos: ninguno requerido por la API actual (se mantiene solo el honeypot anti-spam) -->
@@ -597,6 +597,12 @@ const TURNSTILE_SITE_KEY = import.meta.env.DEV
           const turnstileToken =
             form.querySelector('[name="cf-turnstile-response"]')?.value || "";
 
+          if (!turnstileToken && !DEV_SIMULATION) {
+            console.warn(
+              "[ContactForm] Token de Turnstile no encontrado. La verificación podría fallar.",
+            );
+          }
+
           const payload = {
             name: String(formData.get("name") || "").trim(),
             email: String(formData.get("email") || "").trim(),
@@ -610,6 +616,9 @@ const TURNSTILE_SITE_KEY = import.meta.env.DEV
               ts: new Date().toISOString(),
             },
           };
+
+          console.log("[ContactForm] Enviando payload:", payload);
+          console.log("[ContactForm] API URL:", API_URL);
 
           let response;
           if (!API_BASE_URL && DEV_SIMULATION) {
@@ -635,15 +644,10 @@ const TURNSTILE_SITE_KEY = import.meta.env.DEV
             });
           }
 
-          // LOG: Mostrar respuesta del backend
-
           if (response.ok) {
-            // Intentar leer la respuesta JSON
-            try {
-              await response.json();
-            } catch (jsonError) {
-              /* noop */
-            }
+            const result = await response
+              .json()
+              .catch(() => ({ success: true }));
 
             // Guardar timestamp del envío exitoso (cooldown)
             localStorage.setItem("lastFormSubmit", Date.now().toString());

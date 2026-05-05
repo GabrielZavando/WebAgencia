@@ -119,12 +119,12 @@
 // Workflow-arrow (flechas entre círculos)
 .workflow-arrow.fade-in {
   opacity: 0;
-  transform: scale3d(0, 0, 1);
+  transform: scale3d(0, 0, 1) rotate(var(--arrow-rotation, 0deg));
 }
 
 .workflow-arrow.fade-in.animate {
   opacity: 1;
-  transform: scale3d(1, 1, 1);
+  transform: scale3d(1, 1, 1) rotate(var(--arrow-rotation, 0deg));
   transition: opacity 0.4s ease-out, 
               transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); // Efecto elastic
 }

@@ -34,9 +34,8 @@ jobs:
       - name: Build Project
         run: pnpm build
         env:
-          # Variables mínimas para que el build no falle por falta de env vars
-          PUBLIC_API_URL: ${{ vars.PUBLIC_API_URL || 'https://nestjs-api-201828783555.us-central1.run.app' }}
-          PUBLIC_FIREBASE_PROJECT_ID: placeholder
+          PUBLIC_API_URL: http://localhost:8080
+          PUBLIC_FIREBASE_PROJECT_ID: demo-project
           PUBLIC_FIREBASE_API_KEY: placeholder
           PUBLIC_FIREBASE_AUTH_DOMAIN: placeholder
           PUBLIC_FIREBASE_STORAGE_BUCKET: placeholder
@@ -44,3 +43,28 @@ jobs:
           PUBLIC_FIREBASE_APP_ID: placeholder
           PUBLIC_TURNSTILE_SITE_KEY: placeholder
           PUBLIC_GTM_ID: placeholder
+
+      - name: Get Playwright version
+        id: playwright-version
+        run: echo "PLAYWRIGHT_VERSION=$(pnpm exec playwright --version | cut -d' ' -f2)" >> $GITHUB_ENV
+
+      - name: Cache Playwright Browsers
+        uses: actions/cache@v4
+        id: playwright-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ env.PLAYWRIGHT_VERSION }}
+
+      - name: Install Playwright Browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Install Playwright Dependencies (OS)
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: pnpm exec playwright install-deps chromium
+
+      - name: Run E2E Tests
+        run: pnpm test:e2e
+        env:
+          PUBLIC_API_URL: http://localhost:8080
+          BASE_URL: http://localhost:4321

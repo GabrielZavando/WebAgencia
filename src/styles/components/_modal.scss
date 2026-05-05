@@ -88,7 +88,7 @@
     
     .modal__header h3 {
       gap: 1.5rem;
-      font-size: 1.5rem;
+      font-size: var(--text-xl);
     }
   }
 
@@ -108,7 +108,7 @@
       font-family: var(--font-headings);
       font-weight: 800;
       color: var(--color-text);
-      font-size: 1.25rem;
+      font-size: var(--text-lg);
 
       span.material-symbols-outlined {
         color: var(--color-primary);
@@ -145,50 +145,32 @@
     color: var(--color-text);
     margin-bottom: var(--space-xl);
     margin-top: var(--space-xl);
-    font-size: 1.5rem;
+    font-size: var(--text-xl);
     text-align: center;
-
-    @media (min-width: #{container(narrow)}) {
-      font-size: 1.875rem;
-    }
-
-    @media (min-width: #{container(max)}) {
-      font-size: 2.25rem;
-    }
   }
 
   &__body {
     color: var(--color-text);
     line-height: 1.7;
     font-family: var(--font-primary);
-    font-size: 1rem;
+    font-size: var(--text-base);
     padding: var(--space-md);
     text-align: left;
     
     @media (min-width: #{container(narrow)}) {
-      font-size: 1.125rem;
       padding: var(--space-lg);
     }
 
     @media (min-width: #{container(max)}) {
-      font-size: 1.25rem;
       padding: var(--space-xl);
     }
     
     h4 {
-      font-size: 1.5rem;
+      font-size: var(--text-xl);
       font-weight: 600;
       color: var(--color-text);
       margin: var(--space-lg) 0 var(--space-md) 0;
       text-align: left;
-      
-      @media (min-width: #{container(narrow)}) {
-        font-size: 1.625rem;
-      }
-
-      @media (min-width: #{container(max)}) {
-        font-size: 1.75rem;
-      }
     }
 
     ul, ol {

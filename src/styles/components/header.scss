@@ -10,7 +10,11 @@
     right: 0;
     z-index: var(--z-header);
     background: rgba(255, 255, 255, 0);
-    padding: var(--space-xs) var(--padding-container);
+    padding: 0; 
+    width: 100%;
+    left: 0;
+    // El desbordamiento horizontal se maneja a nivel global en html/body
+    // No añadir overflow: hidden aquí para evitar recortes del menú móvil 100vh
     
     // Animación de entrada desde arriba
     &.fade-in-down {
@@ -38,7 +42,8 @@
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
-        padding: 0;
+        padding: var(--space-xs) var(--padding-container); // Padding movido aquí
+        width: 100%;
     }
     
     // Estado con scroll (mayor a 100px)
@@ -218,7 +223,7 @@
         
         // Estilos simplificados usando el sistema existente
         a {
-            font-size: 1.125rem;
+            font-size: var(--text-lg);
             text-decoration: none;
             transition: var(--nav-transition);
             
@@ -227,7 +232,7 @@
             
             // En desktop: usar variable contextual del sistema
             @include respond-to(sm) {
-                font-size: 1rem;
+                font-size: var(--text-base);
                 color: var(--nav-link-color);
                 
                 // Texto se mantiene igual, se anima el subrayado en buttons.scss

@@ -9,7 +9,9 @@
     "astro": "astro",
     "test": "vitest run",
     "test:ui": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test",
+    "gen:api": "swagger-typescript-api generate -p ../Api/swagger.json -o ./src/api -n index.ts --axios"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.6",
@@ -26,10 +28,12 @@
     "typescript": "^5.9.3"
   },
   "devDependencies": {
+    "@playwright/test": "^1.59.1",
     "@vitest/coverage-v8": "^4.1.2",
     "dotenv": "^17.3.1",
     "jsdom": "^29.0.1",
     "sass": "^1.89.0",
+    "swagger-typescript-api": "^13.7.2",
     "vitest": "^4.1.2"
   }
 }

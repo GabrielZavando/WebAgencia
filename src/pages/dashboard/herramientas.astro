@@ -81,8 +81,8 @@ const tools = [
 <style>
   .tools-page { width: 100%; }
   .page-header { margin-bottom: 3rem; }
-  .page-header h1 { margin: 0 0 0.5rem; font-size: 2.2rem; font-weight: 700; color: var(--color-text); }
-  .text-muted { color: var(--color-text-muted); margin: 0; font-size: 1.1rem; }
+  .page-header h1 { margin: 0 0 0.5rem; font-size: var(--text-lg); font-weight: 700; color: var(--color-text); }
+  .text-muted { color: var(--color-text-muted); margin: 0; font-size: var(--text-base); }
 
   /* Grid de Herramientas */
   .tools-grid {
@@ -94,15 +94,19 @@ const tools = [
 
   .tool-card {
     background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
+    border: 2px solid var(--color-border);
+    border-radius: 0; /* Flat Design */
     padding: 2rem;
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
     position: relative;
-    transition: all 0.3s ease;
-    box-shadow: var(--shadow-sm);
+    transition: all 0.2s ease;
+    box-shadow: none;
+  }
+
+  .tool-card:hover {
+    border-color: var(--color-primary);
   }
 
   .tool-card.coming-soon {
@@ -124,8 +128,7 @@ const tools = [
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.75rem;
-    border-radius: var(--radius-md);
+    border-radius: 0; /* Flat */
   }
   .tool-icon-wrapper span {
     font-size: 2rem;
@@ -133,30 +136,34 @@ const tools = [
 
   .tool-status-badge {
     font-size: 0.7rem;
-    font-weight: 700;
+    font-weight: 800;
     text-transform: uppercase;
     background: var(--color-primary);
     color: white;
-    padding: 0.25rem 0.75rem;
-    border-radius: 999px;
+    padding: 0.35rem 0.8rem;
+    border-radius: 0; /* Flat */
+    letter-spacing: 0.05em;
   }
 
   .category-tag {
     font-size: 0.8rem;
     color: var(--color-primary);
-    font-weight: 600;
+    font-weight: 700;
+    text-transform: uppercase;
     margin-bottom: 0.5rem;
+    letter-spacing: 0.05em;
   }
 
   .tool-card-body h3 {
     margin: 0 0 1rem;
-    font-size: 1.4rem;
+    font-size: var(--text-md);
     color: var(--color-text);
+    font-weight: 700;
   }
 
   .tool-card-body p {
     margin: 0;
-    font-size: 1rem;
+    font-size: var(--text-base);
     color: var(--color-text-muted);
     line-height: 1.6;
   }
@@ -164,17 +171,20 @@ const tools = [
   .tool-card-footer {
     margin-top: auto;
     padding-top: 1.5rem;
+    border-top: 1px solid var(--color-border);
   }
 
   .btn-tool-disabled {
     width: 100%;
     padding: 0.875rem;
-    background: var(--color-border);
-    border: none;
+    background: var(--color-surface-secondary);
+    border: 1px solid var(--color-border);
     color: var(--color-text-muted);
-    border-radius: var(--radius-md);
-    font-weight: 600;
-    font-size: 0.95rem;
+    border-radius: 0; /* Flat */
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -197,24 +207,25 @@ const tools = [
     color: var(--color-text-muted);
   }
 
-  .placeholder-content i {
-    font-size: 2.5rem;
+  .placeholder-content span.material-symbols-outlined {
+    font-size: 3rem;
     margin-bottom: 1rem;
     display: block;
+    color: var(--color-border);
   }
 
   /* Buzón de Ideas */
   .idea-mailbox {
     background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-xl);
-    padding: 3rem;
+    border: 2px solid var(--color-border);
+    border-radius: 0; /* Flat */
+    padding: 3.5rem 2rem;
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    gap: 2rem;
-    box-shadow: var(--shadow-md);
+    gap: 2.5rem;
+    box-shadow: none;
     position: relative;
     overflow: hidden;
   }
@@ -226,7 +237,7 @@ const tools = [
     left: 0;
     width: 100%;
     height: 4px;
-    background: linear-gradient(90deg, var(--color-primary), transparent);
+    background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
   }
 
   .mailbox-header {
@@ -238,24 +249,25 @@ const tools = [
   }
 
   .icon-bulb {
-    width: 160px;
-    height: 160px;
-    background: rgba(245, 158, 11, 0.1);
+    width: 140px;
+    height: 140px;
+    background: rgba(245, 158, 11, 0.15);
     color: #f59e0b;
-    border-radius: 50%;
+    border-radius: 50%; /* Mantener redondo para efecto de brillo */
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 0 20px rgba(245, 158, 11, 0.2);
+    box-shadow: 0 0 30px rgba(245, 158, 11, 0.25);
+    border: none; /* Sin borde para que parezca luz */
   }
 
   .icon-bulb span {
-    font-size: 6.6rem;
+    font-size: 5rem;
   }
 
   .mailbox-header h3 {
     margin: 0 0 0.75rem;
-    font-size: 1.8rem;
+    font-size: var(--text-lg);
     color: var(--color-text);
     font-weight: 700;
   }
@@ -263,7 +275,7 @@ const tools = [
   .mailbox-header p {
     margin: 0;
     color: var(--color-text-muted);
-    font-size: 1.1rem;
+    font-size: var(--text-base);
     line-height: 1.6;
   }
 
@@ -274,29 +286,29 @@ const tools = [
     background: var(--color-primary);
     color: white;
     border: none;
-    border-radius: var(--radius-md);
-    font-weight: 600;
+    border-radius: 0; /* Flat */
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
     cursor: pointer;
     gap: 0.75rem;
     text-decoration: none;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 12px -2px rgba(var(--color-primary-rgb), 0.3);
-    width: auto; /* Forzar ancho automático */
+    transition: all 0.2s ease;
+    width: auto;
   }
 
   .btn-small {
-    padding: 0.75rem 1.8rem;
-    font-size: 0.95rem;
+    padding: 1rem 2rem;
+    font-size: 0.9rem;
   }
 
   .btn-primary:hover {
+    background: var(--color-secondary);
     transform: translateY(-2px);
-    box-shadow: 0 6px 15px -3px rgba(var(--color-primary-rgb), 0.4);
   }
 
   @media (max-width: 480px) {
     .tools-grid { grid-template-columns: 1fr; }
-    .page-header h1 { font-size: 1.8rem; }
-    .idea-mailbox { padding: 2rem 1.5rem; }
+    .idea-mailbox { padding: 2.5rem 1.5rem; }
   }
 </style>

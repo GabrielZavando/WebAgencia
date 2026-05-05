@@ -293,13 +293,13 @@ import ModalMessage from '../components/shared/ModalMessage.astro';
   .login-container {
     background: var(--card-bg); /* Fondo dinámico según tema (blanco o dark) */
     padding: 2.5rem;
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-xl);
+    border-radius: 0; /* Flat design: bordes rectos */
     width: 100%;
     max-width: 440px;
-    border: 1px solid var(--color-border);
+    border: 2px solid var(--color-border); /* Borde más definido */
     position: relative;
     z-index: 1;
+    box-shadow: none; /* Sin sombras pesadas en Flat Design */
   }
 
   .login-header {
@@ -364,13 +364,13 @@ import ModalMessage from '../components/shared/ModalMessage.astro';
   .form-input {
     width: 100%;
     padding: var(--space-md);
-    border: 1px solid var(--input-border);
-    border-radius: 0; /* Flat design */
+    border: 2px solid var(--input-border); /* Borde más grueso para Flat */
+    border-radius: 0; /* Flat design: bordes rectos */
     background: var(--input-bg);
     font-family: var(--font-primary);
     font-size: 1rem;
     color: var(--input-text);
-    transition: all var(--transition-normal) ease;
+    transition: border-color var(--transition-normal) ease;
     outline: none;
 
     &::placeholder {
@@ -380,7 +380,7 @@ import ModalMessage from '../components/shared/ModalMessage.astro';
 
     &:focus {
       border-color: var(--color-primary);
-      box-shadow: 0 0 0 3px var(--input-focus-shadow);
+      /* Sin sombra en foco, solo cambio de color de borde */
     }
   }
 
@@ -391,23 +391,24 @@ import ModalMessage from '../components/shared/ModalMessage.astro';
     background: var(--color-primary);
     color: white;
     border: none;
-    border-radius: var(--radius-md);
-    font-weight: 600;
+    border-radius: 0; /* Flat design: bordes rectos */
+    font-weight: 700;
     font-size: 1.1rem;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 1px;
     cursor: pointer;
     transition: all 0.2s;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 3.5rem; /* Asegura que el botón no se achique */
+    min-height: 3.5rem;
     position: relative;
+    box-shadow: none; /* Sin sombras */
   }
 
   .btn-primary:hover:not(:disabled) {
+    background: var(--color-secondary); /* Cambio de color marcado */
     transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
   }
 
   .btn-primary:active:not(:disabled) {

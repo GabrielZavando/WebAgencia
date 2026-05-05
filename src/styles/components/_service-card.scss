@@ -1,10 +1,14 @@
 @use '../config' as *;
 
 .service-card {
-  padding: var(--space-xl);
+  padding: var(--space-lg);
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: 0;
+  
+  @include respond-to(md) {
+    padding: var(--space-xl);
+  }
   transition: all var(--transition-normal) ease;
   position: relative;
   overflow: hidden;
@@ -18,7 +22,7 @@
 
   &__need {
     display: block;
-    font-size: 0.875rem;
+    font-size: var(--text-sm);
     font-weight: 700;
     text-transform: uppercase;
     color: var(--color-primary);
@@ -51,22 +55,22 @@
     justify-content: center;
     align-items: center;
 
-    // Estilos específicos para Material Symbols (span) y Font Awesome (i)
+    // Estilos específicos para Material Symbols
     // Se usa :global porque son inyectados vía set:html
-    span, i {
-      font-size: 3.5rem !important; // Tamaño móvil
+    .material-symbols-outlined {
+      font-size: 2.5rem !important; // Tamaño móvil optimizado para 375px
       color: inherit;
       display: block;
     }
 
     @media (min-width: #{$breakpoint-md}) {
-      span, i {
+      .material-symbols-outlined {
         font-size: 50px !important; // Tamaño exacto solicitado para escritorio
       }
     }
 
     @media (min-width: #{container(max)}) {
-      span, i {
+      .material-symbols-outlined {
         font-size: 60px !important; // Un poco más grande en pantallas muy anchas
       }
     }
@@ -77,30 +81,19 @@
     font-weight: 600;
     color: var(--color-text);
     margin-bottom: var(--space-sm);
-    font-size: 1.25rem;
+    font-size: var(--text-lg);
     line-height: 1.3;
-
-    @media (min-width: #{container(narrow)}) {
-      font-size: 1.375rem;
-    }
-
-    @media (min-width: #{container(max)}) {
-      font-size: 1.5rem;
-    }
   }
 
   &__description {
     color: var(--color-text-secondary);
     line-height: 1.5;
     font-family: var(--font-primary);
-    font-size: 0.9rem;
+    font-size: var(--text-base);
     flex-grow: 1;
     margin-bottom: 0; // Removemos el margin-bottom para que flex-grow controle el espacio
-
-    @media (min-width: #{container(narrow)}) {
-      font-size: 1rem;
-      line-height: 1.6;
-    }
+    overflow-wrap: break-word;
+    hyphens: auto;
   }
 
   .btn-cta {

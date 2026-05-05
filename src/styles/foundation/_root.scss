@@ -62,10 +62,6 @@
   --logo-size: #{token(logo, size)};
   --logo-size-full: #{token(logo, size-full)};
   
-  /* Fuentes */
-  --font-primary: 'Open Sans', system-ui, sans-serif;
-  --font-headings: 'Montserrat', system-ui, sans-serif;
-  
   /* Variables contextuales para navegación */
   --nav-mobile-breakpoint: 1024px;
   --nav-transition: all 0.3s ease;
@@ -73,7 +69,7 @@
   --nav-link-color: var(--color-nav-link-default);
   
   /* Header heights - Para scroll suave */
-  --header-height-mobile: 30px;
+  --header-height-mobile: 60px;
   --header-height-desktop: 45px;
   
   /* Scroll padding para navegación suave */
@@ -90,13 +86,9 @@
   --color-body: #{color(body)};
   --color-surface: #{color(surface)};
   --color-surface-secondary: #{color(surface-secondary)};
-  --color-text: #{color(text)};
-  --color-text-secondary: #{color(text-secondary)};
-  --color-text-muted: #{color(text-muted)};
   --color-input-text: #{color(input-text)};
   --color-border: #{color(border)};
   --color-border-secondary: #{color(border-secondary)};
-  --color-headings: var(--color-text);
   
   /* Botones tema claro */
   --btn-primary-bg: #{color(btn-primary-bg)};
@@ -137,13 +129,9 @@
   --color-body: #{color(body, dark)};
   --color-surface: #{color(surface, dark)};
   --color-surface-secondary: #{color(surface-secondary, dark)};
-  --color-text: #{color(text, dark)};
-  --color-text-secondary: #{color(text-secondary, dark)};
-  --color-text-muted: #{color(text-muted, dark)};
   --color-input-text: #{color(input-text, dark)};
   --color-border: #{color(border, dark)};
   --color-border-secondary: #{color(border-secondary, dark)};
-  --color-headings: var(--color-white);
   
   /* Botones tema oscuro (mismos valores) */
   --btn-primary-bg: #{color(btn-primary-bg, dark)};
@@ -180,6 +168,7 @@
 // Cuando el menú móvil está activo (clase añadida por JavaScript)
 body.menu-active {
   --nav-hamburger-color: var(--color-nav-hamburger-active);
+  --nav-link-color: var(--color-text);
 }
 
 // Clase helper para ocultar hamburguesa en desktop (desde 1200px)

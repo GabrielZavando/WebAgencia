@@ -30,19 +30,19 @@
   // Tamaños
   &.btn-sm {
     padding: var(--space-xs) var(--space-sm);
-    font-size: 0.875rem;
+    font-size: var(--text-sm);
     border-radius: 0;
   }
 
   &.btn-md {
     padding: var(--space-sm) var(--space-lg);
-    font-size: 1rem;
+    font-size: var(--text-base);
     border-radius: 0;
   }
 
   &.btn-lg {
     padding: var(--space-md) var(--space-xl);
-    font-size: 1.125rem;
+    font-size: var(--text-md);
     border-radius: 0;
   }
 
@@ -192,7 +192,7 @@
   background: transparent;
   color: var(--color-text-muted);
   padding: 0.6rem 1rem;
-  font-size: 0.95rem;
+  font-size: var(--text-sm);
   width: 100%;
   justify-content: flex-start;
   gap: 1rem;
@@ -218,30 +218,56 @@
   position: fixed;
   bottom: var(--space-lg);
   right: var(--space-lg);
-  width: 48px;
-  height: 48px;
-  border-radius: 0;
+  width: 45px;
+  height: 45px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
   background-color: var(--color-primary);
   color: var(--color-white);
-  box-shadow: var(--shadow-md);
+  border: none;
+  border-radius: 0; // Estética Flat
+  box-shadow: none; 
+  
+  z-index: 350; // Por encima de header (400? No, header es 400, nav-mobile es 450)
+  // Re-ajustando: Header es 400. Si lo pongo en 350 está por debajo del header. 
+  // Pero el usuario dijo "debajo del menú hamburguesa cuando está desplegado".
+  // Nav-mobile es 450. Así que 440 es ideal.
+  z-index: 440; 
+
+  // Estado inicial (oculto)
   opacity: 0;
-  transform: translateY(20px);
   visibility: hidden;
-  z-index: 100;
+  transform: translateY(20px);
+  transition: all var(--transition-normal) ease;
+
+  .material-symbols-outlined {
+    font-size: 1.5rem;
+    color: var(--color-white) !important;
+  }
 
   &.visible {
     opacity: 1;
-    transform: translateY(0);
     visibility: visible;
+    transform: translateY(0);
   }
 
   &:hover {
     background-color: var(--color-secondary);
-    transform: translateY(-3px);
+    transform: translateY(-5px);
   }
 
   &:active {
     transform: translateY(0);
+  }
+
+  @media (max-width: 480px) {
+    bottom: var(--space-md);
+    right: var(--space-md);
+    width: 40px;
+    height: 40px;
   }
 }
 
@@ -317,7 +343,7 @@
   background: transparent;
   color: var(--color-text);
   padding: var(--space-xs) var(--space-sm);
-  font-size: 1rem;
+  font-size: var(--text-base);
   text-transform: uppercase;
   transition: color var(--transition-normal) ease;
 
@@ -396,7 +422,7 @@
 .btn-details {
   @include btn-base;
   padding: 0.4rem 1rem;
-  font-size: 0.85rem;
+  font-size: var(--text-sm);
   background: transparent;
   border: 2px solid var(--color-primary);
   color: var(--color-primary);

@@ -67,7 +67,6 @@ const {
         // Scroll top button
         const scrollBtn = document.getElementById('scroll-top');
         if (scrollBtn) {
-          // Limpiar listener global previo si existe para evitar duplicados en SPA
           window.removeEventListener('scroll', (window as any)._scrollHandler);
           (window as any)._scrollHandler = () => {
             if (window.scrollY > 200) scrollBtn.classList.add('visible');
@@ -81,34 +80,64 @@ const {
           });
         }
 
-        // Sistema unificado de animaciones fade-in
+        // --- Sistema unificado de animaciones fade-in ---
+        const observerOptions = { 
+          threshold: 0.1, // Reducido para mayor sensibilidad
+          rootMargin: '0px 0px -50px 0px' 
+        };
+
         const observer = new IntersectionObserver((entries) => {
           entries.forEach(entry => {
             if (entry.isIntersecting) {
               entry.target.classList.add('animate');
+              // Una vez animado, dejar de observar para ahorrar recursos
+              observer.unobserve(entry.target);
             }
           });
-        }, { threshold: 0.2, rootMargin: '0px 0px -50px 0px' });
+        }, observerOptions);
 
-        // Observar todos los elementos con fade-in
         const fadeElements = document.querySelectorAll('.fade-in');
+        
+        // Función para forzar animaciones en un contenedor (ej: al saltar a un ID)
+        const forceAnimateInSection = (sectionId: string) => {
+          const targetSection = document.querySelector(sectionId);
+          if (targetSection) {
+            const elementsToAnimate = targetSection.querySelectorAll('.fade-in');
+            elementsToAnimate.forEach(el => el.classList.add('animate'));
+          }
+        };
+
         fadeElements.forEach((el) => {
           observer.observe(el);
           
-          // Si está visible al cargar, animar inmediatamente respetando delays
+          // Si está visible al cargar, animar inmediatamente
           const rect = el.getBoundingClientRect();
           if (rect.top < window.innerHeight && rect.bottom > 0) {
-            // Forzar un pequeño delay para que CSS transitions funcionen
             setTimeout(() => {
               el.classList.add('animate');
-            }, 50);
+            }, 100);
           }
         });
+
+        // --- Fix para navegación por anclas (Menú Planes, etc) ---
+        // 1. Manejar clics en enlaces con ancla
+        document.addEventListener('click', (e) => {
+          const target = e.target as HTMLElement;
+          const link = target.closest('a');
+          if (link && link.hash && (link.pathname === window.location.pathname || link.pathname === '/')) {
+            // Dar un pequeño margen para que el scroll ocurra y forzar animación
+            setTimeout(() => forceAnimateInSection(link.hash), 100);
+            setTimeout(() => forceAnimateInSection(link.hash), 500); // Doble check por si el scroll es lento
+          }
+        });
+
+        // 2. Manejar carga inicial con hash
+        if (window.location.hash) {
+          setTimeout(() => forceAnimateInSection(window.location.hash), 500);
+        }
       }
 
-      // Ejecutar en la carga inicial
       document.addEventListener('DOMContentLoaded', initLayout);
-      // Ejecutar en cada navegación con View Transitions
       document.addEventListener('astro:page-load', initLayout);
     </script>
   </body>

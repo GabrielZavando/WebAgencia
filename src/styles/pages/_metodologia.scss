@@ -147,7 +147,6 @@
   margin-top: 60px;
   width: 100%;
 }
-
 .transversal-badge {
   background: rgba(var(--color-warning-rgb), 0.1);
   border: 2px solid var(--color-warning);
@@ -162,9 +161,23 @@
   margin-top: -10px;
   position: relative;
   z-index: 2;
-  margin-top: -10px; // Un poco más cerca para dar idea de conexión
-  position: relative;
-  z-index: 2;
+
+  &__badge-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background-color: var(--color-warning);
+    border-radius: 50%;
+    margin-right: var(--space-xs);
+  }
+
+  @media (max-width: 768px) {
+    padding: var(--space-sm) var(--space-md);
+    font-size: 0.95rem;
+    flex-direction: column;
+    text-align: center;
+    gap: var(--space-xs);
+  }
 
   &::before {
     content: '';
@@ -320,20 +333,59 @@
   }
 
   &__body {
-    padding: var(--space-lg);
-    display: none; // Oculto por defecto
+    display: none;
+    padding: 0 var(--space-lg) var(--space-lg);
     border-top: 1px solid var(--color-border);
+    background-color: var(--color-body);
   }
 
-  // Estado activo
   &.is-open {
+    .phase-card__body {
+      display: block;
+      animation: fadeIn 0.4s ease forwards;
+    }
+    
     .accordion-icon {
       transform: rotate(180deg);
     }
 
-    .phase-card__body {
-      display: block; // Visible cuando está abierto
-      animation: fadeIn 0.3s ease;
+    .phase-card__header {
+      background-color: var(--color-surface);
+      border-bottom-color: transparent;
+    }
+  }
+
+  // Ajustes responsivos
+  @include respond-to(md) {
+    &__header {
+      padding: var(--space-md) var(--space-lg);
+    }
+    
+    &__title {
+      font-size: 1.35rem;
+    }
+  }
+
+  @media (max-width: 768px) {
+    &__header {
+      padding: var(--space-sm) var(--space-md);
+    }
+
+    &__title {
+      font-size: 1.15rem;
+      gap: var(--space-xs);
+      
+      span {
+        font-size: 2rem;
+      }
+    }
+
+    &__concept {
+      font-size: 0.9rem;
+    }
+
+    .accordion-toggle-info .toggle-text {
+      display: none; // Ocultar texto "expandir" en móviles muy pequeños si estorba
     }
   }
 }

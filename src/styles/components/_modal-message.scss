@@ -43,8 +43,8 @@
   position: relative;
   transform: scale(0.8);
   transition: transform 0.3s ease;
-  border: 1px solid var(--color-border);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  border: 2px solid var(--color-border);
+  box-shadow: none; /* Flat design */
 
   .success-modal.active &,
   .error-modal.active &,
@@ -104,7 +104,7 @@
 }
 
 .modal-message__title {
-  font-size: 1.5rem;
+  font-size: var(--text-xl);
   font-weight: 700;
   font-family: var(--font-headings);
   color: var(--color-text);
@@ -112,7 +112,7 @@
 }
 
 .modal-message__text {
-  font-size: 1.1rem;
+  font-size: var(--text-md);
   line-height: 1.6;
   margin-bottom: 1.5rem;
   color: var(--color-text);

@@ -15,7 +15,7 @@
 .breadcrumbs li {
   display: flex;
   align-items: center;
-  font-size: 0.9rem;
+  font-size: var(--text-sm);
   color: var(--color-text-muted);
 }
 
@@ -37,7 +37,7 @@
 }
 
 .separator {
-  font-size: 1.2rem;
+  font-size: var(--text-md);
   margin-left: 0.5rem;
   color: var(--color-border);
 }

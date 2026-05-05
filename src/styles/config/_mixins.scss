@@ -212,7 +212,7 @@
   border-radius: 0; // Estética Flat
   color: var(--color-text);
   font-family: var(--font-primary);
-  font-size: 1rem;
+  font-size: var(--text-base);
   transition: all var(--transition-normal) ease;
   outline: none;
   appearance: none;
@@ -253,7 +253,7 @@
     gap: 0.5rem;
 
     .meta-label {
-      font-size: 0.75rem;
+      font-size: var(--text-xs);
       font-weight: 800;
       text-transform: uppercase;
       color: var(--color-text-muted);
@@ -261,7 +261,7 @@
     }
 
     .meta-value {
-      font-size: 0.95rem;
+      font-size: var(--text-sm);
       font-weight: 600;
       color: var(--color-text);
       display: flex;
