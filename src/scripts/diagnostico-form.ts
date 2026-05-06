@@ -144,12 +144,18 @@ class DiagnosticoForm extends HTMLElement {
     this.loading = true;
     this.render();
 
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 45000); // 45s timeout
+
     try {
       const response = await fetch(`${getApiUrl()}/diagnostico`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
+        body: JSON.stringify(data),
+        signal: controller.signal
       });
+
+      clearTimeout(timeoutId);
 
       if (!response.ok) {
         const errData = await response.json().catch(() => ({}));
@@ -162,8 +168,20 @@ class DiagnosticoForm extends HTMLElement {
       // Emitir evento para lanzar confeti y modal en Astro
       this.dispatchEvent(new CustomEvent('diagnostico-success', { bubbles: true, composed: true }));
     } catch (error: any) {
+      clearTimeout(timeoutId);
       console.error("Submission error:", error);
-      alert(error.message || "Hubo un error al procesar tu diagnóstico. Por favor intenta de nuevo.");
+      
+      const isTimeout = error.name === 'AbortError';
+      const message = isTimeout 
+        ? "La solicitud está tardando demasiado debido a la generación del PDF. No te preocupes, es probable que el correo llegue en unos instantes."
+        : (error.message || "Hubo un error al procesar tu diagnóstico. Por favor intenta de nuevo.");
+
+      if ((window as any).modalHelpers) {
+        (window as any).modalHelpers.updateModalMessage('diagnostic-error-modal', message);
+        (window as any).modalHelpers.openModal('diagnostic-error-modal');
+      } else {
+        alert(message);
+      }
     } finally {
       this.loading = false;
       this.render();
@@ -377,7 +395,7 @@ class DiagnosticoForm extends HTMLElement {
               Anterior
             </button>
             <button type="submit" class="btn-cta ${this.loading ? 'btn-loading' : ''}" ${this.loading ? "disabled" : ""}>
-              ${this.loading ? "" : "Finalizar Diagnóstico"}
+              ${this.loading ? "Procesando diagnóstico..." : "Finalizar Diagnóstico"}
               ${this.loading ? "" : '<span class="material-symbols-outlined" style="color: white">arrow_forward</span>'}
             </button>
           </div>

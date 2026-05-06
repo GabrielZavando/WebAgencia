@@ -67,6 +67,13 @@ const config = await getSystemConfig();
     message="Estamos procesando tus respuestas. En unos instantes recibirás tu informe confidencial por correo electrónico."
   />
 
+  <ModalMessage
+    id="diagnostic-error-modal"
+    type="error"
+    title="Error al procesar"
+    message="Hubo un problema al enviar tus respuestas. Por favor, inténtalo de nuevo en unos momentos."
+  />
+
   <script is:inline src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <script>
     import "../scripts/diagnostico-form.ts";
