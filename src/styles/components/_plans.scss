@@ -365,9 +365,13 @@
 
     .price__amount {
       font-family: 'Montserrat', sans-serif;
-      font-size: var(--text-3xl); // Uso de variable dinámica para el precio
+      font-size: min(var(--text-3xl), 63px); // Limitado a 63px según requerimiento
       font-weight: 900;
       letter-spacing: -2px;
+
+      @media (min-width: #{$breakpoint-lg}) {
+        font-weight: 800;
+      }
     }
 
     .price__period {

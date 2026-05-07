@@ -65,14 +65,14 @@ $font-headings: 'Montserrat', system-ui, sans-serif;
 /* ─── Desktops ≥ 1200px (lg) ─── */
 @media (min-width: 1200px) {
   :root {
-    --text-base: 1.125rem;  /* 18px - Optimizado para lectura en pantallas grandes */
+    --text-base: 1.125rem;  /* 18px */
     --text-md:   1.5rem;    /* 24px */
-    --text-lg:   2rem;      /* 32px */
-    --text-xl:   2.5rem;    /* 40px */
-    --text-2xl:  3.5rem;    /* 56px */
-    --text-3xl:  4.5rem;    /* 72px */
-    --text-4xl:  5.5rem;    /* 88px */
-    --text-5xl:  7rem;      /* 112px */
+    --text-lg:   1.75rem;   /* 28px - Ajustado para mantener jerarquía */
+    --text-xl:   2rem;      /* 32px - Reducido 0.5rem según requerimiento */
+    --text-2xl:  3rem;      /* 48px - Reducido 0.5rem */
+    --text-3xl:  4rem;      /* 64px - Reducido 0.5rem */
+    --text-4xl:  5rem;      /* 80px - Reducido 0.5rem */
+    --text-5xl:  6.5rem;    /* 104px - Reducido 0.5rem */
   }
 }
 

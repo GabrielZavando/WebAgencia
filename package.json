@@ -1,6 +1,6 @@
 {
   "name": "@webastro/landing",
-  "version": "1.4.0",
+  "version": "1.4.2",
   "description": "Landing page con Astro para Agencia Digital Gabriel Zavando",
   "scripts": {
     "dev": "astro dev --open",
@@ -35,5 +35,14 @@
     "sass": "^1.89.0",
     "swagger-typescript-api": "^13.7.2",
     "vitest": "^4.1.2"
+  },
+  "pnpm": {
+    "allowBuilds": [
+      "@firebase/util",
+      "@parcel/watcher",
+      "esbuild",
+      "protobufjs",
+      "sharp"
+    ]
   }
 }

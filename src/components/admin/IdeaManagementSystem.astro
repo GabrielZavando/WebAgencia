@@ -1,0 +1,182 @@
+---
+import IdeaTable from './IdeaTable.astro';
+import SearchForm from '../shared/SearchForm.astro';
+---
+
+<div class="idea-management-system">
+  <SearchForm 
+    id="ideaSearchInput" 
+    placeholder="Buscar por nombre de idea, cliente o descripción..." 
+    label="Filtrar ideas" 
+  />
+
+  <IdeaTable id="ideasListBody" />
+</div>
+
+<script>
+  import { auth } from "../../lib/firebase/client";
+  import { onAuthStateChanged } from "firebase/auth";
+  import { apiClient } from "../../lib/api-client";
+
+  async function initIdeaManagement() {
+    const container = document.querySelector('.idea-management-system') as HTMLElement;
+    if (!container) return;
+
+    const ideasListBody = document.getElementById('ideasListBody');
+    const searchInput = document.getElementById('ideaSearchInput') as HTMLInputElement;
+
+    let allIdeas: any[] = [];
+    let token = '';
+
+    const loadIdeas = async () => {
+      try {
+        allIdeas = await apiClient.get('/ideas', { token });
+        applyFilters();
+      } catch (err) {
+        console.error("Error al cargar ideas:", err);
+        if (ideasListBody) {
+          ideasListBody.innerHTML = `<tr><td colspan="4"><div class="empty-state"><span class="material-symbols-outlined">report</span><p>Error al cargar las ideas.</p></div></td></tr>`;
+        }
+      }
+    };
+
+    const applyFilters = () => {
+      if (!ideasListBody) return;
+      const query = searchInput?.value.toLowerCase().trim() || '';
+      
+      let filtered = [...allIdeas];
+      if (query) {
+        filtered = filtered.filter(i => 
+          (i.name && i.name.toLowerCase().includes(query)) || 
+          (i.explanation && i.explanation.toLowerCase().includes(query)) ||
+          (i.clientName && i.clientName.toLowerCase().includes(query))
+        );
+      }
+
+      renderIdeas(filtered);
+    };
+
+    const renderIdeas = (ideas: any[]) => {
+      if (!ideasListBody) return;
+      
+      if (ideas.length === 0) {
+        ideasListBody.innerHTML = `
+          <tr>
+            <td colspan="4">
+              <div class="empty-state">
+                <span class="material-symbols-outlined" style="font-size: 48px; color: var(--primary-color); opacity: 0.5;">lightbulb</span>
+                <h3>Sin resultados</h3>
+                <p>No se encontraron ideas que coincidan con la búsqueda.</p>
+              </div>
+            </td>
+          </tr>`;
+        return;
+      }
+
+      ideasListBody.innerHTML = ideas.map(idea => {
+        const dateStr = idea.createdAt ? new Date(idea.createdAt).toLocaleDateString('es-CL', {
+          day: '2-digit', month: 'short', year: 'numeric'
+        }) : '-';
+
+        return `
+          <tr>
+            <td data-label="Cliente">
+              <div style="font-weight: 600; color: var(--text-color);">${idea.clientName || 'Usuario'}</div>
+            </td>
+            <td data-label="Idea">
+              <div class="ticket-subject-cell">
+                <span class="file-title" title="${idea.name}" style="font-weight: 500;">${idea.name || 'Sin nombre'}</span>
+              </div>
+            </td>
+            <td class="col-date-data" data-label="Fecha Enviado">${dateStr}</td>
+            <td class="col-actions-data" data-label="Detalles">
+              <div class="td-actions">
+                <a href="/admin/ideas/${idea.id}" class="btn-details" title="Ver detalle completo">
+                  <span class="material-symbols-outlined">visibility</span>
+                  <span class="btn-text">Ver</span>
+                </a>
+                <button class="btn-details delete-idea-btn" data-id="${idea.id}" title="Eliminar idea" style="--btn-color: #ef4444; border-color: #fee2e2;">
+                  <span class="material-symbols-outlined">delete</span>
+                  <span class="btn-text">Eliminar</span>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      // Vinculación de eventos de eliminación
+      ideasListBody.querySelectorAll('.delete-idea-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const id = (btn as HTMLElement).dataset.id;
+          if (confirm('¿Estás seguro de que deseas eliminar esta idea?')) {
+             try {
+               await apiClient.delete(`/ideas/${id}`, { token });
+               allIdeas = allIdeas.filter(i => i.id !== id);
+               applyFilters();
+             } catch (err) {
+               alert('Error al eliminar la idea');
+             }
+          }
+        });
+      });
+    };
+
+    searchInput?.addEventListener('input', applyFilters);
+
+    const startLoading = async (user: any) => {
+      if (!user) return;
+      token = await user.getIdToken();
+      await loadIdeas();
+    };
+
+    if (auth.currentUser) {
+      startLoading(auth.currentUser);
+    } else {
+      onAuthStateChanged(auth, startLoading);
+    }
+  }
+
+  document.addEventListener('astro:page-load', initIdeaManagement);
+</script>
+
+<style>
+  .idea-management-system {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .btn-details {
+    --btn-color: var(--primary-color);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.8rem;
+    border: 1px solid #e0f2fe;
+    border-radius: 8px;
+    background: white;
+    color: var(--btn-color);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+
+  .btn-details:hover {
+    background: var(--btn-color);
+    color: white;
+    border-color: var(--btn-color);
+  }
+
+  .empty-state {
+    padding: 4rem 2rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    color: #64748b;
+  }
+</style>

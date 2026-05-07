@@ -1,5 +1,6 @@
 ---
 import DashboardLayout from '../../../layouts/DashboardLayout.astro';
+import IdeaManagementSystem from '../../../components/admin/IdeaManagementSystem.astro';
 
 const token = Astro.cookies.get('session')?.value;
 if (!token) {
@@ -8,91 +9,39 @@ if (!token) {
 ---
 
 <DashboardLayout title="Banco de Ideas" breadcrumbs={[{ label: 'Admin', href: '/admin' }, { label: 'Ideas' }]} role="admin">
-  <div class="ideas-admin">
-    <div class="header-actions">
+  <div class="support-page">
+    <div class="page-header">
       <div>
-        <h1><span class="material-symbols-outlined text-primary" style="font-size: 2.5rem;">lightbulb</span> Banco de Ideas</h1>
-        <p class="text-muted">Propuestas y sugerencias de herramientas enviadas por los clientes.</p>
+        <h1>Banco de Ideas</h1>
+        <p class="text-muted">Propuestas enviadas por los clientes para sus proyectos digitales.</p>
       </div>
     </div>
 
-    <div class="ideas-container" id="ideasContainer">
-      <div class="loading-state">
-        <span class="material-symbols-outlined spinner">sync</span>
-        <p>Cargando ideas...</p>
-      </div>
-    </div>
+    <IdeaManagementSystem />
   </div>
 </DashboardLayout>
 
-<script>
-  import { auth } from "../../../lib/firebase/client";
-  import { onAuthStateChanged } from "firebase/auth";
-  import { apiClient } from "../../../lib/api-client";
-
-  const container = document.getElementById('ideasContainer');
-
-  onAuthStateChanged(auth, async (user) => {
-    if (!user) return;
-    const token = await user.getIdToken();
-    loadIdeas(token);
-  });
-
-  async function loadIdeas(token: string) {
-    try {
-      const ideas = await apiClient.get<any[]>('/ideas', { token });
-      renderIdeas(ideas);
-    } catch (error) {
-      console.error(error);
-      if (container) {
-        container.innerHTML = `
-          <div class="error-state">
-            <span class="material-symbols-outlined">error</span>
-            <p>Error al cargar las ideas. Por favor, intenta de nuevo.</p>
-          </div>`;
-      }
-    }
+<style is:global>
+  /* Asegurar consistencia con la página de tickets */
+  .support-page {
+    padding-bottom: 2rem;
   }
-
-  function renderIdeas(ideas: any[]) {
-    if (!container) return;
-
-    if (ideas.length === 0) {
-      container.innerHTML = `
-        <div class="empty-state">
-          <span class="material-symbols-outlined icon-lightbulb-glow">lightbulb</span>
-          <h3 class="empty-title">No hay ideas aún</h3>
-          <p>Las propuestas de los clientes aparecerán aquí.</p>
-        </div>`;
-      return;
-    }
-
-    container.innerHTML = `
-      <div class="ideas-grid">
-        ${ideas.map(idea => `
-          <div class="idea-card fade-in">
-            <div class="idea-card-header">
-              <span class="date-badge">${new Date(idea.createdAt).toLocaleDateString()}</span>
-              ${idea.imageUrl ? `
-                <a href="${idea.imageUrl}" target="_blank" class="btn-image-link" title="Ver imagen adjunta">
-                  <span class="material-symbols-outlined">image</span>
-                </a>
-              ` : ''}
-            </div>
-            <div class="idea-card-body">
-              <h3>${idea.name}</h3>
-              <p class="explanation">${idea.explanation}</p>
-            </div>
-            <div class="idea-card-footer">
-              <div class="client-info">
-                <span class="material-symbols-outlined">account_circle</span>
-                <span>ID Cliente: ${idea.clientId.substring(0, 8)}...</span>
-              </div>
-            </div>
-          </div>
-        `).join('')}
-      </div>`;
+  
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
   }
-</script>
-
-
+  
+  .page-header h1 {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+  }
+  
+  .text-muted {
+    color: #64748b;
+  }
+</style>
