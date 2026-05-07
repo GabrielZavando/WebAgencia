@@ -25,6 +25,7 @@ const {
   ogImage
 } = Astro.props
 
+const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://gabrielzavando.cl');
 const gtmId = import.meta.env.PUBLIC_GTM_ID
 ---
 
@@ -33,6 +34,7 @@ const gtmId = import.meta.env.PUBLIC_GTM_ID
 <meta name="description" content={description} />
 <link rel="icon" href={faviconUrl} sizes="any" />
 <link rel="icon" type="image/svg+xml" href={faviconUrl} />
+<link rel="canonical" href={canonicalURL} />
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website" />

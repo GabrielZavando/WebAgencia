@@ -2,17 +2,29 @@ import type { APIRoute } from 'astro';
 
 export const GET: APIRoute = async ({ request }) => {
   const API_BASE_URL = import.meta.env.PUBLIC_API_BASE_URL || 'http://localhost:8080';
-  let siteUrl = new URL(request.url).origin;
   
-  // Preferimos usar la variable de entorno real si está definida, en produccion sirve de anclaje firme
-  if (import.meta.env.PUBLIC_SITE_URL) {
-      siteUrl = import.meta.env.PUBLIC_SITE_URL;
+  // Determinamos la URL base del sitio
+  let siteUrl = import.meta.env.PUBLIC_SITE_URL;
+  
+  if (!siteUrl) {
+      // Si no hay variable, intentamos obtenerla del request
+      const origin = new URL(request.url).origin;
+      // Si el origin es localhost o similar, forzamos la de producción como último recurso
+      if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
+          siteUrl = 'https://gabrielzavando.cl';
+      } else {
+          siteUrl = origin;
+      }
   }
 
   // Rutas estáticas clave
   const staticPages = [
     '',
-    '/blog'
+    '/servicios',
+    '/metodologia',
+    '/diagnostico',
+    '/blog',
+    '/politica-de-privacidad'
   ];
 
   let dynamicPosts: any[] = [];
@@ -35,10 +47,15 @@ export const GET: APIRoute = async ({ request }) => {
 
   // 1. Inyectamos páginas estáticas
   staticPages.forEach((page) => {
+    let priority = '0.5';
+    if (page === '') priority = '1.0';
+    else if (['/servicios', '/metodologia', '/diagnostico'].includes(page)) priority = '0.9';
+    else if (page === '/blog') priority = '0.8';
+
     sitemap += `  <url>\n`;
     sitemap += `    <loc>${siteUrl}${page}</loc>\n`;
     sitemap += `    <changefreq>weekly</changefreq>\n`;
-    sitemap += `    <priority>${page === '' ? '1.0' : '0.8'}</priority>\n`;
+    sitemap += `    <priority>${priority}</priority>\n`;
     sitemap += `  </url>\n`;
   });
 
