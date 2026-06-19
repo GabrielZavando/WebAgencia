@@ -57,16 +57,13 @@ function formatFullDate(raw: any): string {
 </div>
 
 <script>
-  import { auth } from "../../lib/firebase/client";
-  import { onAuthStateChanged } from "firebase/auth";
-
   function initConversation() {
     const box = document.getElementById('conversationBox');
     if (!box) return;
 
     const API_URL = import.meta.env.PUBLIC_API_URL || 'http://localhost:8080';
     const ticketId = box.dataset.ticketId!;
-    const userRole = box.dataset.role!; // Rol del espectador ('admin' o 'client')
+    const userRole = box.dataset.role!;
     const additionalMessagesBox = document.getElementById('additionalMessages');
 
     function fmtDate(raw: any): string {
@@ -79,14 +76,8 @@ function formatFullDate(raw: any): string {
 
     async function loadMessages() {
       if (!additionalMessagesBox) return;
-      const user = auth.currentUser;
-      const token = user ? await user.getIdToken() : '';
-      if (!token) return;
-
       try {
-        const res = await fetch(`${API_URL}/support/tickets/${ticketId}/messages`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
+        const res = await fetch(`${API_URL}/support/tickets/${ticketId}/messages`);
         if (res.ok) {
           const messages = await res.json();
           renderMessages(messages);
@@ -148,9 +139,7 @@ function formatFullDate(raw: any): string {
       loadMessages();
     });
 
-    onAuthStateChanged(auth, (user) => {
-      if (user) loadMessages();
-    });
+    loadMessages();
   }
 
   document.addEventListener('astro:page-load', initConversation);

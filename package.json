@@ -17,7 +17,6 @@
     "@astrojs/check": "^0.9.6",
     "@tailwindcss/vite": "^4.2.4",
     "astro": "^5.17.3",
-    "firebase": "^12.9.0",
     "sharp": "^0.33.5",
     "tailwindcss": "^4.2.4",
     "typescript": "^5.9.3"
@@ -33,7 +32,6 @@
   },
   "pnpm": {
     "allowBuilds": [
-      "@firebase/util",
       "@parcel/watcher",
       "esbuild",
       "protobufjs",

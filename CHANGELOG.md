@@ -2,6 +2,25 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y versión siguiendo [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.7.0] - 2026-06-18
+
+### Removed
+
+* **auth:** Eliminado Firebase client SDK (`firebase` dependency) del bundle
+* **login:** Eliminada página `/login` y `ForgotPasswordModal`
+* **firebase:** Eliminado `src/lib/firebase/client.ts`, `src/lib/auth-utils.ts`, `debug-env.ts`
+* **env:** Eliminadas 6 variables `PUBLIC_FIREBASE_*` de `.env.example`, `env.d.ts`, `Dockerfile`, `README.md`
+
+### Changed
+
+* **components:** Limpiados imports Firebase auth de `FileManager`, `TicketConversation`, `TicketMessageForm`
+* **bundle:** JS cliente reducido ~273 KB (Firebase SDK eliminado)
+
+### Notas
+
+- El bundle JS pasó de 43 módulos (login.astro + ForgotPasswordModal) a 24 módulos en la build de cliente.
+- Sin Firebase, los componentes huérfanos (FileManager, tickets) hacen fetch sin token de autenticación. Son código no utilizado actualmente (sin páginas que los importen).
+
 ## [1.6.0] - 2026-06-18
 
 ### Removed

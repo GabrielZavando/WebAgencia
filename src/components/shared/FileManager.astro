@@ -128,8 +128,6 @@ const {
 </div>
 
 <script>
-  import { auth } from "../../lib/firebase/client";
-  import { onAuthStateChanged } from "firebase/auth";
   import { filesStore, quotaStore, setFiles, addFile, removeFile, updateQuota } from "../../lib/stores/filesStore";
   import type { FileResponseDto } from "../../types/api";
 
@@ -148,11 +146,9 @@ const {
       const fileDrop = document.getElementById('fDrop');
       const searchInput = document.getElementById('filesSearchInput') as HTMLInputElement;
 
-      let token = "";
-
       const loadFiles = async () => {
         try {
-          const res = await fetch(`${API}/files`, { headers: { 'Authorization': `Bearer ${token}` } });
+          const res = await fetch(`${API}/files`);
           if (!res.ok) throw new Error();
           const files = await res.json();
           setFiles(files);
@@ -295,12 +291,8 @@ const {
         }
       });
 
-      onAuthStateChanged(auth, async (user) => {
-        if (user) {
-          token = await user.getIdToken();
-          await Promise.all([loadFiles(), loadQuota()]);
-        }
-      });
+      loadFiles();
+      loadQuota();
     });
   }
 
