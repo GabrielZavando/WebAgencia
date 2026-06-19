@@ -1,40 +1,25 @@
 ---
-import StorageVisualizer from '../admin/StorageVisualizer.astro';
 import ModalConfirm from './ModalConfirm.astro';
 import ModalMessage from './ModalMessage.astro';
 
 interface Props {
-  role: 'admin' | 'client';
   limitGB: number;
   title?: string;
   description?: string;
 }
 
 const { 
-  role, 
   limitGB, 
   title = "Gestión de Archivos", 
   description = "Administra tus documentos y recursos multimedia." 
 } = Astro.props;
 ---
 
-<div class="files-page" data-role={role} data-limit-gb={limitGB}>
-  <!-- Header con Cuota (Diseño Original) -->
+<div class="files-page" data-limit-gb={limitGB}>
   <div class="page-header">
     <div class="header-text">
       <h1>{title}</h1>
       <p class="text-muted">{description}</p>
-    </div>
-
-    <div class="storage-banner-wrapper" id="storageBanner">
-      <StorageVisualizer 
-        id={`storage-chart-${role}`}
-        usedFormatted="..." 
-        limitFormatted={`${limitGB} GB`} 
-        usedBytes={0} 
-        limitBytes={limitGB * 1024 * 1024 * 1024} 
-        variant="full"
-      />
     </div>
   </div>
 

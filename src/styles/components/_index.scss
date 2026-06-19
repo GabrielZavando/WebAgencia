@@ -3,7 +3,6 @@
 @forward 'tables';
 @forward 'forms';
 @forward 'quill';
-@forward 'admin-forms';
 @forward 'cards';
 @forward 'banner';
 @forward 'services';
@@ -12,15 +11,6 @@
 @forward 'plans';
 @forward 'contact';
 @forward 'notifications';
-@forward 'dashboard-stats';
-@forward 'admin-users';
-@forward 'admin-tickets';
-@forward 'admin-ideas';
-@forward 'admin-subscribers';
-@forward 'admin-reports';
-@forward 'admin-files';
-@forward 'admin-blog';
-@forward 'admin-contact';
 
 // Shared Components
 @forward 'breadcrumbs';
@@ -31,7 +21,6 @@
 @forward 'filter-bar';
 @forward 'modal';
 @forward 'empty-state';
-@forward 'admin-footer';
 @forward 'modal-message';
 @forward 'toast-container';
 @forward 'skeleton';
@@ -39,7 +28,6 @@
 @forward 'service-card';
 @forward 'blog-card';
 @forward 'blog-index';
-@forward 'storage-visualizer';
 @forward 'footer';
 @forward 'search';
 @forward 'diagnostico';

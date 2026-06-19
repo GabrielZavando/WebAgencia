@@ -2,52 +2,37 @@
 import MainLayout from "../../layouts/MainLayout.astro";
 import Banner from "../../components/landing/Banner.astro";
 import Search from "../../components/shared/Search.astro";
+import blogPosts from "../../data/blog-posts.json";
 
 const { slug } = Astro.params;
-const API_BASE_URL = import.meta.env.PUBLIC_API_BASE_URL;
 
-let post = null;
+export async function getStaticPaths() {
+  const posts = blogPosts.filter((post: any) => post.published);
+  return posts.map((post: any) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+
 let htmlContent = '';
 let formattedDate = '';
 
-try {
-  const res = await fetch(`${API_BASE_URL}/blog/slug/${slug}`);
-  if (!res.ok) {
-    return Astro.redirect('/404');
-  }
-  post = await res.json();
-  
-  if (post.content) {
-     // Eliminar etiquetas de documento completo que rompen el layout global de Astro (Word/Google Docs paste)
-     let safeContent = post.content;
-     
-     // 1. Quitar bloques de estilo que sobrescriban el body o footer
-     safeContent = safeContent.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '');
-     
-     // 2. Quitar bloques de script
-     safeContent = safeContent.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '');
-     
-     // 3. Remover etiquetas delimitadoras de HTML (doc, html, head, body, meta, link, title)
-     safeContent = safeContent.replace(/<\/?(?:html|head|body|meta|link|title|!DOCTYPE|xml)[^>]*>/gi, '');
-     
-     htmlContent = safeContent.trim();
-  }
-  
-  if (post.createdAt?._seconds) {
-      formattedDate = new Date(post.createdAt._seconds * 1000).toLocaleDateString("es-CL", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-      });
-  } else if (post.publishedAt) {
-      formattedDate = new Date(post.publishedAt).toLocaleDateString("es-CL", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-      });
-  }
-} catch (e) {
-  return Astro.redirect('/404');
+if (post.content) {
+  let safeContent = post.content;
+  safeContent = safeContent.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '');
+  safeContent = safeContent.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '');
+  safeContent = safeContent.replace(/<\/?(?:html|head|body|meta|link|title|!DOCTYPE|xml)[^>]*>/gi, '');
+  htmlContent = safeContent.trim();
+}
+
+if (post.publishedAt) {
+  formattedDate = new Date(post.publishedAt).toLocaleDateString("es-CL", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 }
 ---
 

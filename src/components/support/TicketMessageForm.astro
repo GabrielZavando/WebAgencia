@@ -1,21 +1,19 @@
 ---
 interface Props {
   ticketId: string;
-  role: 'admin' | 'client';
+  role?: string;
 }
 
-const { ticketId, role } = Astro.props;
+const { ticketId, role = 'client' } = Astro.props;
 ---
 
-<div class={`message ${role === 'admin' ? 'admin-message' : 'client-message'}`} id="replyArea">
+<div class="message client-message" id="replyArea">
   <div class="message-header">
     <div class="user-info">
       <div class="avatar-wrapper">
-        <div class={`msg-avatar-placeholder ${role}`} id="replyAvatarContainer">
-          {role === 'admin' ? <span class="material-symbols-outlined">headset_mic</span> : null}
-        </div>
+        <div class="msg-avatar-placeholder client" id="replyAvatarContainer"></div>
       </div>
-      <div class="name-time"><strong>{role === 'admin' ? 'Responder (Soporte)' : 'Responder al Equipo de Soporte'}</strong></div>
+      <div class="name-time"><strong>Responder al Equipo de Soporte</strong></div>
     </div>
   </div>
   <div class="message-body">
@@ -23,7 +21,7 @@ const { ticketId, role } = Astro.props;
       <textarea 
         id="newMessageBody" 
         name="body" 
-        placeholder={role === 'admin' ? "Escribe tu respuesta para el cliente..." : "Escribe tu mensaje para el equipo de soporte..."} 
+        placeholder="Escribe tu mensaje para el equipo de soporte..." 
         rows="4" 
         required
       ></textarea>

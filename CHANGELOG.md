@@ -2,6 +2,41 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y versión siguiendo [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.6.0] - 2026-06-18
+
+### Removed
+
+* **admin:** Eliminadas todas las rutas `/admin/*` (24 páginas) y `/dashboard/*` (9 páginas)
+* **layouts:** Eliminados `DashboardLayout.astro` y `AuthLayout.astro`
+* **components:** Eliminados componentes admin (`src/components/admin/`, 8 archivos) y scripts dashboard (`src/scripts/dashboard/`, 6 archivos)
+* **auth:** Eliminado middleware de autenticación (`src/middleware.ts`) y Firebase Admin SDK (`src/lib/firebase/server.ts`)
+* **stores:** Eliminados `authStore.ts`, `filesStore.ts`, `reportsStore.ts`, `navigation.ts`
+* **styles:** Eliminados ~13 archivos SCSS de admin/dashboard
+* **deps:** Eliminadas dependencias `firebase-admin`, `@nanostores/persistent`, `nanostores`, `quill`
+
+### Changed
+
+* **login:** Simplificado sin redirect basado en rol (redirige a `/` en todos los casos)
+* **login:** Cambiado layout de `AuthLayout` a `MainLayout` (con header/footer ocultos)
+* **auth-utils:** Eliminada lógica de cookies SSR
+* **api-client:** Simplificado (eliminada lógica de token por cookie)
+* **api:** Eliminados 10 métodos admin del cliente API generado
+* **support:** Limpiadas referencias a rol admin en componentes de tickets
+* **SCSS:** Limpiados `@forward` de admin/dashboard en índices SCSS
+
+### Notas
+
+- La landing pública (home, blog, diagnóstico, metodología, servicios, política, contacto, formularios) funciona sin cambios.
+- La página `/login` se mantiene pero redirige a home tras autenticación (sin distinción admin/client).
+
+## [1.5.0] - 2026-06-17
+
+### Features
+
+* **build:** Migración a Static Site Generation (SSG) puro para despliegue en Hostinger
+* **blog:** Blog completamente estático usando datos locales JSON (`src/data/blog-posts.json`)
+* **build:** Eliminado adapter `@astrojs/node` y configuración SSR (`output: 'server'` → `output: 'static'`)
+
 ## [1.4.0](https://github.com/GabrielZavando/WebAgenciaAstro/compare/landing-page-v1.3.1...landing-page-v1.4.0) (2026-03-25)
 
 

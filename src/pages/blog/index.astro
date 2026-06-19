@@ -4,36 +4,19 @@ import Layout from '../../layouts/MainLayout.astro';
 import Banner from '../../components/landing/Banner.astro';
 import Search from '../../components/shared/Search.astro';
 import bannerBlogImg from '../../assets/img/banner-blog.jpg';
+import blogPosts from '../../data/blog-posts.json';
 
-// Fetch posts from API (Server Side)
-const API_BASE_URL = import.meta.env.PUBLIC_API_BASE_URL;
-let posts = [];
-let error = null;
-
-try {
-  // Fetch solo publicados
-  const res = await fetch(`${API_BASE_URL}/blog?published=true`);
-  if (!res.ok) throw new Error('Error fetching posts');
-  posts = await res.json();
-} catch (e) {
-  console.error(e);
-  error = 'No se pudieron cargar los artículos del blog.';
-}
+const posts = blogPosts.filter((post: any) => post.published);
 
 const getExcerpt = (post: any) => {
   if (post.excerpt) {
     return post.excerpt.length > 150 ? post.excerpt.substring(0, 150) + '...' : post.excerpt;
   }
   if (post.content) {
-    // 1. Quitar bloques de estilos y su contenido
     let stripped = post.content.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '');
-    // 2. Quitar bloques de scripts y su contenido
     stripped = stripped.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '');
-    // 3. Quitar cualquier otra etiqueta HTML (e.g. <p>, <strong>)
     stripped = stripped.replace(/<[^>]*>?/gm, '');
-    // 4. Limpiar espacios múltiples o saltos de línea (como un plain text real)
     stripped = stripped.replace(/\s+/g, ' ').trim();
-
     return stripped.length > 150 ? stripped.substring(0, 150) + '...' : stripped;
   }
   return '';
@@ -54,8 +37,6 @@ const getExcerpt = (post: any) => {
         <span class="material-symbols-outlined">search</span>
         <p>No hay coincidencias con la búsqueda.</p>
       </div>
-
-      {error && <div class="blog-error-message">{error}</div>}
 
       <div class="posts-grid">
         {posts.map((post: any) => (

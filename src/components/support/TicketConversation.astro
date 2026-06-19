@@ -3,7 +3,7 @@ import type { TicketResponseDto } from "../../types/api";
 
 interface Props {
   ticket: TicketResponseDto;
-  role: 'admin' | 'client';
+  role?: string;
 }
 
 const { ticket, role } = Astro.props;
@@ -22,7 +22,7 @@ function formatFullDate(raw: any): string {
 
 <div class="conversation" id="conversationBox" data-ticket-id={ticket.id} data-role={role}>
   <!-- Mensaje inicial del cliente -->
-  <div class={`message client-message ${role === 'client' ? 'is-me' : 'is-other'}`}>
+    <div class="message client-message">
     <div class="message-header">
       <div class="user-info">
         <div class="avatar-wrapper">
@@ -103,26 +103,21 @@ function formatFullDate(raw: any): string {
       const clientName = document.querySelector('.client-message .name-time strong')?.textContent || 'Cliente';
 
       additionalMessagesBox.innerHTML = messages.map(m => {
-        const isAdmin = m.senderRole === 'admin';
-        // LÓGICA DE ALINEACIÓN:
-        // Si el rol del que envía coincide con el rol del que ve = is-me (Derecha)
         const alignmentClass = m.senderRole === userRole ? 'is-me' : 'is-other';
         
         let avatarHtml = '';
         if (m.senderPhotoUrl) {
           avatarHtml = `<img src="${m.senderPhotoUrl}" alt="Avatar" class="msg-avatar-img" />`;
-        } else if (!isAdmin && clientPhotoUrl) {
+        } else if (clientPhotoUrl) {
           avatarHtml = `<img src="${clientPhotoUrl}" alt="Avatar" class="msg-avatar-img" />`;
-        } else if (!isAdmin) {
-          avatarHtml = `<div class="msg-avatar-placeholder client"></div>`;
         } else {
-          avatarHtml = `<div class="msg-avatar-placeholder admin"><span class="material-symbols-outlined">headset_mic</span></div>`;
+          avatarHtml = `<div class="msg-avatar-placeholder client"></div>`;
         }
 
-        const senderDisplayName = isAdmin ? 'Equipo de Soporte' : (m.senderRole === 'client' ? (userRole === 'client' ? 'Tú' : clientName) : clientName);
+        const senderDisplayName = m.senderRole === 'client' ? (userRole === 'client' ? 'Tú' : clientName) : clientName;
 
         return `
-          <div class="message ${isAdmin ? 'admin-message' : 'client-message'} ${alignmentClass}">
+          <div class="message client-message ${alignmentClass}">
             <div class="message-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; border-bottom: none;">
               <div class="user-info" style="display: flex; align-items: center; gap: 1rem;">
                 <div class="avatar-wrapper" style="width: 40px; height: 40px; flex-shrink: 0;">${avatarHtml}</div>

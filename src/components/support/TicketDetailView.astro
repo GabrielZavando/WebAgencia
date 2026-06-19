@@ -1,12 +1,11 @@
 ---
-import DashboardLayout from '../../layouts/DashboardLayout.astro';
 import TicketConversation from './TicketConversation.astro';
 import TicketMessageForm from './TicketMessageForm.astro';
 import type { TicketResponseDto } from "../../types/api";
 
 interface Props {
   ticket: TicketResponseDto;
-  role: 'admin' | 'client';
+  role: 'client';
 }
 
 const { ticket, role } = Astro.props;
@@ -51,16 +50,7 @@ const priorityInfo = getPriorityInfo(ticket.priority);
       <span class="meta-label">ID Ticket</span>
       <span class="meta-value ticket-id">#{ticket.id.slice(0, 8).toUpperCase()}</span>
     </div>
-    
-    {role === 'admin' && (
-      <div class="meta-item">
-         <span class="meta-label">Cliente</span>
-         <span class="meta-value">
-           <span class="material-symbols-outlined" style="vertical-align: middle; font-size: 1.2rem; margin-right: 0.2rem;">account_circle</span>
-           {ticket.clientName || ticket.clientEmail || 'Desconocido'}
-         </span>
-      </div>
-    )}
+
 
     {ticket.projectName && (
       <div class="meta-item">
