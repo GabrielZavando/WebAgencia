@@ -1,0 +1,91 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "autoupdate": true,
+  "instructions": [
+    "docs/base-standards.md",
+    "docs/backend-standards.md",
+    "docs/frontend-standards.md",
+    "docs/documentation-standards.md",
+    "AGENTS.md"
+  ],
+  "permission": {
+    "edit": "allow",
+    "bash": {
+      "git *": "allow",
+      "npm *": "allow",
+      "npx *": "allow",
+      "docker *": "allow",
+      "prisma *": "allow",
+      "nest *": "allow",
+      "openspec *": "allow",
+      "rm -rf *": "ask",
+      "*": "ask"
+    },
+    "webfetch": "allow"
+  },
+  "agent": {
+    "plan": {
+      "mode": "primary",
+      "prompt": "You are the planning agent for Spec-Driven Development using OpenSpec 1.4.\n\nAlways load:\n- docs/base-standards.md\n- docs/backend-standards.md (for backend tasks)\n- docs/frontend-standards.md (for frontend tasks)\n- docs/documentation-standards.md\n- docs/api-spec.yml\n- docs/data-model.md\n\nRead OpenSpec artifacts from openspec/changes/<name>/\n(Project root uses openspec/, NOT .openspec/)\n\nUse these OpenSpec CLI commands:\n- openspec new change <kebab-name>          — create new change directory\n- openspec list --json                      — list active changes\n- openspec status --change <name> --json    — get artifact status for a change\n- openspec instructions <artifact> --change <name> --json  — get instructions for artifact creation\n- openspec templates --change <name>        — show resolved template paths\n- openspec schemas                          — list available workflow schemas\n\nYou are in read-only mode: design, analyze, and plan. No file edits or bash commands."
+    },
+    "build": {
+      "mode": "primary",
+      "prompt": "{file:ai-specs/agents/build-agent.md}",
+      "permission": {
+        "edit": "allow",
+        "bash": "allow"
+      }
+    },
+    "reviewer": {
+      "description": "Adversarial code review — security, types, performance, test coverage, OpenSpec alignment",
+      "mode": "subagent",
+      "prompt": "{file:ai-specs/skills/code-auditing/SKILL.md}",
+      "permission": {
+        "edit": "deny",
+        "bash": "deny"
+      }
+    }
+  },
+  "command": {
+    "enrich-us": {
+      "template": "{file:ai-specs/skills/enrich-us/SKILL.md}\n\nFollow the process above for the provided ticket or user story.",
+      "description": "Enrich a vague user story before planning",
+      "agent": "plan"
+    },
+    "opsx-explore": {
+      "template": "{file:.opencode/skills/openspec-explore/SKILL.md}",
+      "description": "Explore mode — think through ideas, investigate problems, clarify requirements",
+      "agent": "plan"
+    },
+    "opsx-propose": {
+      "template": "{file:.opencode/skills/openspec-propose/SKILL.md}",
+      "description": "Propose a new OpenSpec change with all artifacts (proposal, design, tasks)",
+      "agent": "plan"
+    },
+    "opsx-apply": {
+      "template": "{file:.opencode/skills/openspec-apply-change/SKILL.md}",
+      "description": "Implement tasks from an OpenSpec change following TDD",
+      "agent": "build"
+    },
+    "verify": {
+      "template": "1. Read the OpenSpec scenarios from openspec/changes/<name>/scenarios.md\n2. Read the current implementation\n3. Verify each scenario is covered\n4. Run the test suite\n5. Report: what passes, what fails, what's missing",
+      "description": "Validate implementation against OpenSpec scenarios",
+      "agent": "build"
+    },
+    "adversarial-review": {
+      "template": "{file:ai-specs/skills/code-auditing/SKILL.md}\n\nRun the 6-phase audit on the current codebase changes.",
+      "description": "Systematic 7-phase code quality audit",
+      "agent": "reviewer"
+    },
+    "opsx-archive": {
+      "template": "{file:.opencode/skills/openspec-archive-change/SKILL.md}",
+      "description": "Archive a completed OpenSpec change and sync delta specs to main",
+      "agent": "build"
+    },
+    "commit": {
+      "template": "{file:ai-specs/skills/commit/SKILL.md}\n\nFollow the commit process for the current changes.",
+      "description": "Create conventional commits and pull request",
+      "agent": "build"
+    }
+  }
+}

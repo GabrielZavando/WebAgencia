@@ -1,0 +1,34 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Lead {
+  id            String           @id @default(uuid())
+  email         String           @unique
+  full_name     String
+  status        String           @default("subscriber")
+  metadata      Json
+  attribution   Json
+  payload       Json
+  created_at    DateTime         @default(now()) @map("created_at")
+  updated_at    DateTime         @updatedAt @map("updated_at")
+  contactMessages ContactMessage[]
+
+  @@map("leads")
+}
+
+model ContactMessage {
+  id        String   @id @default(uuid())
+  lead_id   String
+  message   String   @db.Text
+  created_at DateTime @default(now()) @map("created_at")
+
+  lead     Lead     @relation(fields: [lead_id], references: [id], onDelete: Cascade)
+
+  @@map("contact_messages")
+}
