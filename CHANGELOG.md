@@ -2,6 +2,29 @@
 
 Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y versión siguiendo [Semantic Versioning](https://semver.org/lang/es/).
 
+## [1.7.1] - 2026-06-29
+
+### Added
+
+* **login:** Rediseñada página de login con estética tecnológica cyberpunk
+* **login:** Agregado fondo tecnológico con gradientes azul/violeta y patrón de grid animado
+* **login:** Agregado toggle de visibilidad en campo de contraseña
+* **login:** Agregado logo de agencia en esquina superior izquierda
+* **login:** Agregado footer con copyright en parte inferior de pantalla
+* **styles:** Agregados estilos específicos para login en `global.css` (scoped bajo `.login-page`)
+
+### Changed
+
+* **login:** Actualizados labels de formulario a "CORREO ELECTRÓNICO" y "CONTRASEÑA" (uppercase)
+* **login:** Botón "INICIAR SESIÓN" ahora con fondo rosa vibrante (#FF0080), texto blanco uppercase
+* **login:** Link "¿Olvidaste tu contraseña?" alineado a la derecha, color rosa
+* **login:** Mejorado loading state con spinner animado en botón
+* **test:** Actualizados tests de LoginForm para usar nuevos labels en español
+
+### Fixed
+
+* **test:** Corregidos tests de LoginForm que fallaban por búsqueda de labels en inglés
+
 ## [1.7.0] - 2026-06-18
 
 ### Removed
