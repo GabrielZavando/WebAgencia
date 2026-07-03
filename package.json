@@ -22,17 +22,18 @@
   "dependencies": {
     "@nestjs/common": "^11.0.1",
     "@nestjs/core": "^11.0.1",
-    "@nestjs/jwt": "^11.0.2",
-    "@nestjs/passport": "^11.0.5",
     "@nestjs/platform-express": "^11.0.1",
+    "@nestjs/swagger": "^11.4.5",
+    "@nestjs/throttler": "^6.5.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.15.1",
     "dotenv": "^17.4.2",
     "firebase": "^12.15.0",
     "firebase-admin": "^14.1.0",
-    "passport-jwt": "^4.0.1",
+    "helmet": "^8.2.0",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
@@ -46,7 +47,6 @@
     "@types/express": "^5.0.0",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.10.7",
-    "@types/passport-jwt": "^4.0.1",
     "@types/supertest": "^6.0.2",
     "@types/uuid": "^10.0.0",
     "eslint": "^9.18.0",
@@ -86,5 +86,10 @@
       "^firebase-admin/firestore$": "<rootDir>/__mocks__/firebase-admin/firestore.ts",
       "^firebase-admin/auth$": "<rootDir>/__mocks__/firebase-admin/auth.ts"
     }
+  },
+  "overrides": {
+    "multer": "^2.2.0",
+    "uuid": "^11.1.1",
+    "@hono/node-server": "^1.19.13"
   }
 }
