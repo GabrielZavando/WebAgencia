@@ -18,5 +18,16 @@
   "engines": {
     "node": ">=20.19.0",
     "pnpm": ">=10"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "sharp",
+      "@swc/core",
+      "prisma",
+      "@prisma/engines",
+      "protobufjs",
+      "@firebase/util"
+    ]
   }
 }
