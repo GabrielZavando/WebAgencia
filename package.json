@@ -11,23 +11,33 @@
     "test:ui": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
-    "gen:api": "swagger-typescript-api generate -p ../Api/swagger.json -o ./src/api -n index.ts --axios"
+    "test:validation": "pnpm run test:validation:static && pnpm run test:validation:e2e",
+    "test:validation:static": "vitest run --config vitest.config.ts tests/validation/*.test.ts",
+    "test:validation:e2e": "playwright test --config playwright-validation.config.ts",
+    "link-api-local-dev": "bash scripts/link-api-local-dev.sh"
   },
   "dependencies": {
-    "@astrojs/check": "^0.9.6",
+    "@astrojs/react": "^6.0.0",
+    "@heroicons/react": "^2.2.0",
     "@tailwindcss/vite": "^4.2.4",
-    "astro": "^5.17.3",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "astro": "^7.0.3",
+    "firebase": "^12.15.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "sharp": "^0.33.5",
-    "tailwindcss": "^4.2.4",
-    "typescript": "^5.9.3"
+    "tailwindcss": "^4.2.4"
   },
   "devDependencies": {
+    "@astrojs/check": "^0.9.9",
     "@playwright/test": "^1.59.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@vitejs/plugin-react": "^6.0.3",
     "@vitest/coverage-v8": "^4.1.2",
-    "dotenv": "^17.3.1",
     "jsdom": "^29.0.1",
-    "sass": "^1.89.0",
-    "swagger-typescript-api": "^13.7.2",
+    "typescript": "^5.9.3",
     "vitest": "^4.1.2"
   },
   "pnpm": {

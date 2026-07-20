@@ -2,98 +2,159 @@
 import MainLayout from "../../layouts/MainLayout.astro";
 import Banner from "../../components/landing/Banner.astro";
 import Search from "../../components/shared/Search.astro";
-import blogPosts from "../../data/blog-posts.json";
-
-const { slug } = Astro.params;
+import bannerBlogImg from "../../assets/img/banner-blog.jpg";
 
 export async function getStaticPaths() {
-  const posts = blogPosts.filter((post: any) => post.published);
-  return posts.map((post: any) => ({
-    params: { slug: post.slug },
-    props: { post },
-  }));
+  try {
+    const API_BASE_URL = import.meta.env.PUBLIC_API_URL || import.meta.env.PUBLIC_API_BASE_URL || '';
+    const response = await fetch(`${API_BASE_URL}/api/v1/blog/posts?status=published`);
+    if (response.ok) {
+      const posts = await response.json();
+      return posts.map((post: any) => ({
+        params: { slug: post.slug },
+      }));
+    }
+  } catch {}
+  return [];
 }
 
-const { post } = Astro.props;
-
-let htmlContent = '';
-let formattedDate = '';
-
-if (post.content) {
-  let safeContent = post.content;
-  safeContent = safeContent.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '');
-  safeContent = safeContent.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '');
-  safeContent = safeContent.replace(/<\/?(?:html|head|body|meta|link|title|!DOCTYPE|xml)[^>]*>/gi, '');
-  htmlContent = safeContent.trim();
-}
-
-if (post.publishedAt) {
-  formattedDate = new Date(post.publishedAt).toLocaleDateString("es-CL", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
-}
+const { slug } = Astro.params;
 ---
 
-<MainLayout title={post.title} description={post.excerpt}>
-    <!-- Banner Post -->
-    <Banner image={post.coverImage} size="half">
-        <a href="/blog" class="back-link">
-            <span class="material-symbols-outlined">arrow_back</span> Volver al blog
-        </a>
-        <header class="post-header-content">
-            <time
-                datetime={post.createdAt?._seconds ? new Date(post.createdAt._seconds * 1000).toISOString() : new Date().toISOString()}
-                class="post-date"
-            >
-                {formattedDate}
-            </time>
-            <h1 class="post-title">{post.title}</h1>
-            <div class="post-meta">
-                <span class="post-author">Por {post.author || 'Administrador'}</span>
-                {post.category && (
-                    <a href={`/blog?category=${encodeURIComponent(post.category)}`} class="post-category">
-                        <span class="material-symbols-outlined" style="vertical-align: middle; font-size: 1.1rem; margin-right: 0.3rem;">label</span> {post.category}
-                    </a>
-                )}
-            </div>
-        </header>
+<MainLayout title="Blog | Agencia Digital">
+  <div id="postBanner">
+    <Banner image={bannerBlogImg} size="half">
+      <div id="skeletonBanner">
+        <div class="skeleton-line skeleton-line--title w-[300px] h-8 mb-2"></div>
+        <div class="skeleton-line skeleton-line--short w-[200px]"></div>
+      </div>
     </Banner>
+  </div>
 
-    <div class="container">
-        <div style="margin-top: 2rem;">
-            <Search placeholder="Buscar artículos..." outlined={true} />
-        </div>
+  <div class="mx-auto w-full max-w-[1440px] px-4">
+    <div class="mt-8">
+      <Search placeholder="Buscar artículos..." outlined={true} />
     </div>
+  </div>
 
-    <article class="single-post fade-in">
-        <div class="container container--narrow">
-            <div class="post-content" set:html={htmlContent}>
-            </div>
-        </div>
-    </article>
+  <article class="single-post fade-in" id="postArticle">
+    <div class="mx-auto w-full max-w-[1440px] px-4">
+      <div id="postContent" class="post-content">
+        <div class="skeleton-line skeleton-line--full mb-2"></div>
+        <div class="skeleton-line skeleton-line--full mb-2"></div>
+        <div class="skeleton-line skeleton-line--medium"></div>
+      </div>
+    </div>
+  </article>
 </MainLayout>
 
-<style lang="scss">
-    @use "../../styles/config" as *;
+<script define:vars={{ blogBannerSrc: typeof bannerBlogImg === 'string' ? bannerBlogImg : bannerBlogImg.src }}>
+  import { ApiError } from '../../lib/api-client';
+  import { getBlogPostBySlug } from '../../scripts/blog-fetch';
 
+  function sanitizeContent(content: string): string {
+    let safe = content;
+    safe = safe.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '');
+    safe = safe.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '');
+    safe = safe.replace(/<\/?(?:html|head|body|meta|link|title|!DOCTYPE|xml)[^>]*>/gi, '');
+    return safe.trim();
+  }
+
+  function formatDate(dateStr: string): string {
+    return new Date(dateStr).toLocaleDateString("es-CL", {
+      year: "numeric", month: "long", day: "numeric",
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    const slug = window.location.pathname.replace('/blog/', '');
+    const skeletonBanner = document.getElementById('skeletonBanner');
+    const postContent = document.getElementById('postContent');
+    const bannerContainer = document.getElementById('postBanner');
+
+    if (!slug || !postContent || !bannerContainer) return;
+
+    const startTime = Date.now();
+
+    try {
+      const post = await getBlogPostBySlug(slug);
+
+      const elapsed = Date.now() - startTime;
+      if (elapsed < 800) {
+        await new Promise(r => setTimeout(r, 800 - elapsed));
+      }
+
+      if (!post) {
+        if (skeletonBanner) skeletonBanner.remove();
+        postContent.innerHTML = '<p class="blog-empty-message">Artículo no encontrado</p>';
+        return;
+      }
+
+      document.title = `${post.title} | Agencia Digital`;
+      const metaDesc = document.querySelector('meta[name="description"]');
+      if (metaDesc) metaDesc.setAttribute('content', post.excerpt || post.title);
+
+      const htmlContent = sanitizeContent(post.content);
+      const formattedDate = formatDate(post.publishedAt);
+
+      if (skeletonBanner) skeletonBanner.remove();
+
+      const coverSrc = post.coverImage || blogBannerSrc;
+      bannerContainer.innerHTML = `
+        <div class="relative w-full h-full aspect-[2/1] overflow-hidden">
+          <img src="${coverSrc}" alt="${post.title}" class="absolute inset-0 w-full h-full object-cover" />
+          <div class="absolute inset-0 bg-black/40"></div>
+          <div class="relative z-10 flex flex-col items-center justify-center h-full p-8">
+            <a href="/blog" class="back-link">
+              <span class="material-symbols-outlined">arrow_back</span> Volver al blog
+            </a>
+            <header class="post-header-content text-center">
+              <time datetime="${post.publishedAt}" class="post-date">${formattedDate}</time>
+              <h1 class="post-title">${post.title}</h1>
+              <div class="post-meta">
+                <span class="post-author">Por ${post.author || 'Administrador'}</span>
+                ${post.category ? `<a href="/blog?category=${encodeURIComponent(post.category)}" class="post-category"><span class="material-symbols-outlined align-middle text-[1.1rem] mr-1">label</span> ${post.category}</a>` : ''}
+              </div>
+            </header>
+          </div>
+        </div>
+      `;
+
+      postContent.innerHTML = htmlContent;
+    } catch (err: any) {
+      const elapsed = Date.now() - startTime;
+      if (elapsed < 1200) {
+        await new Promise(r => setTimeout(r, 1200 - elapsed));
+      }
+
+      if (skeletonBanner) skeletonBanner.remove();
+      postContent.innerHTML = `
+        <div class="blog-error-message">
+          <span class="material-symbols-outlined text-5xl text-primary mb-2">cloud_off</span>
+          <p>No se pudo cargar el artículo. Verifica tu conexión o intenta más tarde.</p>
+          <a href="/blog" class="btn-cta inline-block mt-2">Volver al blog</a>
+        </div>
+      `;
+    }
+  });
+</script>
+
+<style>
     .back-link {
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        color: var(--color-white); // Blanco para el banner
+        color: var(--color-white);
         text-decoration: none;
         font-weight: 500;
         margin-bottom: var(--space-xl);
-        background: rgba(255, 255, 255, 0.1);
+        background: rgba(var(--color-white-rgb), 0.1);
         padding: 0.5rem 1rem;
-        border-radius: 0; // Flat Design (Sin bordes redondeados)
         transition: all 0.3s ease;
+    }
 
-        &:hover {
-            background: rgba(255, 255, 255, 0.2);
-        }
+    .back-link:hover {
+        background: rgba(var(--color-white-rgb), 0.2);
     }
 
     .post-header-content {
@@ -102,7 +163,7 @@ if (post.publishedAt) {
 
     .post-date {
         display: block;
-        color: var(--color-accent); // Acento para destacar
+        color: var(--color-accent);
         font-family: var(--font-primary);
         margin-bottom: var(--space-sm);
         font-weight: 600;
@@ -132,11 +193,10 @@ if (post.publishedAt) {
     }
 
     .post-category {
-        background: rgba(255, 0, 128, 0.1); // Transparencia basada en el primary (#FF0080)
-        color: var(--color-white); // Texto blanco para mejor contraste
-        border: 1px solid rgba(255, 0, 128, 0.3);
+        background: rgba(var(--color-primary-rgb), 0.1);
+        color: var(--color-white);
+        border: 1px solid rgba(var(--color-primary-rgb), 0.3);
         padding: 0.35rem 1rem;
-        border-radius: 0; // Flat Design (Sin bordes redondeados)
         font-size: 0.875rem;
         font-weight: 600;
         text-transform: uppercase;
@@ -146,95 +206,103 @@ if (post.publishedAt) {
         gap: 0.5rem;
         text-decoration: none;
         transition: all 0.3s ease;
+    }
 
-        &:hover {
-           background: rgba(255, 0, 128, 0.2);
-           transform: translateY(-2px);
-        }
+    .post-category:hover {
+        background: rgba(var(--color-primary-rgb), 0.2);
+        transform: translateY(-2px);
     }
 
     .single-post {
-        padding: var(--space-3xl) 0;
+        padding: 3rem 0;
         background: transparent;
-        margin-bottom: 8rem; // Espacio extra para separación visual
-    }
-
-    .container--narrow {
-        width: 90%;
-        max-width: 1440px;
+        margin-bottom: 8rem;
     }
 
     .post-content {
         font-size: 1.125rem;
         line-height: 1.8;
         color: var(--color-text);
+    }
 
-        /* Sobreescribir posibles estilos en línea del editor de texto rico para modo oscuro */
-        :global(h1), :global(h2), :global(h3), :global(h4), :global(h5), :global(h6), :global(strong), :global(b) {
-            color: var(--color-headings) !important;
-            background-color: transparent !important;
-        }
+    .post-content h1,
+    .post-content h2,
+    .post-content h3,
+    .post-content h4,
+    .post-content h5,
+    .post-content h6,
+    .post-content strong,
+    .post-content b {
+        color: var(--color-headings) !important;
+        background-color: transparent !important;
+    }
 
-        :global(p), :global(span), :global(li), :global(div), :global(td), :global(th), :global(em), :global(i), :global(u), :global(s) {
-            color: var(--color-text) !important;
-            background-color: transparent !important;
-        }
+    .post-content p,
+    .post-content span,
+    .post-content li,
+    .post-content div,
+    .post-content td,
+    .post-content th,
+    .post-content em,
+    .post-content i,
+    .post-content u,
+    .post-content s {
+        color: var(--color-text) !important;
+        background-color: transparent !important;
+    }
 
-        // Estilos básicos para contenido markdown
-        :global(h2) {
-            font-size: 2rem;
-            margin-top: var(--space-2xl);
-            margin-bottom: var(--space-md);
-        }
+    .post-content h2 {
+        font-size: 2rem;
+        margin-top: var(--space-2xl);
+        margin-bottom: var(--space-md);
+    }
 
-        :global(h3) {
-            font-size: 1.5rem;
-            margin-top: var(--space-xl);
-            margin-bottom: var(--space-sm);
-        }
+    .post-content h3 {
+        font-size: 1.5rem;
+        margin-top: var(--space-xl);
+        margin-bottom: var(--space-sm);
+    }
 
-        :global(p) {
-            margin-bottom: var(--space-md);
-        }
+    .post-content p {
+        margin-bottom: var(--space-md);
+    }
 
-        :global(ul),
-        :global(ol) {
-            margin-bottom: var(--space-md);
-            padding-left: var(--space-xl);
-        }
+    .post-content ul,
+    .post-content ol {
+        margin-bottom: var(--space-md);
+        padding-left: var(--space-xl);
+    }
 
-        :global(li) {
-            margin-bottom: var(--space-xs);
-        }
+    .post-content li {
+        margin-bottom: var(--space-xs);
+    }
 
-        :global(blockquote) {
-            border-left: 4px solid var(--color-primary);
-            padding-left: var(--space-lg);
-            margin: var(--space-xl) 0;
-            font-style: italic;
-            color: var(--color-text-secondary);
-            background: var(--color-surface-secondary);
-            padding: var(--space-lg);
-            border-radius: 0 8px 8px 0;
-        }
+    .post-content blockquote {
+        border-left: 4px solid var(--color-primary);
+        padding-left: var(--space-lg);
+        margin: var(--space-xl) 0;
+        font-style: italic;
+        color: var(--color-text-secondary);
+        background: var(--color-surface-secondary);
+        padding: var(--space-lg);
+        border-radius: 0 8px 8px 0;
+    }
 
-        :global(img) {
-            max-width: 100%;
-            height: auto;
-            border-radius: 8px;
-            margin: var(--space-lg) 0;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
+    .post-content img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 8px;
+        margin: var(--space-lg) 0;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
 
-        :global(a) {
-            color: var(--color-primary) !important;
-            text-decoration: underline;
-            text-underline-offset: 3px;
+    .post-content a {
+        color: var(--color-primary) !important;
+        text-decoration: underline;
+        text-underline-offset: 3px;
+    }
 
-            &:hover {
-                text-decoration: none;
-                color: var(--color-primary-dark) !important;
-            }
-        }
+    .post-content a:hover {
+        text-decoration: none;
     }
 </style>

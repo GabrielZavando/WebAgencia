@@ -1,0 +1,47 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro';
+import LoginForm from '../../components/auth/LoginForm';
+import logo from '../../assets/img/logo-medium.png';
+import bgImage from '../../assets/img/banner-web.jpg';
+---
+
+<MainLayout title="Iniciar sesión | Agencia Digital" hideHeader hideFooter forcedTheme="dark">
+  <section class="relative min-h-screen flex flex-col overflow-hidden bg-body !p-0 !m-0 !text-left">
+    <!-- Fondo con imagen y overlay tokenizado -->
+    <div class="absolute inset-0 z-background">
+      <img src={bgImage.src} alt="" class="w-full h-full object-cover blur-[2px]" aria-hidden="true" />
+    </div>
+    <div class="absolute inset-0 z-base bg-gradient-to-br from-[var(--banner-overlay-start)] to-[var(--banner-overlay-end)] pointer-events-none" aria-hidden="true"></div>
+
+    <!-- Logo fixed top-left -->
+    <div class="fixed top-4 left-4 sm:top-6 sm:left-6 z-tooltip fade-in animate-in">
+      <a href="/" aria-label="Ir al inicio">
+        <img src={logo.src} alt="Agencia Digital Logo" width="64" height="64" class="w-12 h-12 sm:w-16 sm:h-16 object-contain logo-animate" />
+      </a>
+    </div>
+
+    <!-- Contenido centrado: card -->
+    <main class="relative z-content flex-1 flex items-center justify-center px-4 py-8 sm:px-6 lg:px-8 pointer-events-none">
+      <div class="w-full max-w-md bg-surface border border-border !p-8 sm:!p-10 shadow-2xl card-animate pointer-events-auto">
+        <!-- Header centrado -->
+        <div class="text-center mb-8">
+          <span class="material-symbols-outlined text-primary mb-3 block material-symbol-lg" aria-hidden="true">admin_panel_settings</span>
+          <h1 class="text-3xl font-bold text-headings !mb-2 font-[var(--font-headings)] tracking-tighter">Bienvenido</h1>
+          <p class="text-sm text-text-muted !mb-0">Ingresa a tu panel de control</p>
+        </div>
+
+        <!-- Formulario -->
+        <LoginForm client:load />
+      </div>
+    </main>
+
+    <!-- Footer full-width -->
+    <footer class="z-content flex-shrink-0 w-full text-center !p-4 border-t border-border backdrop-blur-[2px] fade-in animate-in md:flex md:items-center md:justify-center md:gap-5">
+      <p class="m-0 text-xs md:text-sm text-text-muted whitespace-nowrap overflow-hidden text-ellipsis px-4">
+        © 2026 <span class="text-primary font-semibold">Gabriel Zavando</span>. Todos los derechos reservados.
+      </p>
+    </footer>
+  </section>
+</MainLayout>
+
+

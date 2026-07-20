@@ -57,16 +57,15 @@ const API_BASE_URL =
 </script>
 
 <script type="module">
-    // Lógica del cliente
+    import { apiClient, ApiError } from "../../lib/api-client";
+
     document.addEventListener("DOMContentLoaded", async () => {
-        // Referencias al DOM
         const loadingState = document.getElementById("loadingState");
         const successState = document.getElementById("successState");
         const errorState = document.getElementById("errorState");
         const errorTitle = document.getElementById("errorTitle");
         const errorMessage = document.getElementById("errorMessage");
 
-        // Funciones helper para cambiar estado
         function showState(stateId) {
             [loadingState, successState, errorState].forEach((el) => {
                 if (el) el.classList.add("hidden");
@@ -80,25 +79,9 @@ const API_BASE_URL =
             showState("errorState");
         }
 
-        // Configuración API
-        function getAPIBaseURL() {
-            if (
-                window.__UNSUBSCRIBE_CONFIG &&
-                window.__UNSUBSCRIBE_CONFIG.API_BASE_URL
-            ) {
-                return window.__UNSUBSCRIBE_CONFIG.API_BASE_URL;
-            }
-            return "https://api-agencia-201828783555.southamerica-west1.run.app";
-        }
-
-        const API_BASE_URL = getAPIBaseURL().replace(/\/$/, "");
-        const ENDPOINT = "/forms/unsubscribe";
-
-        // Obtener parámetros de URL
         const params = new URLSearchParams(window.location.search);
         const email = params.get("email");
 
-        // Validación inicial
         if (!email) {
             showError(
                 "Enlace inválido",
@@ -107,42 +90,23 @@ const API_BASE_URL =
             return;
         }
 
-        // Ejecutar llamada a la API
         try {
-            const response = await fetch(
-                `${API_BASE_URL}${ENDPOINT}?email=${encodeURIComponent(email)}`,
-                {
-                    method: "POST", // Ajustado al método correcto (POST según controlador)
-                    headers: {
-                        Accept: "application/json",
-                    },
-                },
+            const data = await apiClient.post<{ success: boolean; message?: string }>(
+                `/forms/unsubscribe?email=${encodeURIComponent(email)}`,
             );
 
-            const data = await response.json();
-
-            if (response.ok && data.success) {
-                // Éxito real
+            if (data.success) {
                 showState("successState");
             } else {
-                // Manejar errores de negocio
-                // Si el usuario ya no estaba suscrito, también lo consideramos un "éxito" UX,
-                // pero podemos mostrar un mensaje específico si queremos.
-                // El controlador retorna success: true incluso si no estaba suscrito ("wasSubscribed": false).
-                // Así que si success es true, mostramos éxito.
-
-                if (data.success) {
-                    showState("successState");
-                } else {
-                    throw new Error(data.message || "Error desconocido");
-                }
+                showError("Error", data.message || "Error desconocido");
             }
-        } catch (error) {
-            console.error("Error al desuscribir:", error);
-            showError(
-                "Error de conexión",
-                "Tuvimos un problema al conectar con el servidor. Por favor, intenta de nuevo más tarde o contáctame directamente.",
-            );
+        } catch (err) {
+            console.error("Error al desuscribir:", err);
+            const message =
+                err instanceof ApiError
+                    ? err.message
+                    : "Tuvimos un problema al conectar con el servidor. Por favor, intenta de nuevo más tarde o contáctame directamente.";
+            showError("Error de conexión", message);
         }
     });
 </script>

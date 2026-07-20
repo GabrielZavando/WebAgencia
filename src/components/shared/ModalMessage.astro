@@ -9,7 +9,6 @@ export interface Props {
 
 const { type, id, message, icon, title } = Astro.props;
 
-// Iconos de Material Symbols por defecto
 const defaultIcons = {
   success: 'check_circle',
   error: 'error',
@@ -17,135 +16,154 @@ const defaultIcons = {
 };
 
 const modalIcon = icon || defaultIcons[type];
-const modalClass = type === 'success' ? 'success-modal' : type === 'error' ? 'error-modal' : 'info-modal';
 ---
 
-<div id={id} class={modalClass} role="dialog" aria-modal="true" aria-hidden="true">
-  <div class="modal-message__overlay">
-    <div class="modal-message__content" tabindex="-1">
-      <button class="modal-message__close" aria-label="Cerrar modal">&times;</button>
-      <div class="modal-message__icon">
-        <span class="material-symbols-outlined">{modalIcon}</span>
-      </div>
-      {title && <h3 class="modal-message__title">{title}</h3>}
-      <p class="modal-message__text">{message}</p>
-      <button class="modal-btn btn-cta">Entendido</button>
+<div id={id} class="modal-message" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="modal-message__content" tabindex="-1">
+    <button class="modal-message__close" aria-label="Cerrar modal">&times;</button>
+    <div class="modal-message__icon">
+      <span class="material-symbols-outlined">{modalIcon}</span>
     </div>
+    {title && <h3 class="modal-message__title">{title}</h3>}
+    <p class="modal-message__text">{message}</p>
+    <button class="modal-btn btn-cta">Entendido</button>
   </div>
 </div>
 
-
 <script is:inline>
-  // Funciones helper para modales (script inline para evitar errores de TypeScript)
-  (function() {
-    function initModalHelpers() {
-      if (typeof window !== 'undefined' && !window.modalHelpers) {
-        window.modalHelpers = {
-          openModal: function(modalId) {
-            var modal = document.getElementById(modalId);
-            if (modal) {
-              // Guardar el elemento que tenía el foco antes del modal
-              modal.previouslyFocusedElement = document.activeElement;
-              
-              modal.classList.add('active');
-              modal.setAttribute('aria-hidden', 'false');
-              document.body.style.overflow = 'hidden';
-              
-              var content = modal.querySelector('.modal-message__content');
-              if (content && content.focus) {
-                content.focus();
-              }
-              
-              // Auto-cerrar después de 3 segundos
-              setTimeout(function() {
-                if (modal.classList.contains('active')) {
-                  window.modalHelpers.closeModal(modal);
-                }
-              }, 10000);
-            }
-          },
-          
-          closeModal: function(modal) {
-            // Primero quitar el foco de cualquier elemento dentro del modal
-            var focusedElement = document.activeElement;
-            if (focusedElement && modal.contains(focusedElement)) {
-              if (focusedElement.blur) focusedElement.blur();
-            }
-            
-            // Pequeño delay para asegurar que el foco se haya liberado
-            setTimeout(function() {
-              modal.classList.remove('active');
-              modal.setAttribute('aria-hidden', 'true');
-              document.body.style.overflow = '';
-              
-              // Devolver el foco al elemento anterior
-              if (modal.previouslyFocusedElement && modal.previouslyFocusedElement.focus) {
-                modal.previouslyFocusedElement.focus();
-                modal.previouslyFocusedElement = null;
-              }
-            }, 10);
-          },
-          
-          closeAllModals: function() {
-            var activeModals = document.querySelectorAll('.success-modal.active, .error-modal.active, .info-modal.active');
-            for (var i = 0; i < activeModals.length; i++) {
-              this.closeModal(activeModals[i]);
-            }
-          },
-          
-          updateModalMessage: function(modalId, newMessage) {
-            var modal = document.getElementById(modalId);
-            if (modal) {
-              var textElement = modal.querySelector('.modal-message__text');
-              if (textElement) {
-                textElement.textContent = newMessage;
-              }
-            }
-          }
-        };
-
-        // Event listeners globales
-        document.addEventListener('click', function(e) {
-          var target = e.target;
-          
-          // Botón de cerrar (X)
-          if (target && target.classList && target.classList.contains('modal-message__close')) {
-            e.preventDefault();
-            var modal = target.closest('.success-modal, .error-modal, .info-modal');
-            if (modal) window.modalHelpers.closeModal(modal);
-          }
-          
-          // Botones principales de modal
-          if (target && target.classList && target.classList.contains('modal-btn')) {
-            e.preventDefault();
-            
-            // Desenfocar el botón antes de cerrar el modal para evitar el error de aria-hidden
-            if (target.blur) target.blur();
-            
-            var modal = target.closest('.success-modal, .error-modal, .info-modal');
-            if (modal) window.modalHelpers.closeModal(modal);
-          }
-          
-          // Click fuera del contenido
-          if (target && target.classList && (target.classList.contains('success-modal') || target.classList.contains('error-modal') || target.classList.contains('info-modal'))) {
-            window.modalHelpers.closeModal(target);
-          }
-        });
-
-        // Cerrar con Escape
-        document.addEventListener('keydown', function(e) {
-          if (e.key === 'Escape') {
-            window.modalHelpers.closeAllModals();
-          }
-        });
+(function() {
+  function openModalById(modalId) {
+    var modal = document.getElementById(modalId);
+    if (!modal) return;
+    modal.previouslyFocusedElement = document.activeElement;
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    var content = modal.querySelector('.modal-message__content');
+    if (content && content.focus) content.focus();
+    setTimeout(function() {
+      if (modal.classList.contains('open')) {
+        document.dispatchEvent(new CustomEvent('modal:close', { detail: { modalId: modalId } }));
       }
-    }
+    }, 10000);
+  }
 
-    // Inicializar cuando el DOM esté listo
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initModalHelpers);
-    } else {
-      initModalHelpers();
+  function closeModalById(modalId) {
+    var modal = document.getElementById(modalId);
+    if (!modal) return;
+    var focusedElement = document.activeElement;
+    if (focusedElement && modal.contains(focusedElement) && focusedElement.blur) {
+      focusedElement.blur();
     }
-  })();
+    setTimeout(function() {
+      modal.classList.remove('open');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      if (modal.previouslyFocusedElement && modal.previouslyFocusedElement.focus) {
+        modal.previouslyFocusedElement.focus();
+        modal.previouslyFocusedElement = null;
+      }
+    }, 10);
+  }
+
+  function closeModalElement(modal) {
+    var focusedElement = document.activeElement;
+    if (focusedElement && modal.contains(focusedElement) && focusedElement.blur) {
+      focusedElement.blur();
+    }
+    setTimeout(function() {
+      modal.classList.remove('open');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      if (modal.previouslyFocusedElement && modal.previouslyFocusedElement.focus) {
+        modal.previouslyFocusedElement.focus();
+        modal.previouslyFocusedElement = null;
+      }
+    }, 10);
+  }
+
+  function closeAllModals() {
+    var openModals = document.querySelectorAll('.modal-message.open');
+    for (var i = 0; i < openModals.length; i++) {
+      closeModalElement(openModals[i]);
+    }
+  }
+
+  function updateModalMessage(modalId, newMessage) {
+    var modal = document.getElementById(modalId);
+    if (modal) {
+      var textElement = modal.querySelector('.modal-message__text');
+      if (textElement) textElement.textContent = newMessage;
+    }
+  }
+
+  function initModalSystem() {
+    if (typeof window === 'undefined') return;
+
+    document.addEventListener('modal:open', function(e) {
+      if (e.detail && e.detail.modalId) openModalById(e.detail.modalId);
+    });
+
+    document.addEventListener('modal:close', function(e) {
+      if (e.detail && e.detail.modalId) closeModalById(e.detail.modalId);
+    });
+
+    document.addEventListener('modal:update', function(e) {
+      if (e.detail && e.detail.modalId && e.detail.message) {
+        updateModalMessage(e.detail.modalId, e.detail.message);
+      }
+    });
+
+    document.addEventListener('click', function(e) {
+      var target = e.target;
+      if (!target || !target.classList) return;
+
+      if (target.classList.contains('modal-message__close')) {
+        e.preventDefault();
+        var modal = target.closest('.modal-message');
+        if (modal) document.dispatchEvent(new CustomEvent('modal:close', { detail: { modalId: modal.id } }));
+      }
+
+      if (target.classList.contains('modal-btn')) {
+        e.preventDefault();
+        if (target.blur) target.blur();
+        var modal = target.closest('.modal-message');
+        if (modal) document.dispatchEvent(new CustomEvent('modal:close', { detail: { modalId: modal.id } }));
+      }
+
+      if (target.classList.contains('modal-message') && !target.querySelector('.modal-message__content')?.contains(target)) {
+        document.dispatchEvent(new CustomEvent('modal:close', { detail: { modalId: target.id } }));
+      }
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeAllModals();
+    });
+
+    if (!window.modalHelpers) {
+      window.modalHelpers = {
+        openModal: function(modalId) {
+          document.dispatchEvent(new CustomEvent('modal:open', { detail: { modalId: modalId } }));
+        },
+        closeModal: function(modal) {
+          if (modal && modal.id) {
+            document.dispatchEvent(new CustomEvent('modal:close', { detail: { modalId: modal.id } }));
+          }
+        },
+        closeAllModals: function() {
+          closeAllModals();
+        },
+        updateModalMessage: function(modalId, newMessage) {
+          document.dispatchEvent(new CustomEvent('modal:update', { detail: { modalId: modalId, message: newMessage } }));
+        }
+      };
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initModalSystem);
+  } else {
+    initModalSystem();
+  }
+})();
 </script>

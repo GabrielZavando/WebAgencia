@@ -59,3 +59,117 @@ import { Image } from 'astro:assets';
 
   </div>
 </section>
+
+<style>
+  .about {
+    padding: var(--space-xl) 0;
+    background-color: var(--color-surface);
+    border-top: 1px solid var(--color-border);
+  }
+
+  @media (min-width: 820px) {
+    .about { padding: var(--space-2xl) 0; }
+  }
+
+  .about-content {
+    width: 100%;
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 var(--padding-container);
+  }
+
+  .about-header {
+    margin-bottom: var(--space-xl);
+  }
+
+  @media (min-width: 820px) {
+    .about-header { margin-bottom: var(--space-2xl); }
+  }
+
+  .about-intro {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+    margin-bottom: var(--space-2xl);
+  }
+
+  @media (min-width: 820px) {
+    .about-intro {
+      gap: var(--space-xl);
+      margin-bottom: var(--space-2xl);
+    }
+  }
+
+  @media (min-width: 1200px) {
+    .about-intro {
+      flex-direction: row;
+      align-items: center;
+      gap: var(--space-2xl);
+    }
+  }
+
+  .about-intro__image-wrapper {
+    flex-shrink: 0;
+    text-align: center;
+  }
+
+  @media (min-width: 1200px) {
+    .about-intro__image-wrapper { width: 400px; }
+  }
+
+  .about-intro__photo {
+    width: 100%;
+    max-width: 280px;
+    height: auto;
+    border-radius: 0;
+    border: 3px solid var(--color-primary);
+  }
+
+  @media (min-width: 1200px) {
+    .about-intro__photo { max-width: 100%; }
+  }
+
+  .about-intro__text-wrapper { flex-grow: 1; }
+
+  .about-intro__text {
+    font-size: var(--text-base);
+    line-height: 1.7;
+    color: var(--color-text-secondary);
+  }
+
+  .about-intro__text :global(p) { margin-bottom: var(--space-md); }
+
+  .about-intro__text :global(.highlight-pattern) {
+    border-left: 3px solid var(--color-primary);
+    padding-left: var(--space-md);
+    margin-left: var(--space-xs);
+    font-style: italic;
+    background: var(--color-surface-secondary);
+    padding-top: var(--space-sm);
+    padding-bottom: var(--space-sm);
+  }
+
+  .about-intro__text :global(strong) {
+    color: var(--color-text);
+    font-weight: 600;
+  }
+
+  .about-intro__badge {
+    display: inline-block;
+    margin-top: var(--space-md);
+    padding: var(--space-sm) var(--space-md);
+    background-color: transparent;
+    border: 2px solid var(--color-primary);
+    border-radius: 0;
+    color: var(--color-primary);
+    font-weight: 500;
+    font-size: var(--text-sm);
+  }
+
+  .about-signature {
+    border-top: 1px solid var(--color-border);
+    padding-top: var(--space-lg);
+    margin-top: var(--space-2xl);
+    text-align: center;
+  }
+</style>

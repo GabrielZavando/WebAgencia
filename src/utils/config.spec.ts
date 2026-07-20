@@ -1,64 +1,40 @@
-import { vi, describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { getSystemConfig } from './config'
 import { companyConfig } from '../config/company.config'
 
 describe('Config Utils (Landing)', () => {
   beforeEach(() => {
-    // Mock global fetch
-    vi.stubGlobal('fetch', vi.fn())
-    vi.clearAllMocks()
-    
-    // Mock import.meta.env
-    // En vitest, podemos usar vi.stubEnv si es necesario, 
-    // pero config.ts usa import.meta.env.PUBLIC_API_URL
+    vi.unstubAllGlobals()
   })
 
-  it('debe obtener configuración desde la API correctamente', async () => {
-    const mockData = {
-      name: 'API Config',
-      description: 'Desc from API',
-      websiteUrl: 'https://api.test',
-      logoUrl: '/logo.png',
-      faviconUrl: '/favicon.ico',
-      address: 'Calle API 123',
-      phone: '+569000000',
-      email: 'api@test.com',
-      servicesUrl: '/services',
-      social: { ...companyConfig.social }
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    ;(fetch as any).mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve(mockData)
-    })
+  it('debe retornar configuración estática directamente (sin llamada a API)', async () => {
+    const fetchMock = vi.fn()
+    vi.stubGlobal('fetch', fetchMock)
 
     const result = await getSystemConfig()
 
-    expect(fetch).toHaveBeenCalled()
-    expect(result.name).toBe('API Config')
-    expect(result.email).toBe('api@test.com')
-  })
-
-  it('debe usar fallback estático si la API responde con error', async () => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    ;(fetch as any).mockResolvedValue({
-      ok: false
-    })
-
-    const result = await getSystemConfig()
+    expect(fetchMock).not.toHaveBeenCalled()
 
     expect(result.name).toBe(companyConfig.name)
     expect(result.email).toBe(companyConfig.email)
+    expect(result.description).toBe(companyConfig.description)
+    expect(result.social).toEqual(companyConfig.social)
   })
 
-  it('debe usar fallback estático si hay error de red', async () => {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-    ;(fetch as any).mockRejectedValue(new Error('Network Error'))
-
+  it('debe retornar todos los campos requeridos de SystemConfig', async () => {
     const result = await getSystemConfig()
 
-    expect(result.name).toBe(companyConfig.name)
-    expect(result.social).toEqual(companyConfig.social)
+    expect(result).toHaveProperty('name')
+    expect(result).toHaveProperty('description')
+    expect(result).toHaveProperty('websiteUrl')
+    expect(result).toHaveProperty('logoUrl')
+    expect(result).toHaveProperty('faviconUrl')
+    expect(result).toHaveProperty('address')
+    expect(result).toHaveProperty('phone')
+    expect(result).toHaveProperty('email')
+    expect(result).toHaveProperty('servicesUrl')
+    expect(result).toHaveProperty('social')
+    expect(result.social).toHaveProperty('linkedinUrl')
+    expect(result.social).toHaveProperty('instagramUrl')
   })
 })

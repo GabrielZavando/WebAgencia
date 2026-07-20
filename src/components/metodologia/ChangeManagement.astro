@@ -71,26 +71,26 @@
   </div>
 </section>
 
-<style lang="scss">
+<style>
   .change-management {
     padding: 120px 0;
     background-color: var(--color-surface);
-    
-    &__content {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 0 var(--padding-container);
-    }
+  }
 
-    &__header {
-      margin-bottom: 60px;
-    }
+  .change-management__content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 var(--padding-container);
+  }
 
-    &__grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: var(--space-lg);
-    }
+  .change-management__header {
+    margin-bottom: 60px;
+  }
+
+  .change-management__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--space-lg);
   }
 
   .change-card {
@@ -102,77 +102,77 @@
     height: 100%;
     text-align: left;
     transition: transform 0.3s ease, border-color 0.3s ease;
+  }
 
-    &:hover {
-      transform: translateY(-5px);
-      border-color: var(--color-warning);
-    }
+  .change-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--color-warning);
+  }
 
-    &__header {
-      display: flex;
-      align-items: center;
-      gap: var(--space-sm);
-      margin-bottom: var(--space-md);
-      
-      .material-symbols-outlined {
-        color: var(--color-warning);
-        font-size: 2rem;
-      }
+  .change-card__header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-md);
+  }
 
-      h3 {
-        font-size: 1.25rem;
-        font-weight: 700;
-        color: var(--color-text);
-        margin: 0;
-      }
-    }
+  .change-card__header .material-symbols-outlined {
+    color: var(--color-warning);
+    font-size: 2rem;
+  }
 
-    &__body {
-      flex-grow: 1;
-      
-      p {
-        font-size: 1rem;
-        color: var(--color-text);
-        margin-bottom: var(--space-md);
-        line-height: 1.6;
-      }
-    }
+  .change-card__header h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-text);
+    margin: 0;
+  }
 
-    &__footer {
-      margin-top: var(--space-lg);
-      padding-top: var(--space-md);
-      border-top: 1px dashed var(--color-border);
-      font-size: 0.95rem;
-      color: var(--color-text);
-      
-      strong {
-        color: var(--color-warning);
-        text-transform: uppercase;
-        font-size: 0.8rem;
-        letter-spacing: 0.5px;
-      }
-    }
+  .change-card__body {
+    flex-grow: 1;
+  }
+
+  .change-card__body p {
+    font-size: 1rem;
+    color: var(--color-text);
+    margin-bottom: var(--space-md);
+    line-height: 1.6;
+  }
+
+  .change-card__footer {
+    margin-top: var(--space-lg);
+    padding-top: var(--space-md);
+    border-top: 1px dashed var(--color-border);
+    font-size: 0.95rem;
+    color: var(--color-text);
+  }
+
+  .change-card__footer strong {
+    color: var(--color-warning);
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
   }
 
   .change-list {
     list-style: none;
     padding: 0;
     margin: 0;
+  }
 
-    li {
-      position: relative;
-      padding-left: 20px;
-      margin-bottom: 8px;
-      font-size: 0.95rem;
-      color: var(--color-text-secondary);
+  .change-list li {
+    position: relative;
+    padding-left: 20px;
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+    color: var(--color-text-secondary);
+  }
 
-      &::before {
-        content: '•';
-        position: absolute;
-        left: 0;
-        color: var(--color-warning);
-        font-weight: bold;
-      }
-    }
+  .change-list li::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: var(--color-warning);
+    font-weight: bold;
   }
 </style>

@@ -1,5 +1,4 @@
 User-agent: *
-Disallow: /admin/
 Allow: /
 
-Sitemap: https://gabrielzavando.com/sitemap.xml
+Sitemap: https://gabrielzavando.cl/sitemap.xml

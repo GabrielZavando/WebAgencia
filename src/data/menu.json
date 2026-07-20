@@ -24,27 +24,5 @@
       "text": "Contacto",
       "href": "/#contacto"
     }
-  ],
-  "socialLinks": [
-    {
-      "name": "LinkedIn",
-      "url": "https://linkedin.com/in/gabrielzavando",
-      "icon": "share"
-    },
-    {
-      "name": "GitHub",
-      "url": "https://github.com/gabrielzavando",
-      "icon": "code"
-    },
-    {
-      "name": "Instagram",
-      "url": "https://instagram.com/gabrielzavando",
-      "icon": "instagram"
-    },
-    {
-      "name": "YouTube",
-      "url": "https://youtube.com/@gabrielzavando",
-      "icon": "youtube_music"
-    }
   ]
 }

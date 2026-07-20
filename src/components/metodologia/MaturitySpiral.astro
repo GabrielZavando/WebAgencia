@@ -54,121 +54,125 @@
           </ul>
         </div>
       </div>
+    </div>
   </div>
 </section>
 
-<style lang="scss">
-  @use '../../styles/config' as *;
-
+<style>
   .maturity-spiral {
     padding: 10px 0 40px;
     background-color: var(--color-body);
-    
-    &__content {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 var(--padding-container);
+  }
+
+  .maturity-spiral__content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--padding-container);
+  }
+
+  .maturity-spiral__steps {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xl);
+    margin: 80px auto;
+    max-width: 700px;
+    position: relative;
+  }
+
+  @media (min-width: 768px) {
+    .maturity-spiral__steps {
+      gap: var(--space-2xl);
     }
 
-    &__steps {
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-xl);
-      margin: 80px auto;
-      max-width: 700px; // Centrado horizontal del bloque
-      position: relative;
-
-      @include respond-to(md) {
-        gap: var(--space-2xl);
-        
-        &::before {
-          content: '';
-          position: absolute;
-          left: 40px;
-          top: 0;
-          bottom: 0;
-          width: 2px;
-          background: linear-gradient(to bottom, 
-            var(--color-primary), 
-            var(--color-secondary), 
-            var(--color-accent)
-          );
-          opacity: 0.2;
-        }
-      }
+    .maturity-spiral__steps::before {
+      content: '';
+      position: absolute;
+      left: 40px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, 
+        var(--color-primary), 
+        var(--color-secondary), 
+        var(--color-accent)
+      );
+      opacity: 0.2;
     }
+  }
 
-    &__footer {
-      display: flex;
-      justify-content: center;
-      margin-top: 60px;
-    }
+  .maturity-spiral__footer {
+    display: flex;
+    justify-content: center;
+    margin-top: 60px;
   }
 
   .spiral-step {
     display: flex;
     gap: var(--space-lg);
     align-items: center;
-    
-    &__icon {
-      flex-shrink: 0;
-      width: 80px;
-      height: 80px;
-      background-color: var(--color-surface);
-      border: 2px solid var(--color-border);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1;
-      transition: all 0.3s ease;
+  }
 
-      .material-symbols-outlined {
-        font-size: 2.5rem;
-        color: var(--color-primary);
-      }
-    }
+  .spiral-step__icon {
+    flex-shrink: 0;
+    width: 80px;
+    height: 80px;
+    background-color: var(--color-surface);
+    border: 2px solid var(--color-border);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+    transition: all 0.3s ease;
+  }
 
-    &:nth-child(2) &__icon .material-symbols-outlined { color: var(--color-secondary); }
-    &:nth-child(3) &__icon .material-symbols-outlined { color: var(--color-accent); }
+  .spiral-step__icon .material-symbols-outlined {
+    font-size: 2.5rem;
+    color: var(--color-primary);
+  }
 
-    &__info {
-      h3 {
-        font-size: 1.5rem;
-        font-weight: 700;
-        margin-bottom: var(--space-sm);
-        color: var(--color-text);
-      }
-    }
+  .spiral-step:nth-child(2) .spiral-step__icon .material-symbols-outlined {
+    color: var(--color-secondary);
+  }
 
-    &:hover &__icon {
-      transform: scale(1.1);
-      border-color: var(--color-primary);
-      box-shadow: 0 0 20px rgba(var(--color-primary-rgb), 0.15);
-    }
+  .spiral-step:nth-child(3) .spiral-step__icon .material-symbols-outlined {
+    color: var(--color-accent);
+  }
+
+  .spiral-step__info h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: var(--space-sm);
+    color: var(--color-text);
+  }
+
+  .spiral-step:hover .spiral-step__icon {
+    transform: scale(1.1);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 20px rgba(var(--color-primary-rgb), 0.15);
   }
 
   .spiral-list {
     list-style: none;
     padding: 0;
     margin: 0;
+  }
 
-    li {
-      position: relative;
-      padding-left: 24px;
-      margin-bottom: 12px;
-      font-size: 1.05rem;
-      color: var(--color-text-secondary);
-      line-height: 1.4;
+  .spiral-list li {
+    position: relative;
+    padding-left: 24px;
+    margin-bottom: 12px;
+    font-size: 1.05rem;
+    color: var(--color-text-secondary);
+    line-height: 1.4;
+  }
 
-      &::before {
-        content: '→';
-        position: absolute;
-        left: 0;
-        color: var(--color-primary);
-        font-weight: bold;
-      }
-    }
+  .spiral-list li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--color-primary);
+    font-weight: bold;
   }
 
   .maturity-badge {
@@ -181,10 +185,10 @@
     gap: var(--space-md);
     text-align: center;
     justify-content: center;
+  }
 
-    .emoji {
-      font-size: 2rem;
-    }
+  .maturity-badge .emoji {
+    font-size: 2rem;
   }
 
   .maturity-quote {

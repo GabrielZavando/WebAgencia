@@ -1,6 +1,5 @@
 ---
-import "../../styles/main.scss";
-import "../../styles/tailwind.css";
+import "../../styles/global.css";
 import { ClientRouter } from 'astro:transitions';
 
 interface Props {
@@ -82,8 +81,8 @@ const gtmId = import.meta.env.PUBLIC_GTM_ID
 
 <title>{title}</title>
 
+<!-- Google Tag Manager -->
 {gtmId && (
-  <!-- Google Tag Manager -->
   <script is:inline define:vars={{ gtmId }}>
     (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -91,7 +90,7 @@ const gtmId = import.meta.env.PUBLIC_GTM_ID
     'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer',gtmId);
   </script>
-  <!-- End Google Tag Manager -->
 )}
+<!-- End Google Tag Manager -->
 
 <ClientRouter />

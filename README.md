@@ -1,73 +1,112 @@
-# Contenido del archivo README.md
-
 # Agencia Digital
 
-Este proyecto es una landing page para una agencia digital. La página incluye secciones para presentar los servicios ofrecidos, información sobre la agencia, ejemplos de trabajos realizados y un formulario de contacto.
+Landing page SSG con Astro 5. Despliegue estático en Hostinger.
 
 **Arquitectura:** Static Site Generation (SSG) con Astro 5. Despliegue como archivos estáticos en Hostinger.
 
-## Estructura del Proyecto
+## Stack
 
-- **src/components**: Contiene los componentes reutilizables de la landing page.
-- **src/layouts**: Define el diseño general de la página.
-- **src/pages**: Contiene las páginas de la aplicación, incluyendo la página principal.
-- **src/styles**: Contiene los estilos globales para la landing page.
-- **src/data**: Datos estáticos (blog posts, services, plans).
-- **public**: Archivos estáticos que se sirven directamente.
-- **astro.config.mjs**: Configuración del proyecto Astro (output: 'static').
-- **package.json**: Configuración de npm para las dependencias y scripts del proyecto.
+| Capa | Tecnología |
+|------|-----------|
+| Framework | Astro 5 (output: `static`) |
+| CSS | Tailwind CSS 4 + SCSS 5-capas |
+| Testing | Vitest + Playwright |
+| Package Manager | pnpm |
 
 ## Instalación
 
-Para instalar las dependencias del proyecto, ejecuta:
-
-```
-npm install
+```bash
+pnpm install
 ```
 
-## Ejecución
+## Comandos
 
-Para iniciar el servidor de desarrollo, ejecuta:
+| Comando | Descripción |
+|---------|------------|
+| `pnpm dev` | Servidor de desarrollo |
+| `pnpm build` | Build estático a `dist/` |
+| `pnpm preview` | Vista previa del build |
+| `pnpm test` | Tests unitarios Vitest |
+| `pnpm test:e2e` | Tests E2E Playwright |
+| `pnpm test:validation` | Validación SSG completa |
+| `bash scripts/validate-ssg.sh` | Suite completa con resumen |
 
-```
-npm run dev
-```
+## Despliegue (Hostinger)
 
-## Construcción
+1. `pnpm build` → genera `dist/`
+2. Subir `dist/` a `public_html` vía FTP
+3. Sin configuración especial de rutas (HTML plano)
 
-Para construir el proyecto para producción (genera archivos estáticos en `dist/`):
+## Variables de Entorno
 
-```
-npm run build
-```
+Ver `.env.example`. Requeridas: `PUBLIC_API_BASE_URL`, `PUBLIC_TURNSTILE_SITE_KEY`, `PUBLIC_SITE_URL`, `PUBLIC_GTM_ID`, y variables de Firebase para login.
 
-## Despliegue en Hostinger (Static Hosting)
+### Desarrollo Local con API Local
 
-1. Ejecutar `npm run build` - genera carpeta `dist/` con archivos estáticos
-2. Subir contenido de `dist/` al directorio público de Hostinger (public_html)
-3. Configurar dominio para servir `index.html` como página por defecto
-4. No requiere configuración especial de rutas (todo es HTML plano)
+Para desarrollar con la API NestJS corriendo localmente:
 
-### Variables de Entorno Requeridas
+1. **Crear `.env.local`** (copiar de `.env.example`):
+   ```bash
+   cp .env.example .env.local
+   ```
 
-Crear archivo `.env` basado en `.env.example`:
+2. **Configurar variables para local**:
+   ```env
+   PUBLIC_API_URL=http://localhost:3000/api/v1
+   PUBLIC_API_BASE_URL=http://localhost:3000/api/v1
+   PUBLIC_SITE_URL=http://localhost:4321
+   PUBLIC_TURNSTILE_SITE_KEY=1x00000000000000000000AA
+   ```
 
+3. **Configurar Firebase** (credenciales de tu proyecto):
+   ```env
+   PUBLIC_FIREBASE_API_KEY=AIza...
+   PUBLIC_FIREBASE_AUTH_DOMAIN=api-web-agencia.firebaseapp.com
+   PUBLIC_FIREBASE_PROJECT_ID=api-web-agencia
+   PUBLIC_FIREBASE_STORAGE_BUCKET=api-web-agencia.firebasestorage.app
+   PUBLIC_FIREBASE_MESSAGING_SENDER_ID=31988183470
+   PUBLIC_FIREBASE_APP_ID=1:31988183470:web:...
+   ```
+
+4. **Iniciar la API NestJS** (en el directorio del backend):
+   ```bash
+   cd ../Api
+   npm run start:dev
+   ```
+
+5. **Iniciar el frontend** (en este directorio):
+   ```bash
+   pnpm dev
+   ```
+
+6. **Probar login** en `http://localhost:4321/login`
+
+### Producción
+
+Para producción, usar las URLs de Cloud Run en `.env.local`:
 ```env
-PUBLIC_API_BASE_URL=https://tu-api-ligera.com
-PUBLIC_TURNSTILE_SITE_KEY=tu-turnstile-site-key
-PUBLIC_TURNSTILE_SITE_KEY=...
+PUBLIC_API_URL=https://nestjs-api-XXXXXXXXXX.us-central1.run.app
+PUBLIC_API_BASE_URL=https://nestjs-api-XXXXXXXXXX.us-central1.run.app
 PUBLIC_SITE_URL=https://tu-dominio.com
-PUBLIC_GTM_ID=GTM-XXXXXXXX
+PUBLIC_TURNSTILE_SITE_KEY=tu_key_real_de_produccion
 ```
 
-### Notas Importantes
+## Estructura
 
-- **Blog:** Usa datos locales en `src/data/blog-posts.json`. Para actualizar, editar este archivo o sincronizar desde CMS/API externa.
-- **Formularios:** Contacto y Newsletter son islas client-side que llaman a API Ligera (`/api/v1/leads/contact`, `/api/v1/leads/subscribe`).
-- **Sitemap:** Se genera automáticamente en build (`dist/sitemap.xml`).
+```
+src/
+  components/   → Componentes .astro
+  layouts/      → MainLayout.astro
+  pages/        → Rutas del sitio (11 páginas)
+  lib/          → api-client.ts (fetch-based)
+  utils/        → Utilidades (config, theme, math)
+  scripts/      → Vanilla TS para interactividad
+  styles/       → global.css
+  assets/       → Imágenes optimizadas
+  config/       → company.config.ts
+  data/         → JSON estáticos (servicios, planes, menú)
+```
 
 ## Licencia
 
-Este proyecto está bajo la Licencia MIT.
-
-## Versionado en `CHANGELOG.md`. Versión actual: `v1.6.0`.
+MIT

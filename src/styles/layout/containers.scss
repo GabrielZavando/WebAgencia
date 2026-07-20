@@ -1,7 +1,0 @@
-// Importación del sistema de configuración
-@use '../config' as *;
-
-// Sistema de contenedores modular
-.container{
-    @include container(space(md));
-}

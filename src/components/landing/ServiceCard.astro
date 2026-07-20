@@ -44,3 +44,102 @@ const { id, need, icon, title, description, ctaText = 'Ver detalles', anchor, cl
   )}
 </div>
 
+<style>
+.service-card {
+  padding: var(--space-lg);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 0;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-normal) ease;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  text-align: center;
+  height: 100%;
+  cursor: pointer;
+}
+
+@media (min-width: 820px) {
+  .service-card { padding: var(--space-xl); }
+}
+
+.service-card__need {
+  display: block;
+  font-size: var(--text-sm);
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--color-primary);
+  margin-bottom: var(--space-md);
+  letter-spacing: 0.05em;
+  opacity: 0.8;
+}
+
+.service-card:hover {
+  border-color: var(--color-primary) !important;
+  background: var(--color-surface-secondary) !important;
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-5px) scale3d(1.03, 1.03, 1.03) !important;
+  transition-delay: 0s !important;
+  z-index: 10;
+}
+
+.service-card:hover :global(.service-card__icon) {
+  color: var(--color-accent);
+  transform: scale(1.1);
+}
+
+.service-card__icon {
+  margin-bottom: var(--space-lg);
+  color: var(--color-primary);
+  transition: all var(--transition-normal) ease;
+  font-size: 4rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.service-card__icon :global(.material-symbols-outlined) {
+  font-size: 2.5rem !important;
+  color: inherit;
+  display: block;
+}
+
+@media (min-width: 820px) {
+  .service-card__icon :global(.material-symbols-outlined) {
+    font-size: 50px !important;
+  }
+}
+
+@media (min-width: 1440px) {
+  .service-card__icon :global(.material-symbols-outlined) {
+    font-size: 60px !important;
+  }
+}
+
+.service-card__title {
+  font-family: var(--font-headings);
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: var(--space-sm);
+  font-size: var(--text-lg);
+  line-height: 1.3;
+}
+
+.service-card__description {
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+  font-family: var(--font-primary);
+  font-size: var(--text-base);
+  flex-grow: 1;
+  margin-bottom: 0;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+.service-card :global(.btn-cta) { margin-top: 1rem; }
+</style>
+

@@ -1,5 +1,6 @@
+import { apiClient, ApiError } from "../lib/api-client";
+
 const getTurnstileSiteKey = () => import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || "1x00000000000000000000AA";
-const getApiUrl = () => import.meta.env.PUBLIC_API_URL || "http://localhost:8080";
 
 interface Question {
   id: string;
@@ -119,60 +120,39 @@ class DiagnosticoForm extends HTMLElement {
 
     const form = e.target as HTMLFormElement;
     const formData = new FormData(form);
-    
-    // Capturamos el token de Turnstile de forma robusta
-    const turnstileToken = formData.get("cf-turnstile-response")?.toString() || 
-                          (form.querySelector('[name="cf-turnstile-response"]') as HTMLInputElement)?.value;
 
-    if (!turnstileToken) {
-        alert("Por favor, completa el captcha de seguridad para continuar.");
-        return;
-    }
-
-    // Convertimos las respuestas de objeto a arreglo ordenado para la API
     const answersArray = QUESTIONS.map(q => !!this.answers[q.id]);
 
     const data = {
       name: formData.get("name"),
       email: formData.get("email"),
       company: formData.get("company"),
-      industry: formData.get("sector"), // Mapear 'sector' a 'industry' según DTO
-      answers: answersArray,           // Enviar como arreglo de booleanos
-      turnstileToken: turnstileToken
+      industry: formData.get("sector"),
+      answers: answersArray,
     };
+
+    const turnstileToken = (window as any).turnstile?.getResponse?.();
+    if (!turnstileToken) {
+      alert("Por favor, completa el captcha de seguridad para continuar.");
+      return;
+    }
 
     this.loading = true;
     this.render();
 
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 45000); // 45s timeout
-
     try {
-      const response = await fetch(`${getApiUrl()}/diagnostico`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-        signal: controller.signal
+      this.result = await apiClient.post<DiagnosticoResultado>('/diagnostico', data, {
+        timeout: 45000,
+        injectTurnstile: true,
       });
-
-      clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        const errData = await response.json().catch(() => ({}));
-        throw new Error(errData.message || "Error al procesar el diagnóstico");
-      }
-      
-      this.result = await response.json();
       this.step = "result";
-      
-      // Emitir evento para lanzar confeti y modal en Astro
+
       this.dispatchEvent(new CustomEvent('diagnostico-success', { bubbles: true, composed: true }));
     } catch (error: any) {
-      clearTimeout(timeoutId);
       console.error("Submission error:", error);
-      
-      const isTimeout = error.name === 'AbortError';
-      const message = isTimeout 
+
+      const isTimeout = error instanceof ApiError && error.type === 'TIMEOUT_ERROR';
+      const message = isTimeout
         ? "La solicitud está tardando demasiado debido a la generación del PDF. No te preocupes, es probable que el correo llegue en unos instantes."
         : (error.message || "Hubo un error al procesar tu diagnóstico. Por favor intenta de nuevo.");
 

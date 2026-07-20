@@ -19,9 +19,8 @@ const TURNSTILE_SITE_KEY = import.meta.env.DEV
     </p>
 
     <form class="contact-form" id="contactForm" novalidate>
-      <!-- BACKEND: Este formulario envía los datos a tu API NestJS (POST /forms/contact).
-              Contrato JSON: { name, email, phone?, message, meta: { userAgent, referrer, page, ts } }
-              Recomendaciones: rate limiting, validación y sanitización server-side, y CAPTCHA opcional. -->
+      <!-- BACKEND: Este formulario envía los datos a la API de leads (POST /api/v1/leads/contact).
+              Contrato JSON: { name, email, phone?, message, meta: { userAgent, referrer, page, ts }, turnstileToken } -->
       <div class="form-group contact-field fade-in fade-in-delay-2">
         <label for="name" class="form-label">Nombre completo *</label>
         <input
@@ -124,67 +123,24 @@ const TURNSTILE_SITE_KEY = import.meta.env.DEV
   title="Error al Enviar"
   message="Lo siento, ha ocurrido un error al enviar tu mensaje. Por favor, inténtalo de nuevo o contáctame directamente."
 />
-<script type="module">
+<script>
+  import { apiClient, ApiError } from "../../lib/api-client";
+
   // CONFIG API - Usar configuración inyectada desde el servidor
   function getAPIBaseURL() {
-    // 1. Configuración inyectada desde Astro (frontmatter)
     if (window.__CONTACT_CONFIG && window.__CONTACT_CONFIG.API_BASE_URL) {
       return window.__CONTACT_CONFIG.API_BASE_URL;
     }
-
-    // 2. Runtime config (para deploys estáticos)
     if (window.__APP_CONFIG && window.__APP_CONFIG.PUBLIC_API_BASE_URL) {
       return window.__APP_CONFIG.PUBLIC_API_BASE_URL;
     }
-
-    // 3. Fallback
     return "https://api-agencia-201828783555.southamerica-west1.run.app";
   }
 
   const API_BASE_URL = getAPIBaseURL().replace(/\/$/, "");
-  const CONTACT_ENDPOINT = "/forms/contact";
-  const API_URL = `${API_BASE_URL}${CONTACT_ENDPOINT}`;
-
-  // Flag de desarrollo para simulación
   const DEV_SIMULATION = API_BASE_URL.includes("localhost");
-
-  // Simula respuesta en modo desarrollo si no hay backend
-  const REQUEST_TIMEOUT_MS = 30000; // 30s para tolerar cold starts de Cloud Run
+  const REQUEST_TIMEOUT_MS = 30000;
   const HONEYPOT_FIELD = "website";
-
-  // Utilidad timeout fetch con soporte AbortController
-  function fetchWithTimeout(resource, options = {}) {
-    const { timeout = REQUEST_TIMEOUT_MS, signal } = options;
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort("timeout"), timeout);
-    // Permitir señal externa además del timeout interno
-    if (signal) {
-      signal.addEventListener("abort", () => controller.abort(signal.reason), {
-        once: true,
-      });
-    }
-    return fetch(resource, { ...options, signal: controller.signal }).finally(
-      () => clearTimeout(timeoutId),
-    );
-  }
-
-  // Retry con backoff exponencial básico (1 reintento)
-  async function fetchWithRetry(url, options = {}, retries = 1) {
-    try {
-      return await fetchWithTimeout(url, options);
-    } catch (err) {
-      if (
-        retries > 0 &&
-        (err?.name === "AbortError" ||
-          err?.message === "Failed to fetch" ||
-          err?.message === "timeout")
-      ) {
-        await new Promise((r) => setTimeout(r, 600));
-        return fetchWithRetry(url, options, retries - 1);
-      }
-      throw err;
-    }
-  }
 
   document.addEventListener("DOMContentLoaded", () => {
     const form = document.getElementById("contactForm");
@@ -196,34 +152,6 @@ const TURNSTILE_SITE_KEY = import.meta.env.DEV
       typeof window !== "undefined" &&
       window.location.search.includes("debug=1");
     let inFlightController = null;
-    let apiWarmedUp = false;
-
-    // =====================
-    // WARMUP DE LA API (Anti Cold Start)
-    // =====================
-    // Precalentar la API cuando el usuario hace scroll a la sección de contacto
-    const contactSection = document.getElementById("contacto");
-    if (contactSection && "IntersectionObserver" in window) {
-      const warmupObserver = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting && !apiWarmedUp) {
-              apiWarmedUp = true;
-              // Hacer ping silencioso a la API para despertarla
-              fetch(`${API_BASE_URL}/forms/status`, {
-                method: "GET",
-                headers: { Accept: "application/json" },
-              }).catch(() => {
-                // Ignorar errores del warmup - es solo para despertar la API
-              });
-              warmupObserver.disconnect();
-            }
-          });
-        },
-        { rootMargin: "200px" }, // Empezar warmup 200px antes de que sea visible
-      );
-      warmupObserver.observe(contactSection);
-    }
 
     // =====================
     // CONFIGURACIÓN ANTI-SPAM
@@ -249,21 +177,12 @@ const TURNSTILE_SITE_KEY = import.meta.env.DEV
       formLoadTimeInput.value = formLoadTime.toString();
     }
 
-    // =====================
-    // FUNCIONES DE MODAL - Usando window.modalHelpers del componente ModalMessage
-    // =====================
-
-    // Funciones helper que usan window.modalHelpers global
+    // Funciones helper de modal (delegan a window.modalHelpers del componente ModalMessage)
     function openModal(modalId) {
-      if (typeof window !== "undefined" && window.modalHelpers) {
-        window.modalHelpers.openModal(modalId);
-      }
+      window.modalHelpers?.openModal(modalId);
     }
-
     function updateModalMessage(modalId, newMessage) {
-      if (typeof window !== "undefined" && window.modalHelpers) {
-        window.modalHelpers.updateModalMessage(modalId, newMessage);
-      }
+      window.modalHelpers?.updateModalMessage(modalId, newMessage);
     }
 
     // =====================
@@ -389,7 +308,7 @@ const TURNSTILE_SITE_KEY = import.meta.env.DEV
           errorElement = document.createElement("span");
           errorElement.classList.add("error-message");
           // Añadimos inline style para forzar visibilidad si la cascada CSS lo sobreescribe
-          errorElement.style.color = "#ef4444";
+          errorElement.style.color = "var(--color-error)";
           formGroup.appendChild(errorElement);
         }
         errorElement.textContent = message;
@@ -593,22 +512,12 @@ const TURNSTILE_SITE_KEY = import.meta.env.DEV
 
         try {
           const formData = new FormData(form);
-          // Obtener token Turnstile (campo generado automáticamente por el widget invisible)
-          const turnstileToken =
-            form.querySelector('[name="cf-turnstile-response"]')?.value || "";
-
-          if (!turnstileToken && !DEV_SIMULATION) {
-            console.warn(
-              "[ContactForm] Token de Turnstile no encontrado. La verificación podría fallar.",
-            );
-          }
 
           const payload = {
             name: String(formData.get("name") || "").trim(),
             email: String(formData.get("email") || "").trim(),
             phone: String(formData.get("phone") || "").trim() || null,
             message: String(formData.get("message") || "").trim(),
-            turnstileToken,
             meta: {
               userAgent: navigator.userAgent,
               referrer: document.referrer || null,
@@ -618,76 +527,39 @@ const TURNSTILE_SITE_KEY = import.meta.env.DEV
           };
 
           console.log("[ContactForm] Enviando payload:", payload);
-          console.log("[ContactForm] API URL:", API_URL);
 
-          let response;
-          if (!API_BASE_URL && DEV_SIMULATION) {
-            // Simulación local sin backend
-            await new Promise((r) => setTimeout(r, 800));
-            response = {
-              ok: true,
-              status: 200,
-              json: async () => ({ success: true, simulated: true }),
-            };
-          } else {
-            // Usar fetchWithTimeout en lugar de fetchWithRetry para evitar
-            // reintentos automáticos que causan envíos duplicados de correos
-            response = await fetchWithTimeout(API_URL, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Accept: "application/json",
-              },
-              body: JSON.stringify(payload),
-              timeout: REQUEST_TIMEOUT_MS,
-              signal: inFlightController.signal,
-            });
-          }
+          await apiClient.post("/api/v1/leads/contact", payload, {
+            timeout: REQUEST_TIMEOUT_MS,
+            signal: inFlightController.signal,
+            injectTurnstile: true,
+          });
 
-          if (response.ok) {
-            const result = await response
-              .json()
-              .catch(() => ({ success: true }));
+          localStorage.setItem("lastFormSubmit", Date.now().toString());
 
-            // Guardar timestamp del envío exitoso (cooldown)
-            localStorage.setItem("lastFormSubmit", Date.now().toString());
-
-            openModal("successModal");
-            form.reset();
-            inputs?.forEach((input) => clearErrors(input));
-            if (currentCount) currentCount.textContent = "0";
-            if (characterCounter)
-              characterCounter.classList.remove("warning", "error");
-            if (submitButton) submitButton.disabled = true; // hasta que se vuelva a llenar
-          } else {
-            // Intentar leer mensaje de error del backend
-            try {
-              const errorData = await response.json();
-              if (errorData?.message) {
-                updateModalMessage("errorModal", String(errorData.message));
-              }
-            } catch (jsonError) {
-              /* noop */
-            }
-            openModal("errorModal");
-          }
+          openModal("successModal");
+          form.reset();
+          inputs?.forEach((input) => clearErrors(input));
+          if (currentCount) currentCount.textContent = "0";
+          if (characterCounter)
+            characterCounter.classList.remove("warning", "error");
+          if (submitButton) submitButton.disabled = true;
         } catch (err) {
-          // Mensaje de error más específico
           let errorMessage =
             "No se pudo enviar el formulario. Inténtalo nuevamente en unos segundos.";
 
-          if (err?.name === "AbortError") {
-            errorMessage =
-              "La solicitud fue cancelada o expiró. Intenta nuevamente.";
+          if (err instanceof ApiError) {
+            if (err.type === "TIMEOUT_ERROR") {
+              errorMessage =
+                "La solicitud fue cancelada o expiró. Intenta nuevamente.";
+            } else if (err.type === "NETWORK_ERROR") {
+              errorMessage =
+                "Error de conexión. Verifica que la API esté disponible y que no hay problemas de CORS.";
+            } else if (err.type === "HTTP_ERROR") {
+              errorMessage = err.message;
+            }
           } else if (!navigator.onLine) {
             errorMessage =
               "Sin conexión a Internet. Revisa tu red e intenta de nuevo.";
-          } else if (
-            err?.name === "TypeError" &&
-            err?.message?.includes("Failed to fetch")
-          ) {
-            errorMessage =
-              "Error de conexión. Verifica que la API esté disponible y que no hay problemas de CORS.";
           } else if (err?.message) {
             errorMessage = `Error: ${err.message}`;
           }
