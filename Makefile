@@ -37,5 +37,5 @@ validate:
 refcheck:
 	bash check-refs.sh
 
-# Full local CI pass.
-ci: install lint test build validate refcheck
+# Full local CI pass. Build first: Web validation tests require dist/.
+ci: install build lint test validate refcheck
