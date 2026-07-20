@@ -7,11 +7,15 @@ cd "$ROOT"
 
 err=0
 while IFS= read -r f; do
-  while IFS= read -r ref; do
-    path="${ref#\{file:\}"
-    path="${path%\}}"
-    [ -f "$path" ] || { echo "MISSING {file:...} -> $path  (in $f)"; err=1; }
-  done < <(grep -oE '\{file:[^}]*\}' "$f" 2>/dev/null | sort -u)
+  [ -z "$f" ] && continue
+  refs="$(grep -oE '\{file:[^}]*\}' "$f" 2>/dev/null | sort -u || true)"
+  for ref in $refs; do
+    path="$(printf '%s' "$ref" | sed -e 's/^{file://' -e 's/}$//')"
+    if [ ! -f "$path" ]; then
+      echo "MISSING {file:...} -> $path  (in $f)"
+      err=1
+    fi
+  done
 done < <(find opencode.json ai-specs .opencode -type f \( -name '*.json' -o -name '*.md' \) 2>/dev/null)
 
 if [ "$err" -ne 0 ]; then echo "check-refs: FAILED"; exit 1; fi
