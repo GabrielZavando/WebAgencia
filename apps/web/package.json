@@ -1,5 +1,5 @@
 {
-  "name": "@webastro/landing",
+  "name": "@webastro/web",
   "version": "1.4.2",
   "description": "Landing page con Astro para Agencia Digital Gabriel Zavando",
   "scripts": {
