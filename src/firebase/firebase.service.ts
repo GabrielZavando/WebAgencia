@@ -1,4 +1,9 @@
-import { Injectable, OnModuleInit, OnModuleDestroy, Logger } from '@nestjs/common';
+import {
+  Injectable,
+  OnModuleInit,
+  OnModuleDestroy,
+  Logger,
+} from '@nestjs/common';
 import { initializeApp, cert, deleteApp, App } from 'firebase-admin/app';
 import { getFirestore, Firestore } from 'firebase-admin/firestore';
 import { getAuth, Auth } from 'firebase-admin/auth';
@@ -69,6 +74,6 @@ export class FirebaseService implements OnModuleInit, OnModuleDestroy {
     if (!this.app) {
       throw new Error('Firebase app not initialized');
     }
-    return getAuth(this.app).verifyIdToken(idToken);
+    return getAuth(this.app).verifyIdToken(idToken, true);
   }
 }

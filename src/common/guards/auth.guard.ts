@@ -1,27 +1,54 @@
-import { Injectable, ExecutionContext, UnauthorizedException } from '@nestjs/common';
-import { AuthGuard as NestAuthGuard } from '@nestjs/passport';
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { Request } from 'express';
+import { FirebaseService } from '../../firebase/firebase.service';
 
 @Injectable()
-export class AuthGuard extends NestAuthGuard('jwt') {
-  canActivate(context: ExecutionContext) {
-    return super.canActivate(context);
-  }
+export class AuthGuard implements CanActivate {
+  constructor(private readonly firebaseService: FirebaseService) {}
 
-  handleRequest<TUser>(err: Error | null, user: TUser, info: Error | null): TUser {
-    if (err || !user) {
-      if (info?.name === 'TokenExpiredError') {
-        throw new UnauthorizedException({
-          error: 'Unauthorized',
-          message: 'Token expirado',
-          statusCode: 401,
-        });
-      }
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const request = context.switchToHttp().getRequest<Request>();
+    const authHeader = request.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      throw new UnauthorizedException({
+        error: 'Unauthorized',
+        message: 'Token de acceso requerido',
+        statusCode: 401,
+      });
+    }
+
+    const token = authHeader.substring(7);
+
+    if (!token) {
+      throw new UnauthorizedException({
+        error: 'Unauthorized',
+        message: 'Token de acceso requerido',
+        statusCode: 401,
+      });
+    }
+
+    try {
+      const decoded = await this.firebaseService.verifyIdToken(token);
+
+      (request as any).user = {
+        userId: decoded.uid,
+        email: decoded.email,
+        role: decoded.role,
+      };
+
+      return true;
+    } catch {
       throw new UnauthorizedException({
         error: 'Unauthorized',
         message: 'Token inválido',
         statusCode: 401,
       });
     }
-    return user;
   }
 }

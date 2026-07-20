@@ -15,7 +15,10 @@ export class UsersService {
 
   constructor(private readonly usersRepository: UsersRepository) {}
 
-  async findAll(page: number = 1, limit: number = 10): Promise<PaginationResult<User>> {
+  async findAll(
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<PaginationResult<User>> {
     const sanitizedPage = Math.max(1, page);
     const sanitizedLimit = Math.min(Math.max(1, limit), 100);
 
@@ -37,7 +40,9 @@ export class UsersService {
   }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    const emailExists = await this.usersRepository.existsByEmail(createUserDto.email);
+    const emailExists = await this.usersRepository.existsByEmail(
+      createUserDto.email,
+    );
 
     if (emailExists) {
       throw new BadRequestException({

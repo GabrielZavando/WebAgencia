@@ -42,7 +42,10 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         };
       }
     } else if (exception instanceof Error) {
-      this.logger.error(`Unhandled exception: ${exception.message}`, exception.stack);
+      this.logger.error(
+        `Unhandled exception: ${exception.message}`,
+        exception.stack,
+      );
       errorResponse = {
         error: 'Internal Server Error',
         message: 'Ocurrió un error inesperado',

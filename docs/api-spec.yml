@@ -10,15 +10,13 @@ info:
 servers:
   - url: http://localhost:3000/api/v1
     description: Desarrollo local
-  - url: https://api.liderdigital.cl/v1
-    description: Producción
 
 components:
   securitySchemes:
     bearerAuth:
       type: http
       scheme: bearer
-      bearerFormat: JWT
+      bearerFormat: Firebase ID Token
 
   schemas:
     Error:
@@ -56,6 +54,24 @@ components:
         timestamp:
           type: string
           format: date-time
+
+    TiptapJSON:
+      type: object
+      required:
+        - type
+        - content
+      properties:
+        type:
+          type: string
+          enum: [doc]
+          description: Always "doc" for the root Tiptap document
+        content:
+          type: array
+          description: Array of top-level content nodes
+          items:
+            type: object
+            additionalProperties: true
+            description: A Tiptap node (paragraph, heading, etc.)
 
 security:
   - bearerAuth: []
@@ -106,8 +122,6 @@ paths:
                     properties:
                       user:
                         $ref: "#/components/schemas/User"
-                      token:
-                        type: string
                   meta:
                     type: object
                     properties:
@@ -592,7 +606,7 @@ paths:
                 slug:
                   type: string
                 content:
-                  type: string
+                  $ref: '#/components/schemas/TiptapJSON'
                 cover_url:
                   type: string
                 category_id:
@@ -868,7 +882,7 @@ components:
         slug:
           type: string
         content:
-          type: string
+          $ref: '#/components/schemas/TiptapJSON'
         cover_url:
           type: string
           format: uri

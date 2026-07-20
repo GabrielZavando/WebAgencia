@@ -1,13 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
 import { FirebaseService } from '../firebase/firebase.service';
-import { JwtService } from '@nestjs/jwt';
 import { UnauthorizedException } from '@nestjs/common';
 
 describe('AuthService', () => {
   let service: AuthService;
   let firebaseService: FirebaseService;
-  let jwtService: JwtService;
 
   const mockUser = {
     id: 'user-123',
@@ -42,19 +40,11 @@ describe('AuthService', () => {
             getFirestore: jest.fn().mockReturnValue(mockFirestore),
           },
         },
-        {
-          provide: JwtService,
-          useValue: {
-            sign: jest.fn().mockReturnValue('mock-jwt-token'),
-            verify: jest.fn(),
-          },
-        },
       ],
     }).compile();
 
     service = module.get<AuthService>(AuthService);
     firebaseService = module.get<FirebaseService>(FirebaseService);
-    jwtService = module.get<JwtService>(JwtService);
   });
 
   it('should be defined', () => {
@@ -72,15 +62,20 @@ describe('AuthService', () => {
       const result = await service.login('valid-id-token');
 
       expect(result).toHaveProperty('user');
-      expect(result).toHaveProperty('token');
-      expect(result.token).toBe('mock-jwt-token');
-      expect(firebaseService.verifyIdToken).toHaveBeenCalledWith('valid-id-token');
+      expect(result.user.email).toBe('test@example.com');
+      expect(firebaseService.verifyIdToken).toHaveBeenCalledWith(
+        'valid-id-token',
+      );
     });
 
     it('should throw UnauthorizedException when Firebase token is invalid', async () => {
-      jest.spyOn(firebaseService, 'verifyIdToken').mockRejectedValue(new Error('Invalid token'));
+      jest
+        .spyOn(firebaseService, 'verifyIdToken')
+        .mockRejectedValue(new Error('Invalid token'));
 
-      await expect(service.login('invalid-token')).rejects.toThrow(UnauthorizedException);
+      await expect(service.login('invalid-token')).rejects.toThrow(
+        UnauthorizedException,
+      );
     });
 
     it('should create new user when email does not exist', async () => {
@@ -139,7 +134,9 @@ describe('AuthService', () => {
 
       const mockQuerySnapshot = {
         empty: false,
-        docs: [{ id: 'existing-user-id', data: () => existingUser, ref: mockDocRef }],
+        docs: [
+          { id: 'existing-user-id', data: () => existingUser, ref: mockDocRef },
+        ],
       };
 
       const mockCollectionRef = {
@@ -160,48 +157,17 @@ describe('AuthService', () => {
       expect(mockDocRef.update).toHaveBeenCalled();
     });
 
-    it('should generate JWT with correct payload', async () => {
+    it('should return user without token', async () => {
       jest.spyOn(firebaseService, 'verifyIdToken').mockResolvedValue({
         uid: 'firebase-uid-123',
         email: 'test@example.com',
         name: 'Test User',
       } as never);
 
-      await service.login('valid-token');
+      const result = await service.login('valid-token');
 
-      expect(jwtService.sign).toHaveBeenCalledWith({
-        sub: expect.any(String),
-        email: 'test@example.com',
-        role: 'editor',
-      });
-    });
-  });
-
-  describe('getUserFromToken', () => {
-    it('should return user from valid token', async () => {
-      jest.spyOn(jwtService, 'verify').mockReturnValue({
-        sub: 'user-123',
-        email: 'test@example.com',
-        role: 'editor',
-      } as never);
-
-      const result = await service.getUserFromToken('valid-token');
-
-      expect(result).toEqual({
-        id: 'user-123',
-        email: 'test@example.com',
-        role: 'editor',
-      });
-    });
-
-    it('should return null for invalid token', async () => {
-      jest.spyOn(jwtService, 'verify').mockImplementation(() => {
-        throw new Error('Invalid token');
-      });
-
-      const result = await service.getUserFromToken('invalid-token');
-
-      expect(result).toBeNull();
+      expect(result).toHaveProperty('user');
+      expect(result).not.toHaveProperty('token');
     });
   });
 });

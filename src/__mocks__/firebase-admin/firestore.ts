@@ -1,7 +1,11 @@
 export const getFirestore = jest.fn().mockReturnValue({
   collection: jest.fn().mockReturnValue({
     doc: jest.fn().mockReturnValue({
-      get: jest.fn().mockResolvedValue({ exists: true, id: 'mock-id', data: jest.fn().mockReturnValue({}) }),
+      get: jest.fn().mockResolvedValue({
+        exists: true,
+        id: 'mock-id',
+        data: jest.fn().mockReturnValue({}),
+      }),
       update: jest.fn().mockResolvedValue(undefined),
       delete: jest.fn().mockResolvedValue(undefined),
     }),

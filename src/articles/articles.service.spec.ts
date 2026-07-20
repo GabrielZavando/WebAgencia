@@ -3,16 +3,32 @@ import { ArticlesService } from './articles.service';
 import { ArticlesRepository } from './articles.repository';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
 import { CreateArticleDto, ArticleStatus } from './dto/create-article.dto';
+import { TiptapJSON } from '../shared/types/tiptap';
 
 describe('ArticlesService', () => {
   let service: ArticlesService;
   let repository: ArticlesRepository;
 
+  const mockTiptapContent: TiptapJSON = {
+    type: 'doc',
+    content: [
+      {
+        type: 'paragraph',
+        content: [
+          {
+            type: 'text',
+            text: 'Test content',
+          },
+        ],
+      },
+    ],
+  };
+
   const mockArticle = {
     id: 'article-123',
     title: 'Test Article',
     slug: 'test-article',
-    content: 'Test content',
+    content: mockTiptapContent,
     cover_url: 'https://example.com/cover.jpg',
     category_id: 'cat-123',
     tags: ['test', 'article'],
@@ -60,10 +76,18 @@ describe('ArticlesService', () => {
 
       jest.spyOn(repository, 'findAll').mockResolvedValue(paginatedResult);
 
-      const result = await service.findAll({ status: ArticleStatus.PUBLISHED }, 1, 10);
+      const result = await service.findAll(
+        { status: ArticleStatus.PUBLISHED },
+        1,
+        10,
+      );
 
       expect(result).toEqual(paginatedResult);
-      expect(repository.findAll).toHaveBeenCalledWith({ status: 'published' }, 1, 10);
+      expect(repository.findAll).toHaveBeenCalledWith(
+        { status: 'published' },
+        1,
+        10,
+      );
     });
 
     it('should cap limit at 100', async () => {
@@ -78,7 +102,11 @@ describe('ArticlesService', () => {
 
       await service.findAll({ status: ArticleStatus.PUBLISHED }, 1, 200);
 
-      expect(repository.findAll).toHaveBeenCalledWith({ status: 'published' }, 1, 100);
+      expect(repository.findAll).toHaveBeenCalledWith(
+        { status: 'published' },
+        1,
+        100,
+      );
     });
   });
 
@@ -104,7 +132,9 @@ describe('ArticlesService', () => {
       jest.spyOn(repository, 'findById').mockResolvedValue(null);
       jest.spyOn(repository, 'findBySlug').mockResolvedValue(null);
 
-      await expect(service.findByIdOrSlug('non-existent')).rejects.toThrow(NotFoundException);
+      await expect(service.findByIdOrSlug('non-existent')).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -112,7 +142,20 @@ describe('ArticlesService', () => {
     const createDto: CreateArticleDto = {
       title: 'New Article',
       slug: 'new-article',
-      content: 'New content',
+      content: {
+        type: 'doc',
+        content: [
+          {
+            type: 'paragraph',
+            content: [
+              {
+                type: 'text',
+                text: 'New content',
+              },
+            ],
+          },
+        ],
+      },
       cover_url: 'https://example.com/new-cover.jpg',
       category_id: 'cat-123',
       tags: ['new'],
@@ -135,7 +178,9 @@ describe('ArticlesService', () => {
     it('should throw BadRequestException when slug already exists', async () => {
       jest.spyOn(repository, 'existsBySlug').mockResolvedValue(true);
 
-      await expect(service.create(createDto, 'author-123')).rejects.toThrow(BadRequestException);
+      await expect(service.create(createDto, 'author-123')).rejects.toThrow(
+        BadRequestException,
+      );
     });
   });
 
@@ -148,7 +193,9 @@ describe('ArticlesService', () => {
         title: 'Updated Title',
       });
 
-      const result = await service.update('article-123', { title: 'Updated Title' });
+      const result = await service.update('article-123', {
+        title: 'Updated Title',
+      });
 
       expect(result.title).toBe('Updated Title');
     });
@@ -156,9 +203,9 @@ describe('ArticlesService', () => {
     it('should throw NotFoundException when article not found', async () => {
       jest.spyOn(repository, 'findById').mockResolvedValue(null);
 
-      await expect(service.update('non-existent', { title: 'Test' })).rejects.toThrow(
-        NotFoundException,
-      );
+      await expect(
+        service.update('non-existent', { title: 'Test' }),
+      ).rejects.toThrow(NotFoundException);
     });
 
     it('should throw BadRequestException when new slug already exists', async () => {
@@ -174,7 +221,7 @@ describe('ArticlesService', () => {
   describe('delete', () => {
     it('should delete article successfully', async () => {
       jest.spyOn(repository, 'findById').mockResolvedValue(mockArticle);
-      jest.spyOn(repository, 'delete').mockResolvedValue(undefined as never);
+      jest.spyOn(repository, 'delete').mockResolvedValue(undefined);
 
       await service.delete('article-123');
 
@@ -184,7 +231,9 @@ describe('ArticlesService', () => {
     it('should throw NotFoundException when article not found', async () => {
       jest.spyOn(repository, 'findById').mockResolvedValue(null);
 
-      await expect(service.delete('non-existent')).rejects.toThrow(NotFoundException);
+      await expect(service.delete('non-existent')).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 });

@@ -3,7 +3,11 @@ import {
   NotFoundException,
   BadRequestException,
 } from '@nestjs/common';
-import { ArticlesRepository, PaginationResult, ArticleFilters } from './articles.repository';
+import {
+  ArticlesRepository,
+  PaginationResult,
+  ArticleFilters,
+} from './articles.repository';
 import { Article } from './entities/article.entity';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
@@ -20,7 +24,11 @@ export class ArticlesService {
     const sanitizedPage = Math.max(1, page);
     const sanitizedLimit = Math.min(Math.max(1, limit), 100);
 
-    return this.articlesRepository.findAll(filters, sanitizedPage, sanitizedLimit);
+    return this.articlesRepository.findAll(
+      filters,
+      sanitizedPage,
+      sanitizedLimit,
+    );
   }
 
   async findByIdOrSlug(idOrSlug: string): Promise<Article> {
@@ -41,21 +49,29 @@ export class ArticlesService {
     return article;
   }
 
-  async create(createArticleDto: CreateArticleDto, authorId: string): Promise<Article> {
-    const slugExists = await this.articlesRepository.existsBySlug(createArticleDto.slug);
+  async create(
+    createArticleDto: CreateArticleDto,
+    authorId: string,
+  ): Promise<Article> {
+    const slugExists = await this.articlesRepository.existsBySlug(
+      createArticleDto.slug,
+    );
 
     if (slugExists) {
       throw new BadRequestException({
-        error: 'Bad Request',
-        message: 'El slug ya existe',
-        statusCode: 400,
+        error: 'Conflict',
+        message: 'El slug ya está en uso',
+        statusCode: 409,
       });
     }
 
     return this.articlesRepository.create(createArticleDto, authorId);
   }
 
-  async update(id: string, updateArticleDto: UpdateArticleDto): Promise<Article> {
+  async update(
+    id: string,
+    updateArticleDto: UpdateArticleDto,
+  ): Promise<Article> {
     const article = await this.articlesRepository.findById(id);
 
     if (!article) {
@@ -67,13 +83,15 @@ export class ArticlesService {
     }
 
     if (updateArticleDto.slug && updateArticleDto.slug !== article.slug) {
-      const slugExists = await this.articlesRepository.existsBySlug(updateArticleDto.slug);
+      const slugExists = await this.articlesRepository.existsBySlug(
+        updateArticleDto.slug,
+      );
 
       if (slugExists) {
         throw new BadRequestException({
-          error: 'Bad Request',
-          message: 'El slug ya existe',
-          statusCode: 400,
+          error: 'Conflict',
+          message: 'El slug ya está en uso',
+          statusCode: 409,
         });
       }
     }

@@ -1,21 +1,16 @@
 import { Injectable, UnauthorizedException, Logger } from '@nestjs/common';
 import { FirebaseService } from '../firebase/firebase.service';
-import { JwtService } from '@nestjs/jwt';
 import { User } from '../users/entities/user.entity';
 
 export interface LoginResponseData {
   user: User;
-  token: string;
 }
 
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
 
-  constructor(
-    private readonly firebaseService: FirebaseService,
-    private readonly jwtService: JwtService,
-  ) {}
+  constructor(private readonly firebaseService: FirebaseService) {}
 
   async login(idToken: string): Promise<LoginResponseData> {
     let decodedToken: { uid: string; email?: string; name?: string };
@@ -32,9 +27,8 @@ export class AuthService {
     }
 
     const user = await this.findOrCreateUser(decodedToken);
-    const token = this.generateJwt(user);
 
-    return { user, token };
+    return { user };
   }
 
   private async findOrCreateUser(firebaseUser: {
@@ -79,35 +73,4 @@ export class AuthService {
       ...newUserData,
     } as User;
   }
-
-  private generateJwt(user: User): string {
-    const payload = {
-      sub: user.id,
-      email: user.email,
-      role: user.role,
-    };
-
-    return this.jwtService.sign(payload);
-  }
-
-  async getUserFromToken(token: string): Promise<User | null> {
-    try {
-      const payload = this.jwtService.verify<JwtPayload>(token);
-      return {
-        id: payload.sub,
-        email: payload.email,
-        role: payload.role,
-      } as User;
-    } catch (error) {
-      return null;
-    }
-  }
-}
-
-interface JwtPayload {
-  sub: string;
-  email: string;
-  role: string;
-  iat?: number;
-  exp?: number;
 }

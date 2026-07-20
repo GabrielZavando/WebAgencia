@@ -1,8 +1,10 @@
+import { TiptapJSON } from '../../shared/types/tiptap';
+
 export interface Article {
   id: string;
   title: string;
   slug: string;
-  content: string;
+  content: TiptapJSON;
   cover_url: string;
   category_id: string;
   tags: string[] | null;

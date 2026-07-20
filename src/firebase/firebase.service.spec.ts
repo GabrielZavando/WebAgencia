@@ -1,6 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { FirebaseService } from './firebase.service';
-import { initializeApp, cert, deleteApp, getApp, getApps } from 'firebase-admin/app';
+import {
+  initializeApp,
+  cert,
+  deleteApp,
+  getApp,
+  getApps,
+} from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getAuth } from 'firebase-admin/auth';
 
@@ -27,8 +33,10 @@ describe('FirebaseService', () => {
     jest.clearAllMocks();
 
     process.env.FIREBASE_PROJECT_ID = 'test-project';
-    process.env.FIREBASE_CLIENT_EMAIL = 'test@test-project.iam.gserviceaccount.com';
-    process.env.FIREBASE_PRIVATE_KEY = '-----BEGIN RSA PRIVATE KEY-----\ntest\n-----END RSA PRIVATE KEY-----';
+    process.env.FIREBASE_CLIENT_EMAIL =
+      'test@test-project.iam.gserviceaccount.com';
+    process.env.FIREBASE_PRIVATE_KEY =
+      '-----BEGIN RSA PRIVATE KEY-----\ntest\n-----END RSA PRIVATE KEY-----';
 
     (initializeApp as jest.Mock).mockReturnValue({
       delete: jest.fn().mockResolvedValue(undefined),
@@ -73,17 +81,23 @@ describe('FirebaseService', () => {
 
   it('should throw error when FIREBASE_PROJECT_ID is missing', () => {
     delete process.env.FIREBASE_PROJECT_ID;
-    expect(() => service.onModuleInit()).toThrow('Firebase configuration is incomplete');
+    expect(() => service.onModuleInit()).toThrow(
+      'Firebase configuration is incomplete',
+    );
   });
 
   it('should throw error when FIREBASE_CLIENT_EMAIL is missing', () => {
     delete process.env.FIREBASE_CLIENT_EMAIL;
-    expect(() => service.onModuleInit()).toThrow('Firebase configuration is incomplete');
+    expect(() => service.onModuleInit()).toThrow(
+      'Firebase configuration is incomplete',
+    );
   });
 
   it('should throw error when FIREBASE_PRIVATE_KEY is missing', () => {
     delete process.env.FIREBASE_PRIVATE_KEY;
-    expect(() => service.onModuleInit()).toThrow('Firebase configuration is incomplete');
+    expect(() => service.onModuleInit()).toThrow(
+      'Firebase configuration is incomplete',
+    );
   });
 
   it('should delete Firebase app on module destroy', async () => {
@@ -107,10 +121,24 @@ describe('FirebaseService', () => {
   });
 
   it('should throw error when getting Firestore before initialization', () => {
-    expect(() => service.getFirestore()).toThrow('Firebase app not initialized');
+    expect(() => service.getFirestore()).toThrow(
+      'Firebase app not initialized',
+    );
   });
 
   it('should throw error when getting Auth before initialization', () => {
     expect(() => service.getAuth()).toThrow('Firebase app not initialized');
+  });
+
+  it('should verify ID token with checkRevoked=true', async () => {
+    service.onModuleInit();
+    const mockAuth = {
+      verifyIdToken: jest.fn().mockResolvedValue({ uid: 'test-uid' }),
+    };
+    (getAuth as jest.Mock).mockReturnValue(mockAuth);
+
+    await service.verifyIdToken('test-token');
+
+    expect(mockAuth.verifyIdToken).toHaveBeenCalledWith('test-token', true);
   });
 });

@@ -18,7 +18,10 @@ export class UsersRepository {
 
   constructor(private readonly firebaseService: FirebaseService) {}
 
-  async findAll(page: number = 1, limit: number = 10): Promise<PaginationResult<User>> {
+  async findAll(
+    page: number = 1,
+    limit: number = 10,
+  ): Promise<PaginationResult<User>> {
     const firestore = this.firebaseService.getFirestore();
     const usersRef = firestore.collection(this.collectionName);
 
@@ -46,7 +49,10 @@ export class UsersRepository {
 
   async findById(id: string): Promise<User | null> {
     const firestore = this.firebaseService.getFirestore();
-    const userDoc = await firestore.collection(this.collectionName).doc(id).get();
+    const userDoc = await firestore
+      .collection(this.collectionName)
+      .doc(id)
+      .get();
 
     if (!userDoc.exists) {
       return null;
@@ -78,7 +84,7 @@ export class UsersRepository {
     return {
       id: newUserDoc.id,
       ...userData,
-    } as User;
+    };
   }
 
   async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {

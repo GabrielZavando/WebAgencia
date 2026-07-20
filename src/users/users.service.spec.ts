@@ -105,7 +105,9 @@ describe('UsersService', () => {
     it('should throw NotFoundException when user not found', async () => {
       jest.spyOn(repository, 'findById').mockResolvedValue(null);
 
-      await expect(service.findById('non-existent')).rejects.toThrow(NotFoundException);
+      await expect(service.findById('non-existent')).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -127,13 +129,17 @@ describe('UsersService', () => {
       const result = await service.create(createUserDto);
 
       expect(result.email).toBe(createUserDto.email);
-      expect(repository.existsByEmail).toHaveBeenCalledWith(createUserDto.email);
+      expect(repository.existsByEmail).toHaveBeenCalledWith(
+        createUserDto.email,
+      );
     });
 
     it('should throw BadRequestException when email already exists', async () => {
       jest.spyOn(repository, 'existsByEmail').mockResolvedValue(true);
 
-      await expect(service.create(createUserDto)).rejects.toThrow(BadRequestException);
+      await expect(service.create(createUserDto)).rejects.toThrow(
+        BadRequestException,
+      );
     });
   });
 
@@ -153,14 +159,16 @@ describe('UsersService', () => {
     it('should throw NotFoundException when user not found', async () => {
       jest.spyOn(repository, 'findById').mockResolvedValue(null);
 
-      await expect(service.update('non-existent', {})).rejects.toThrow(NotFoundException);
+      await expect(service.update('non-existent', {})).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
   describe('delete', () => {
     it('should delete user successfully', async () => {
       jest.spyOn(repository, 'findById').mockResolvedValue(mockUser);
-      jest.spyOn(repository, 'delete').mockResolvedValue(undefined as never);
+      jest.spyOn(repository, 'delete').mockResolvedValue(undefined);
 
       await service.delete('user-123');
 
@@ -170,7 +178,9 @@ describe('UsersService', () => {
     it('should throw NotFoundException when user not found', async () => {
       jest.spyOn(repository, 'findById').mockResolvedValue(null);
 
-      await expect(service.delete('non-existent')).rejects.toThrow(NotFoundException);
+      await expect(service.delete('non-existent')).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 });

@@ -31,7 +31,9 @@ export class CategoriesService {
   }
 
   async create(createCategoryDto: CreateCategoryDto): Promise<Category> {
-    const slugExists = await this.categoriesRepository.existsBySlug(createCategoryDto.slug);
+    const slugExists = await this.categoriesRepository.existsBySlug(
+      createCategoryDto.slug,
+    );
 
     if (slugExists) {
       throw new BadRequestException({
@@ -44,7 +46,10 @@ export class CategoriesService {
     return this.categoriesRepository.create(createCategoryDto);
   }
 
-  async update(id: string, updateCategoryDto: UpdateCategoryDto): Promise<Category> {
+  async update(
+    id: string,
+    updateCategoryDto: UpdateCategoryDto,
+  ): Promise<Category> {
     const category = await this.categoriesRepository.findById(id);
 
     if (!category) {
@@ -56,7 +61,9 @@ export class CategoriesService {
     }
 
     if (updateCategoryDto.slug && updateCategoryDto.slug !== category.slug) {
-      const slugExists = await this.categoriesRepository.existsBySlug(updateCategoryDto.slug);
+      const slugExists = await this.categoriesRepository.existsBySlug(
+        updateCategoryDto.slug,
+      );
 
       if (slugExists) {
         throw new BadRequestException({

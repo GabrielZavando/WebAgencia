@@ -76,7 +76,9 @@ describe('CategoriesService', () => {
     it('should throw NotFoundException when not found', async () => {
       jest.spyOn(repository, 'findById').mockResolvedValue(null);
 
-      await expect(service.findById('non-existent')).rejects.toThrow(NotFoundException);
+      await expect(service.findById('non-existent')).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -103,7 +105,9 @@ describe('CategoriesService', () => {
     it('should throw BadRequestException when slug already exists', async () => {
       jest.spyOn(repository, 'existsBySlug').mockResolvedValue(true);
 
-      await expect(service.create(createDto)).rejects.toThrow(BadRequestException);
+      await expect(service.create(createDto)).rejects.toThrow(
+        BadRequestException,
+      );
     });
   });
 
@@ -124,9 +128,9 @@ describe('CategoriesService', () => {
     it('should throw NotFoundException when category not found', async () => {
       jest.spyOn(repository, 'findById').mockResolvedValue(null);
 
-      await expect(service.update('non-existent', { name: 'Test' })).rejects.toThrow(
-        NotFoundException,
-      );
+      await expect(
+        service.update('non-existent', { name: 'Test' }),
+      ).rejects.toThrow(NotFoundException);
     });
 
     it('should throw BadRequestException when new slug already exists', async () => {
@@ -153,7 +157,7 @@ describe('CategoriesService', () => {
     it('should delete category successfully', async () => {
       jest.spyOn(repository, 'findById').mockResolvedValue(mockCategory);
       jest.spyOn(repository, 'countByCategoryId').mockResolvedValue(0);
-      jest.spyOn(repository, 'delete').mockResolvedValue(undefined as never);
+      jest.spyOn(repository, 'delete').mockResolvedValue(undefined);
 
       await service.delete('cat-123');
 
@@ -163,14 +167,18 @@ describe('CategoriesService', () => {
     it('should throw NotFoundException when category not found', async () => {
       jest.spyOn(repository, 'findById').mockResolvedValue(null);
 
-      await expect(service.delete('non-existent')).rejects.toThrow(NotFoundException);
+      await expect(service.delete('non-existent')).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should throw BadRequestException when category has articles', async () => {
       jest.spyOn(repository, 'findById').mockResolvedValue(mockCategory);
       jest.spyOn(repository, 'countByCategoryId').mockResolvedValue(5);
 
-      await expect(service.delete('cat-123')).rejects.toThrow(BadRequestException);
+      await expect(service.delete('cat-123')).rejects.toThrow(
+        BadRequestException,
+      );
     });
   });
 });

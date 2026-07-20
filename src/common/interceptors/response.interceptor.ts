@@ -28,13 +28,17 @@ export class ResponseInterceptor<T> implements NestInterceptor<T, Response<T>> {
   ): Observable<Response<T>> {
     return next.handle().pipe(
       map((responseData) => {
-        if (responseData && typeof responseData === 'object' && 'data' in responseData) {
+        if (
+          responseData &&
+          typeof responseData === 'object' &&
+          'data' in responseData
+        ) {
           return responseData as Response<T>;
         }
 
         return {
           data: responseData,
-        } as Response<T>;
+        };
       }),
     );
   }

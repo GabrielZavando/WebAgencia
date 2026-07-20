@@ -93,7 +93,10 @@ export class ArticlesRepository {
     } as Article;
   }
 
-  async create(createArticleDto: CreateArticleDto, authorId: string): Promise<Article> {
+  async create(
+    createArticleDto: CreateArticleDto,
+    authorId: string,
+  ): Promise<Article> {
     const firestore = this.firebaseService.getFirestore();
     const articlesRef = firestore.collection(this.collectionName);
 
@@ -116,10 +119,13 @@ export class ArticlesRepository {
     return {
       id: newDoc.id,
       ...articleData,
-    } as Article;
+    };
   }
 
-  async update(id: string, updateArticleDto: UpdateArticleDto): Promise<Article> {
+  async update(
+    id: string,
+    updateArticleDto: UpdateArticleDto,
+  ): Promise<Article> {
     const firestore = this.firebaseService.getFirestore();
     const articleRef = firestore.collection(this.collectionName).doc(id);
 

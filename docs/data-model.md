@@ -58,7 +58,7 @@
 | id | string | Identificador único (Firestore auto-ID) |
 | title | string | Título (5-150 caracteres) |
 | slug | string (único, indexado) | Slug URL-amigable |
-| content | string | Cuerpo del artículo |
+| content | Object (Tiptap JSON) | Cuerpo del artículo en formato Tiptap JSON (`{ type: 'doc', content: TiptapNode[] }`) |
 | cover_url | string | URL de imagen de portada (Firebase Storage) |
 | category_id | string | Referencia a category |
 | tags | string[] (nullable) | Tags en minúsculas, sin espacios |
@@ -73,6 +73,8 @@
 - `slug` único
 - `status` + `created_at` compuesto
 - `category_id`
+
+**Nota:** El campo `content` almacena exactamente el objeto JSON que devuelve el editor Tiptap (versión 3.27.1). No se almacena como string plano. El formato es `{ type: 'doc', content: TiptapNode[] }` donde cada nodo puede tener `type`, `attrs`, `content` (anidado) y `marks`.
 
 ---
 

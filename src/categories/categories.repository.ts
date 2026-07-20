@@ -74,10 +74,13 @@ export class CategoriesRepository {
     return {
       id: newDoc.id,
       ...categoryData,
-    } as Category;
+    };
   }
 
-  async update(id: string, updateCategoryDto: UpdateCategoryDto): Promise<Category> {
+  async update(
+    id: string,
+    updateCategoryDto: UpdateCategoryDto,
+  ): Promise<Category> {
     const firestore = this.firebaseService.getFirestore();
     const categoryRef = firestore.collection(this.collectionName).doc(id);
 
