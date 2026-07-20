@@ -1,0 +1,39 @@
+# OpenSpec artifacts (generados automáticamente)
+.openspec/
+
+# Node
+node_modules/
+.npm
+
+# Build outputs (NestJS)
+dist/
+build/
+
+# Test coverage
+coverage/
+
+# Entornos
+.env
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+
+# Prisma
+generated/prisma/
+
+# Temporary files
+*.tmp
+*.temp
