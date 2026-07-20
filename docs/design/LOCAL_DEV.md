@@ -35,11 +35,11 @@ PUBLIC_FIREBASE_APP_ID=1:31988183470:web:61405275f23da485b9583f
 PUBLIC_FIREBASE_MEASUREMENT_ID=G-ETYR7VH4Y7
 ```
 
-2. **Iniciar la API NestJS** (en el directorio `../API`):
+2. **Iniciar la API NestJS** (en el directorio `apps/api`):
 
 ```bash
-cd ../API
-npm run start:dev
+cd apps/api
+pnpm start:dev
 ```
 
 3. **Iniciar el frontend** (en otra terminal):

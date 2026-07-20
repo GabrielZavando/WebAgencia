@@ -12,7 +12,7 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(dirname "$SCRIPT_DIR")"
-API_DIR="$(dirname "$ROOT_DIR")/API"
+API_DIR="$(dirname "$ROOT_DIR")/api"
 
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
@@ -104,7 +104,7 @@ if [ -d "$API_DIR" ]; then
   fi
 else
   echo -e "${RED}[ERROR]${NC} API no encontrada en $API_DIR"
-  echo "Esperado: ../API desde WebAgenciaAstro"
+    echo "Esperado: apps/api desde la raíz del monorepo"
 fi
 
 # Step 4: Instrucciones finales
@@ -114,11 +114,11 @@ echo ""
 echo "Para desarrollar con la API local:"
 echo ""
 echo "  ${GREEN}1.${NC} Inicia la API NestJS:"
-echo "     cd ../API"
-echo "     npm run start:dev"
+echo "     cd apps/api"
+echo "     pnpm start:dev"
 echo ""
 echo "  ${GREEN}2.${NC} Inicia el frontend (en otra terminal):"
-echo "     cd WebAgenciaAstro"
+echo "     cd apps/web"
 echo "     pnpm dev"
 echo ""
 echo "  ${GREEN}3.${NC} Accede a:"
