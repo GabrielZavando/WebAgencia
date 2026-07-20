@@ -1,0 +1,98 @@
+---
+import servicesData from "../../data/services.json";
+import ServiceCard from "./ServiceCard.astro";
+import Modal from "../shared/Modal.astro";
+
+const { section, services } = servicesData;
+---
+
+<section id="servicios" class="services">
+  <div class="services-content">
+    <div class="services-header">
+      <h2 class="title-section fade-in">{section.title}</h2>
+      <h3 class="subtitle-section fade-in fade-in-delay-1">{section.description}</h3>
+    </div>
+
+    <div class="services-content__grid">
+        {
+          services.map((service, index) => (
+            <ServiceCard
+            id={service.id}
+            need={service.need}
+            icon={service.icon}
+            title={service.title}
+            description={service.description}
+            ctaText={service.ctaText}
+            anchor={service.anchor}
+            class={`fade-in fade-in-delay-${index + 2}`}
+          />
+        ))
+      }
+    </div>
+
+    <div class="services-microcopy fade-in fade-in-delay-4">
+      <p><span class="material-symbols-outlined">check</span> Sin compromiso &nbsp;•&nbsp; <span class="material-symbols-outlined">check</span> Respuesta en &lt;24h &nbsp;•&nbsp; <span class="material-symbols-outlined">check</span> Hoja de ruta incluida</p>
+    </div>
+
+    {/* Modales */}
+    {
+      services.map((service) => (
+        <Modal id={`modal-${service.id}`} title={service.title}>
+          <div class="service-details">
+            <p class="service-details__description">
+              {service.modalContent.extendedDescription}
+            </p>
+
+            <div class="service-details__benefits">
+              <h4>Beneficios</h4>
+              <ul>
+                {service.modalContent.benefits.map((benefit) => (
+                  <li>{benefit}</li>
+                ))}
+              </ul>
+            </div>
+
+            <div class="service-details__implementation">
+              <h4>Implementación</h4>
+              <ol>
+                {service.modalContent.implementation.map((step) => (
+                  <li>{step}</li>
+                ))}
+              </ol>
+            </div>
+
+            {service.modalContent.videoId !== "próximamente" && (
+              <div class="service-details__video">
+                <iframe
+                  width="100%"
+                  height="315"
+                  src={`https://www.youtube.com/embed/${service.modalContent.videoId}`}
+                  title={`Video sobre ${service.title}`}
+                  frameborder="0"
+                  allow="accelerometer, autoplay, clipboard-write, encrypted-media, gyroscope, picture-in-picture"
+                  allowfullscreen
+                />
+              </div>
+            )}
+
+            {service.modalContent.hook && (
+              <p class="service-details__hook">
+                {service.modalContent.hook}
+              </p>
+            )}
+
+            <button
+              class="service-details__cta btn-cta"
+              data-modal={`modal-${service.id}`}
+              data-service={service.title}
+            >
+              {service.modalContent.ctaText}
+            </button>
+          </div>
+        </Modal>
+      ))
+    }
+  </div>
+</section>
+
+

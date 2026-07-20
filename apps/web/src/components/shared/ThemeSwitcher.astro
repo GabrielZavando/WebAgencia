@@ -1,0 +1,81 @@
+<button id="theme-toggle" class="theme-switcher" aria-label="Cambiar tema">
+  <span class="material-symbols-outlined theme-sun">light_mode</span>
+  <span class="material-symbols-outlined theme-moon">dark_mode</span>
+</button>
+
+<style>
+  .theme-switcher {
+    background: none;
+    border: none;
+    padding: var(--space-xs);
+    cursor: pointer;
+    display: inline-grid;
+    align-items: center;
+    justify-content: center;
+    color: var(--nav-link-color);
+    transition: color var(--transition-normal) ease;
+    outline: none;
+  }
+
+  .theme-switcher:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  .theme-switcher :global(.material-symbols-outlined) {
+    font-size: 1.4rem;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  .theme-sun,
+  .theme-moon {
+    grid-row: 1;
+    grid-column: 1;
+  }
+
+  .theme-sun {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+  }
+
+  .theme-moon {
+    opacity: 0;
+    transform: rotate(90deg) scale(0.5);
+  }
+
+  :global(:root[data-theme="dark"]) .theme-sun {
+    opacity: 0;
+    transform: rotate(-90deg) scale(0.5);
+  }
+
+  :global(:root[data-theme="dark"]) .theme-moon {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+  }
+</style>
+
+<script>
+  import { getInitialTheme, setTheme, toggleTheme } from '../../utils/theme'
+
+  function init() {
+    if (document.documentElement.getAttribute('data-forced-theme')) return
+
+    setTheme(getInitialTheme())
+
+    const btn = document.getElementById('theme-toggle')
+    if (btn) {
+      btn.onclick = () => toggleTheme()
+    }
+
+    window
+      .matchMedia('(prefers-color-scheme: dark)')
+      .addEventListener('change', (e) => {
+        if (!localStorage.getItem('theme')) {
+          setTheme(e.matches ? 'dark' : 'light')
+        }
+      })
+  }
+
+  document.addEventListener('DOMContentLoaded', init)
+  document.addEventListener('astro:page-load', init)
+</script>

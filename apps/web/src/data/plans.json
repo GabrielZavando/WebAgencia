@@ -1,0 +1,115 @@
+{
+  "planes": [
+    {
+      "nombre": "PACK ESENCIAL",
+      "icono": "rocket_launch",
+      "tagline": "Tu casa propia en internet, bajo tu mando",
+      "objetivo": "Sitio web profesional, ultra veloz y escalable, listo en 14 días garantizados.",
+      "caracteristicas": [
+        "Sitio web (1-5 páginas) con arquitectura moderna (Astro/Angular) - 3-5x más rápido que WordPress",
+        "Diseño 100% fiel a tu marca (hasta 7 secciones)",
+        "Botón de WhatsApp + formulario de contacto",
+        "SSL + 5 correos corporativos configurados",
+        "Google Tag Manager integrado (control total de datos)",
+        "Hosting Pro incluido en el plan mensual"
+      ],
+      "soberania": "Tú eres dueño del dominio y el código desde el día 1.",
+      "precio_6_meses_total": "180.000",
+      "precio_6_meses_mes": "30.000",
+      "precio_12_meses_total": "240.000",
+      "precio_12_meses_mes": "20.000",
+      "ahorro": "$60.000 (25%)",
+      "mantenimiento": [
+        "Hosting de alta velocidad + backups mensuales",
+        "Actualizaciones técnicas proactivas",
+        "3 tickets mensuales para ajustes de contenido",
+        "Informe mensual de rendimiento"
+      ],
+      "garantia": "Si no está listo en 14 días, -20% automático.",
+      "cta_calendly": "https://calendly.com/gabrielzavando/30min",
+      "cta_contratar": "/#contacto",
+      "cta_contratar_text": "Contratar ahora"
+    },
+    {
+      "nombre": "PACK BLOG PROFESIONAL",
+      "icono": "history_edu",
+      "tagline": "Tu plataforma de autoridad, optimizada para destacar",
+      "objetivo": "Blog profesional en WordPress que posicione tu marca personal, atraiga clientes y genere confianza, listo en 21 días garantizados.",
+      "caracteristicas": [
+        "WordPress optimizado + Tema personalizado (velocidad premium)",
+        "Diseño profesional alineado a tu marca personal",
+        "Hasta 10 secciones: Inicio, Sobre Mí, Servicios, Blog, etc.",
+        "Sistema de blog optimizado para SEO",
+        "Integración con redes sociales + Newsletter",
+        "Botón de WhatsApp Business + Formulario de contacto",
+        "SSL + 5 correos corporativos configurados",
+        "Google Analytics + Search Console configurados",
+        "Capacitación básica: cómo publicar artículos (1 hora)"
+      ],
+      "soberania": "Tú eres dueño del dominio, WordPress y todo el contenido. Sin trabas ni costos ocultos.",
+      "precio_6_meses_total": "270.000",
+      "precio_6_meses_mes": "45.000",
+      "precio_12_meses_total": "360.000",
+      "precio_12_meses_mes": "30.000",
+      "ahorro": "$90.000 (25%)",
+      "mantenimiento": [
+        "Hosting WordPress optimizado (velocidad premium)",
+        "Actualizaciones de WordPress, plugins y seguridad",
+        "Backups semanales automáticos",
+        "5 tickets mensuales para ajustes o soporte",
+        "Informe mensual de tráfico y rendimiento SEO",
+        "Optimización de velocidad continua"
+      ],
+      "bonus": [
+        "Configuración inicial de SEO básico (meta tags, sitemap)",
+        "Guía PDF: \"Cómo escribir artículos que posicionen\""
+      ],
+      "garantia": "Si no está listo en 21 días, -15% automático.",
+      "cta_calendly": "https://calendly.com/gabrielzavando/30min",
+      "cta_contratar": "/#contacto",
+      "cta_contratar_text": "Contratar ahora",
+      "destacado": true
+    },
+    {
+      "nombre": "PACK WEB CORPORATIVA",
+      "icono": "store",
+      "tagline": "Tu negocio completo online, listo para vender",
+      "objetivo": "Sitio web corporativo o tienda online profesional con todas las funcionalidades, listo en 30 días garantizados.",
+      "caracteristicas": [
+        "BUSINESS: PARA RESTAURANTES/CENTROS MÉDICOS:",
+        "Sitio web completo (hasta 10 páginas)",
+        "Sistema de reservas/agendamiento online",
+        "Menú digital o catálogo interactivo",
+        "SHOPPING: PARA TIENDAS ONLINE (WooCommerce):",
+        "Tienda virtual completa con WooCommerce",
+        "Pasarela de pagos integrada",
+        "Gestión de inventario y stock",
+        "Cálculo automático de envíos"
+      ],
+      "soberania": "Tú eres dueño de todo: dominio, código, base de datos y productos. Sin comisiones por venta.",
+      "precio_6_meses_total": "720.000",
+      "precio_6_meses_mes": "120.000",
+      "precio_12_meses_total": "960.000",
+      "precio_12_meses_mes": "80.000",
+      "ahorro": "$480.000 (33%)",
+      "mantenimiento": [
+        "Hosting empresarial de alto rendimiento",
+        "Backups diarios automáticos",
+        "Soporte técnico prioritario (respuesta <12h)",
+        "10 tickets mensuales para ajustes o soporte",
+        "Informe mensual de ventas/tráfico/reservas",
+        "Monitoreo de uptime 24/7"
+      ],
+      "bonus": [
+        "Configuración completa de Google My Business",
+        "Integración con redes sociales",
+        "Capacitación de 2 horas para gestionar tu sitio"
+      ],
+      "garantia": "Si no está listo en 30 días, -20% automático.",
+      "disponibilidad": "Solo 4 cupos mensuales para garantizar calidad.",
+      "cta_calendly": "https://calendly.com/gabrielzavando/30min",
+      "cta_contratar": "/#contacto",
+      "cta_contratar_text": "Contratar ahora"
+    }
+  ]
+}

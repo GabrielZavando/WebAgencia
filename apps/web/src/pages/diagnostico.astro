@@ -1,0 +1,144 @@
+---
+import MainLayout from "../layouts/MainLayout.astro";
+import ModalMessage from "../components/shared/ModalMessage.astro";
+import { getSystemConfig } from "../utils/config";
+
+const config = await getSystemConfig();
+---
+
+<MainLayout
+  title="Diagnóstico de Madurez Digital | Agencia Digital"
+  description="Descubre el nivel real de digitalización de tu negocio en 5 minutos. Recibe un plan de acción personalizado 100% gratuito."
+  hideHeader={true}
+  hideFooter={true}
+  forcedTheme="dark"
+>
+  <nav class="assessment-nav fade-in-down">
+    <div class="assessment-nav__container">
+      <a href="/" class="assessment-nav__logo" title="Volver al inicio">
+        <img
+          src={config.logoUrl}
+          alt={config.name}
+          width="150"
+          height="150"
+          class="logo"
+        />
+      </a>
+      <a href="/" class="btn-cta__border btn-sm assessment-nav__back">
+        <span class="material-symbols-outlined">arrow_back</span>
+        Volver al home
+      </a>
+    </div>
+  </nav>
+
+  <main class="assessment-page" id="assessment-main">
+    <div class="assessment-page__background">
+      <div class="assessment-page__glow"></div>
+      <div class="assessment-page__grid"></div>
+    </div>
+
+    <div class="assessment-page__container">
+      <!-- Encabezado de Alto Impacto -->
+      <header class="assessment-header fade-in">
+        <div class="assessment-header__badge">
+          <span class="material-symbols-outlined">verified</span>
+          Herramienta 100% gratuita
+        </div>
+        <h1 class="assessment-header__title">
+          ¿Qué tan digitalizado está<br />
+          <span class="assessment-header__highlight">tu negocio?</span>
+        </h1>
+        <p class="assessment-header__description">
+          Analiza 15 puntos clave y recibe una hoja de ruta estratégica para digitalizar tu empresa.
+        </p>
+      </header>
+
+      <!-- Formulario de Evaluación -->
+      <div class="assessment-wrapper fade-in" style="--delay: 0.1s">
+        <diagnostico-form id="form-diagnostico"></diagnostico-form>
+      </div>
+    </div>
+  </main>
+  
+  <ModalMessage
+    id="diagnostic-success-modal"
+    type="success"
+    title="¡Diagnóstico completado!"
+    message="Estamos procesando tus respuestas. En unos instantes recibirás tu informe confidencial por correo electrónico."
+  />
+
+  <ModalMessage
+    id="diagnostic-error-modal"
+    type="error"
+    title="Error al procesar"
+    message="Hubo un problema al enviar tus respuestas. Por favor, inténtalo de nuevo en unos momentos."
+  />
+
+  <script is:inline src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script>
+    import "../scripts/diagnostico-form.ts";
+
+    const form = document.getElementById('form-diagnostico');
+    const main = document.getElementById('assessment-main');
+
+    if (form && main) {
+      form.addEventListener('diagnostico-start', () => {
+        main.classList.add('assessment-page--active');
+        // También desplazamos suavemente hacia arriba para enfocar el formulario
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+      form.addEventListener('diagnostico-success', () => {
+        // Ejecutar confeti interactivo
+        if (typeof (window as any).confetti === 'function') {
+          const duration = 3 * 1000;
+          const end = Date.now() + duration;
+
+          (function frame() {
+            (window as any).confetti({
+              particleCount: 5,
+              angle: 60,
+              spread: 55,
+              origin: { x: 0 },
+              zIndex: 200000,
+              colors: ['#471761', '#ff0080', '#1c1c1e']
+            });
+            (window as any).confetti({
+              particleCount: 5,
+              angle: 120,
+              spread: 55,
+              origin: { x: 1 },
+              zIndex: 200000,
+              colors: ['#471761', '#ff0080', '#1c1c1e']
+            });
+
+            if (Date.now() < end) {
+              requestAnimationFrame(frame);
+            }
+          }());
+        }
+
+        // Mostrar modal y redirigir al home cuando se cierre
+        if (typeof (window as any).modalHelpers !== 'undefined') {
+          (window as any).modalHelpers.openModal('diagnostic-success-modal');
+          
+          const modal = document.getElementById('diagnostic-success-modal');
+          if (modal) {
+            // Un pequeño delay para evitar interceptar el cambio de clase inicial al abrirlo
+            setTimeout(() => {
+              const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                  if (mutation.attributeName === 'class' || mutation.attributeName === 'aria-hidden') {
+                    if (!modal.classList.contains('active') || modal.getAttribute('aria-hidden') === 'true') {
+                      window.location.href = '/';
+                    }
+                  }
+                });
+              });
+              observer.observe(modal, { attributes: true });
+            }, 100);
+          }
+        }
+      });
+    }
+  </script>
+</MainLayout>

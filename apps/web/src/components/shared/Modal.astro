@@ -1,0 +1,118 @@
+---
+interface Props {
+  id: string;
+  title: string;
+}
+
+const { id, title } = Astro.props;
+---
+
+<div class="modal" id={id} role="dialog" aria-modal="true">
+  <button 
+    class="modal__close" 
+    aria-label="Cerrar modal"
+  >
+    &times;
+  </button>
+  <div class="modal__content">
+    <h3 class="modal__title">{title}</h3>
+    <div class="modal__body">
+      <slot />
+    </div>
+  </div>
+</div>
+
+
+
+<script>
+  function initModals() {
+    // Función para abrir modal
+    function openModal(modalId: string) {
+      const modal = document.getElementById(modalId);
+      if (modal) {
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden'; // Prevenir scroll del body
+      }
+    }
+
+    // Función para cerrar modal
+    function closeModal(modal: HTMLElement) {
+      modal.classList.remove('active');
+      document.body.style.overflow = ''; // Restaurar scroll del body
+    }
+
+    // Función para cerrar todos los modales
+    function closeAllModals() {
+      const activeModals = document.querySelectorAll('.modal.active');
+      activeModals.forEach(modal => closeModal(modal as HTMLElement));
+    }
+
+    // Event listeners para botones "Ver más"
+    const serviceButtons = document.querySelectorAll('[data-modal]');
+    serviceButtons.forEach(button => {
+      (button as HTMLElement).onclick = (e) => {
+        e.preventDefault();
+        const modalId = button.getAttribute('data-modal');
+        if (modalId) {
+          openModal(modalId);
+        }
+      };
+    });
+
+    // Event listeners para botones de cerrar
+    const closeButtons = document.querySelectorAll('.modal__close');
+    closeButtons.forEach(button => {
+      (button as HTMLElement).onclick = (e) => {
+        e.preventDefault();
+        const modal = button.parentElement;
+        if (modal && modal.classList.contains('modal')) {
+          closeModal(modal as HTMLElement);
+        }
+      };
+    });
+
+    // Cerrar modal al hacer click fuera del contenido
+    const modals = document.querySelectorAll('.modal');
+    modals.forEach(modal => {
+      (modal as HTMLElement).onclick = (e) => {
+        if (e.target === modal) {
+          closeModal(modal as HTMLElement);
+        }
+      };
+    });
+
+    // Cerrar modal con la tecla Escape (Global)
+    const keyHandler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        closeAllModals();
+      }
+    };
+    document.removeEventListener('keydown', keyHandler);
+    document.addEventListener('keydown', keyHandler);
+
+    // Event listeners para botones CTA del modal
+    const ctaButtons = document.querySelectorAll('.service-details__cta');
+    ctaButtons.forEach(button => {
+      (button as HTMLElement).onclick = (e) => {
+        e.preventDefault();
+        
+        const modal = button.closest('.modal');
+        if (modal) {
+          closeModal(modal as HTMLElement);
+        }
+        
+        setTimeout(() => {
+          const contactSection = document.getElementById('contacto');
+          if (contactSection) {
+            contactSection.scrollIntoView({ 
+              behavior: 'smooth',
+              block: 'start'
+            });
+          }
+        }, 300);
+      };
+    });
+  }
+
+  document.addEventListener('astro:page-load', initModals);
+</script>

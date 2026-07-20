@@ -1,0 +1,178 @@
+---
+// ChangeManagement.astro
+---
+
+<section class="change-management fade-in">
+  <div class="change-management__content">
+    <div class="change-management__header text-center">
+      <h2 class="title-section">Gestión del Cambio: El acompañamiento que hace la diferencia</h2>
+      <p class="subtitle-section">La tecnología no transforma por sí sola. Las personas sí. Por eso, esta capa ocurre DURANTE todo el proceso, no al final.</p>
+    </div>
+
+    <div class="change-management__grid">
+      <!-- Alfabetización Digital -->
+      <div class="change-card">
+        <div class="change-card__header">
+          <span class="material-symbols-outlined">groups</span>
+          <h3>Alfabetización Digital</h3>
+        </div>
+        <div class="change-card__body">
+          <p>El objetivo no es transformar a tu equipo en expertos en informática. El objetivo es darles la confianza necesaria para operar con seguridad:</p>
+          <ul class="change-list">
+            <li>Uso correcto de la nube</li>
+            <li>Seguridad de contraseñas</li>
+            <li>Trabajo colaborativo en herramientas</li>
+          </ul>
+        </div>
+        <div class="change-card__footer">
+          <strong>Resultado:</strong> Adopción real, no resistencia
+        </div>
+      </div>
+
+      <!-- Quick Wins -->
+      <div class="change-card">
+        <div class="change-card__header">
+          <span class="material-symbols-outlined">bolt</span>
+          <h3>Quick Wins (Victorias Rápidas)</h3>
+        </div>
+        <div class="change-card__body">
+          <p>Celebramos logros inmediatos que mantienen la motivación alta:</p>
+          <ul class="change-list">
+            <li>Automatizar una tarea que quitaba 2 horas semanales</li>
+            <li>Centralizar datos que estaban dispersos</li>
+            <li>Eliminar un proceso innecesario</li>
+          </ul>
+        </div>
+        <div class="change-card__footer">
+          <strong>Resultado:</strong> El equipo ve valor desde la primera semana
+        </div>
+      </div>
+
+      <!-- Ritual Quincenal -->
+      <div class="change-card">
+        <div class="change-card__header">
+          <span class="material-symbols-outlined">sync</span>
+          <h3>Ritual Quincenal de Mejora</h3>
+        </div>
+        <div class="change-card__body">
+          <p>Establecemos un espacio de 30-45 min cada dos semanas para:</p>
+          <ul class="change-list">
+            <li>Compartir victorias rápidas</li>
+            <li>Identificar puntos de dolor</li>
+            <li>Definir ajustes concretos</li>
+            <li>Micro-aprendizaje en equipo</li>
+          </ul>
+        </div>
+        <div class="change-card__footer">
+          <strong>Resultado:</strong> Transformación como hábito, no como evento único
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .change-management {
+    padding: 120px 0;
+    background-color: var(--color-surface);
+  }
+
+  .change-management__content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 var(--padding-container);
+  }
+
+  .change-management__header {
+    margin-bottom: 60px;
+  }
+
+  .change-management__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--space-lg);
+  }
+
+  .change-card {
+    background-color: var(--color-body);
+    border: 1px solid var(--color-border);
+    padding: var(--space-lg);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    text-align: left;
+    transition: transform 0.3s ease, border-color 0.3s ease;
+  }
+
+  .change-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--color-warning);
+  }
+
+  .change-card__header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-md);
+  }
+
+  .change-card__header .material-symbols-outlined {
+    color: var(--color-warning);
+    font-size: 2rem;
+  }
+
+  .change-card__header h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-text);
+    margin: 0;
+  }
+
+  .change-card__body {
+    flex-grow: 1;
+  }
+
+  .change-card__body p {
+    font-size: 1rem;
+    color: var(--color-text);
+    margin-bottom: var(--space-md);
+    line-height: 1.6;
+  }
+
+  .change-card__footer {
+    margin-top: var(--space-lg);
+    padding-top: var(--space-md);
+    border-top: 1px dashed var(--color-border);
+    font-size: 0.95rem;
+    color: var(--color-text);
+  }
+
+  .change-card__footer strong {
+    color: var(--color-warning);
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+  }
+
+  .change-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .change-list li {
+    position: relative;
+    padding-left: 20px;
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+    color: var(--color-text-secondary);
+  }
+
+  .change-list li::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: var(--color-warning);
+    font-weight: bold;
+  }
+</style>

@@ -1,0 +1,54 @@
+---
+import { Image } from 'astro:assets';
+import banner from '../../assets/img/banner-web.jpg';
+
+interface Props {
+    image?: any;
+    size?: 'full' | 'half';
+    align?: 'center' | 'end';
+}
+
+const { image = banner, size = 'full', align = 'center' } = Astro.props;
+
+const name = "Transformación Digital";
+const chargeLine1 = "Orden digital para tu empresa.";
+const subtitle = "Sistemas digitales que cuidan tu tiempo mientras tú haces crecer tu marca.";
+---
+
+<section id="inicio" class={`banner banner--${size}`}>
+    <div class="banner__background">
+        {image && typeof image === 'string' ? (
+            <img src={image} alt="Banner background" class="banner__image" />
+        ) : image ? (
+            <Image 
+                src={image} 
+                alt="Banner background"
+                width={1920}
+                height={1080}
+                class="banner__image"
+            />
+        ) : null}
+    </div>
+    
+    <div class={`banner__container align-${align}`}>
+        <slot>
+            <h1 class="banner__title fade-in">
+                <span class="title-2xl">{name}</span>
+                <span class="title-md">{chargeLine1}</span>
+            </h1>
+            <p class="parrafo fade-in fade-in-delay-1">
+                {subtitle}
+            </p>
+            <div class="banner__actions fade-in fade-in-delay-2">
+                <a href="https://calendly.com/gabrielzavando/30min" class="btn-cta" target="_blank" rel="noopener noreferrer">
+                    <span class="material-symbols-outlined">calendar_today</span> Agendar Asesoría
+                </a>
+                <a href="/diagnostico" class="btn-cta__accent">
+                    <span class="material-symbols-outlined">analytics</span> Diagnóstico gratis
+                </a>
+            </div>
+        </slot>
+    </div>
+</section>
+
+

@@ -1,0 +1,14 @@
+---
+import MainLayout from "../layouts/MainLayout.astro";
+import ErrorPage from "../components/shared/ErrorPage.astro";
+---
+
+<MainLayout title="Página no encontrada">
+  <ErrorPage 
+    code="404" 
+    message="Oops... La página que buscas no existe o ha sido movida."
+    icon="construction"
+    buttonText="Volver al inicio"
+    buttonHref="/"
+  />
+</MainLayout>

@@ -1,0 +1,61 @@
+---
+import ServiceCard from "./ServiceCard.astro";
+---
+
+<section id="servicios" class="services">
+  <div class="services-content">
+    <div class="services-header">
+      <h2 class="title-section fade-in">¿Qué necesitas para recuperar el control de tu negocio?</h2>
+      <h3 class="subtitle-section fade-in fade-in-delay-1">
+        Creo sistemas digitales a medida que centralizan tu información y automatizan lo repetitivo.<br/>
+        Mantenimiento proactivo, informes claros y soporte directo: tu tranquilidad es parte del servicio.
+      </h3>
+    </div>
+
+    <div class="services-content__grid">
+      <ServiceCard
+        id="pack-web"
+        need="Necesito orden y presencia profesional"
+        icon='<span class="material-symbols-outlined">devices</span>'
+        title="Pack Web Profesional: Tu sitio web bajo control, listo en 14 días."
+        description="Deja de improvisar tu presencia digital. Centraliza tus clientes, proyecta autoridad y recupera el control de tu operación con un activo web bajo tu mando absoluto."
+        ctaText="Ver detalles"
+        anchor="/servicios#web-profesional"
+        class="fade-in fade-in-delay-2"
+      />
+      
+      <ServiceCard
+        id="pack-sistemas"
+        need="Necesito automatizar y escalar mi operación"
+        icon='<span class="material-symbols-outlined">trending_up</span>'
+        title="Pack Sistemas & Automatización: El motor inteligente que trabaja por ti."
+        description="Tu tiempo vale más que repetir lo mismo. Diseña flujos automáticos e IA que operan en segundo plano, liberándote para enfocarte en lo que realmente genera valor."
+        ctaText="Ver detalles"
+        anchor="/servicios#automatizacion"
+        class="fade-in fade-in-delay-3"
+      />
+    </div>
+
+    {/* Sección de Diagnóstico */}
+    <div class="services-diagnostic fade-in fade-in-delay-4">
+      <div class="services-diagnostic__content">
+        <h3 class="services-diagnostic__question">¿No sabes por dónde empezar?</h3>
+        <div class="services-diagnostic__info">
+          <p class="services-diagnostic__text">
+            Agenda tu <strong>Diagnóstico de Fricción gratuito (30 min)</strong> y recibe:
+          </p>
+          <ul class="services-diagnostic__list">
+            <li><span class="check"><span class="material-symbols-outlined">check</span></span> Auditoría de 15 puntos clave</li>
+            <li><span class="check"><span class="material-symbols-outlined">check</span></span> Hoja de ruta estratégica personalizada</li>
+            <li><span class="check"><span class="material-symbols-outlined">check</span></span> Claridad sobre qué automatizar primero</li>
+          </ul>
+        </div>
+        <div class="services-diagnostic__actions">
+          <a href="https://calendly.com/gabrielzavando/30min" target="_blank" rel="noopener noreferrer" class="btn-cta btn-cta--primary">
+            <span class="material-symbols-outlined">calendar_today</span> Agendar diagnóstico gratis
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

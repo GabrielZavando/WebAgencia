@@ -1,0 +1,577 @@
+---
+import ModalMessage from "../shared/ModalMessage.astro";
+
+const API_BASE_URL =
+  import.meta.env.PUBLIC_API_BASE_URL ||
+  "https://api-agencia-201828783555.southamerica-west1.run.app";
+const TURNSTILE_SITE_KEY = import.meta.env.DEV
+  ? "1x00000000000000000000AA"
+  : import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || "";
+---
+
+<!-- Cloudflare Turnstile SDK -->
+
+<section class="contact" id="contacto">
+  <div class="contact__container">
+    <h2 class="title-section fade-in">Contacto</h2>
+    <p class="contact__subtitle fade-in fade-in-delay-1">
+      ¿Tienes un proyecto en mente? Cuéntame sobre él
+    </p>
+
+    <form class="contact-form" id="contactForm" novalidate>
+      <!-- BACKEND: Este formulario envía los datos a la API de leads (POST /api/v1/leads/contact).
+              Contrato JSON: { name, email, phone?, message, meta: { userAgent, referrer, page, ts }, turnstileToken } -->
+      <div class="form-group contact-field fade-in fade-in-delay-2">
+        <label for="name" class="form-label">Nombre completo *</label>
+        <input
+          type="text"
+          id="name"
+          name="name"
+          class="form-input"
+          required
+          placeholder="¿Cómo te llamas?"
+        />
+      </div>
+
+      <div class="form-group contact-field fade-in fade-in-delay-3">
+        <label for="email" class="form-label">Correo electrónico *</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          class="form-input"
+          required
+          placeholder="tu@correo.com"
+        />
+      </div>
+
+      <div class="form-group contact-field fade-in fade-in-delay-4">
+        <label for="phone" class="form-label">Teléfono (opcional)</label>
+        <input
+          type="tel"
+          id="phone"
+          name="phone"
+          class="form-input"
+          placeholder="+56 9 XXXX XXXX"
+        />
+      </div>
+
+      <div class="form-group contact-field fade-in fade-in-delay-5">
+        <label for="message" class="form-label">Mensaje *</label>
+        <textarea
+          id="message"
+          name="message"
+          class="form-input form-textarea"
+          required
+          minlength="20"
+          placeholder="Cuéntame sobre tu proyecto... (mínimo 20 caracteres)"
+        ></textarea>
+        <div class="character-counter">
+          <span id="currentCount">0</span>
+          <span>/</span>
+          <span>1500 caracteres (mínimo 20)</span>
+        </div>
+      </div>
+
+      <!-- Honeypot anti-spam (debe permanecer vacío) -->
+      <div style="display:none;visibility:hidden;height:0;overflow:hidden;">
+        <label>Tu sitio web (no completar)</label>
+        <input type="text" name="website" tabindex="-1" autocomplete="off" />
+      </div>
+
+      <!-- Campo oculto para timestamp de carga de página (anti-bot) -->
+      <input type="hidden" name="formLoadTime" id="formLoadTime" value="" />
+
+      <!-- Cloudflare Turnstile (Managed) -->
+      <div
+        class="cf-turnstile"
+        data-sitekey={TURNSTILE_SITE_KEY}
+        data-size="flexible"
+      ></div>
+
+      <!-- Campos ocultos: ninguno requerido por la API actual (se mantiene solo el honeypot anti-spam) -->
+
+      <button
+        type="submit"
+        class="btn-cta btn-full contact-field fade-in fade-in-delay-6"
+      >
+        Enviar mensaje
+      </button>
+    </form>
+  </div>
+</section>
+
+<!-- Inyectar configuración del servidor al cliente -->
+<script define:vars={{ apiBaseUrl: API_BASE_URL }}>
+  // Hacer disponible la configuración globalmente
+  window.__CONTACT_CONFIG = {
+    API_BASE_URL: apiBaseUrl,
+  };
+</script>
+
+<!-- Modales de éxito y error -->
+<ModalMessage
+  id="successModal"
+  type="success"
+  title="¡Mensaje Enviado!"
+  message="Gracias por contactarme. He recibido tu mensaje y me pondré en contacto contigo lo antes posible."
+/>
+
+<ModalMessage
+  id="errorModal"
+  type="error"
+  title="Error al Enviar"
+  message="Lo siento, ha ocurrido un error al enviar tu mensaje. Por favor, inténtalo de nuevo o contáctame directamente."
+/>
+<script>
+  import { apiClient, ApiError } from "../../lib/api-client";
+
+  // CONFIG API - Usar configuración inyectada desde el servidor
+  function getAPIBaseURL() {
+    if (window.__CONTACT_CONFIG && window.__CONTACT_CONFIG.API_BASE_URL) {
+      return window.__CONTACT_CONFIG.API_BASE_URL;
+    }
+    if (window.__APP_CONFIG && window.__APP_CONFIG.PUBLIC_API_BASE_URL) {
+      return window.__APP_CONFIG.PUBLIC_API_BASE_URL;
+    }
+    return "https://api-agencia-201828783555.southamerica-west1.run.app";
+  }
+
+  const API_BASE_URL = getAPIBaseURL().replace(/\/$/, "");
+  const DEV_SIMULATION = API_BASE_URL.includes("localhost");
+  const REQUEST_TIMEOUT_MS = 30000;
+  const HONEYPOT_FIELD = "website";
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("contactForm");
+    const messageTextarea = document.getElementById("message");
+    const currentCount = document.getElementById("currentCount");
+    const characterCounter = document.querySelector(".character-counter");
+    const submitButton = form?.querySelector('button[type="submit"]');
+    const DEBUG =
+      typeof window !== "undefined" &&
+      window.location.search.includes("debug=1");
+    let inFlightController = null;
+
+    // =====================
+    // CONFIGURACIÓN ANTI-SPAM
+    // =====================
+    const SPAM_CONFIG = {
+      MIN_MESSAGE_LENGTH: 20,
+      MIN_FORM_TIME_SECONDS: 3, // Tiempo mínimo antes de poder enviar (anti-bot)
+      COOLDOWN_MINUTES: 2, // Tiempo de espera entre envíos
+      MAX_UPPERCASE_RATIO: 0.7, // Máximo 70% de mayúsculas
+      MAX_REPEATED_CHARS: 5, // Máximo de caracteres repetidos consecutivos
+      SPAM_PATTERNS: [
+        /https?:\/\//i, // URLs
+        /\b[A-Z]{10,}\b/, // Palabras todas en mayúsculas muy largas
+        /(.)\1{5,}/, // Caracteres repetidos 6+ veces
+        /^[^aeiouáéíóú\s]{15,}$/i, // Texto sin vocales (spam típico)
+      ],
+    };
+
+    // Registrar timestamp de carga del formulario
+    const formLoadTime = Date.now();
+    const formLoadTimeInput = document.getElementById("formLoadTime");
+    if (formLoadTimeInput) {
+      formLoadTimeInput.value = formLoadTime.toString();
+    }
+
+    // Funciones helper de modal (delegan a window.modalHelpers del componente ModalMessage)
+    function openModal(modalId) {
+      window.modalHelpers?.openModal(modalId);
+    }
+    function updateModalMessage(modalId, newMessage) {
+      window.modalHelpers?.updateModalMessage(modalId, newMessage);
+    }
+
+    // =====================
+    // FUNCIONALIDAD DEL FORMULARIO
+    // =====================
+
+    // Autoresize y contador de caracteres
+    if (messageTextarea && currentCount) {
+      const maxLength = 1500;
+
+      function updateCharacterCount() {
+        const currentLength = messageTextarea.value.length;
+        if (currentCount) {
+          currentCount.textContent = currentLength.toString();
+        }
+        // Autoresize
+        messageTextarea.style.height = "auto";
+        messageTextarea.style.height =
+          Math.min(messageTextarea.scrollHeight, 600) + "px";
+
+        // Cambiar color según el progreso
+        if (characterCounter) {
+          characterCounter.classList.remove("warning", "error");
+
+          if (currentLength > maxLength * 0.9) {
+            characterCounter.classList.add("warning");
+          }
+          if (currentLength > maxLength) {
+            characterCounter.classList.add("error");
+          }
+        }
+      }
+
+      // Limitar caracteres
+      messageTextarea.addEventListener("input", (e) => {
+        const target = e.target;
+        if (target.value.length > maxLength) {
+          target.value = target.value.substring(0, maxLength);
+        }
+        updateCharacterCount();
+      });
+
+      // Inicializar contador
+      updateCharacterCount();
+    }
+
+    // Validación en tiempo real
+    const inputs = form?.querySelectorAll(".form-input");
+    inputs?.forEach((input) => {
+      input.addEventListener("blur", () => {
+        validateField(input);
+      });
+
+      input.addEventListener("input", () => {
+        clearErrors(input);
+        // Activar/desactivar botón según validez mínima
+        if (submitButton && form) {
+          const nameOk = !!form.querySelector('[name="name"]').value.trim();
+          const emailEl = form.querySelector('[name="email"]').value.trim();
+          const emailOk = !!emailEl && isValidEmail(emailEl);
+          const msgOk = !!form.querySelector('[name="message"]').value.trim();
+          submitButton.disabled = !(nameOk && emailOk && msgOk);
+        }
+      });
+    });
+
+    // Inicialmente deshabilitar hasta que sea válido (mejor UX)
+    if (submitButton) submitButton.disabled = true;
+
+    // Función de validación individual
+    function validateField(field) {
+      const formGroup = field.closest(".form-group");
+      const value = field.value.trim();
+      let isValid = true;
+      let errorMessage = "";
+
+      // Limpiar errores previos
+      clearErrors(field);
+
+      // Validaciones específicas
+      switch (field.type) {
+        case "email":
+          if (value && !isValidEmail(value)) {
+            isValid = false;
+            errorMessage = "Por favor ingresa un correo electrónico válido";
+          }
+          break;
+        case "tel":
+          if (value && !isValidPhone(value)) {
+            isValid = false;
+            errorMessage = "Por favor ingresa un número de teléfono válido";
+          }
+          break;
+      }
+
+      // Campos requeridos
+      if (field.required && !value) {
+        isValid = false;
+        errorMessage = "Este campo es requerido";
+      }
+
+      // Aplicar estilos de validación
+      if (formGroup) {
+        if (isValid && value) {
+          formGroup.classList.add("success");
+          formGroup.classList.remove("error");
+        } else if (!isValid) {
+          formGroup.classList.add("error");
+          formGroup.classList.remove("success");
+          showError(field, errorMessage);
+        }
+      }
+
+      return isValid;
+    }
+
+    // Mostrar mensaje de error
+    function showError(field, message) {
+      const formGroup = field.closest(".form-group");
+      if (formGroup) {
+        let errorElement = formGroup.querySelector(".error-message");
+        if (!errorElement) {
+          errorElement = document.createElement("span");
+          errorElement.classList.add("error-message");
+          // Añadimos inline style para forzar visibilidad si la cascada CSS lo sobreescribe
+          errorElement.style.color = "var(--color-error)";
+          formGroup.appendChild(errorElement);
+        }
+        errorElement.textContent = message;
+      }
+    }
+
+    // Limpiar errores
+    function clearErrors(field) {
+      const formGroup = field.closest(".form-group");
+      if (formGroup) {
+        formGroup.classList.remove("error", "success");
+        const errorElement = formGroup.querySelector(".error-message");
+        if (errorElement) {
+          errorElement.remove();
+        }
+      }
+    }
+
+    // Validadores
+    function isValidEmail(email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email);
+    }
+
+    function isValidPhone(phone) {
+      const phoneRegex = /^[\+]?[0-9\s\-\(\)]+$/;
+      return phoneRegex.test(phone) && phone.replace(/\D/g, "").length >= 8;
+    }
+
+    // =====================
+    // VALIDACIONES ANTI-SPAM
+    // =====================
+
+    // Verificar si el usuario está en cooldown
+    function isInCooldown() {
+      const lastSubmit = localStorage.getItem("lastFormSubmit");
+      if (!lastSubmit) return false;
+
+      const timeSinceLastSubmit = Date.now() - parseInt(lastSubmit);
+      const cooldownMs = SPAM_CONFIG.COOLDOWN_MINUTES * 60 * 1000;
+
+      return timeSinceLastSubmit < cooldownMs;
+    }
+
+    // Obtener tiempo restante de cooldown
+    function getCooldownTimeRemaining() {
+      const lastSubmit = localStorage.getItem("lastFormSubmit");
+      if (!lastSubmit) return 0;
+
+      const timeSinceLastSubmit = Date.now() - parseInt(lastSubmit);
+      const cooldownMs = SPAM_CONFIG.COOLDOWN_MINUTES * 60 * 1000;
+      const remaining = cooldownMs - timeSinceLastSubmit;
+
+      return Math.max(0, Math.ceil(remaining / 1000)); // Segundos restantes
+    }
+
+    // Validar contenido del mensaje contra patrones de spam
+    function isSpamContent(message) {
+      // Verificar longitud mínima
+      if (message.length < SPAM_CONFIG.MIN_MESSAGE_LENGTH) {
+        return {
+          isSpam: true,
+          reason: `El mensaje debe tener al menos ${SPAM_CONFIG.MIN_MESSAGE_LENGTH} caracteres`,
+        };
+      }
+
+      // Verificar exceso de mayúsculas
+      const uppercaseCount = (message.match(/[A-Z]/g) || []).length;
+      const uppercaseRatio = uppercaseCount / message.length;
+      if (uppercaseRatio > SPAM_CONFIG.MAX_UPPERCASE_RATIO) {
+        return {
+          isSpam: true,
+          reason: "El mensaje contiene demasiadas mayúsculas",
+        };
+      }
+
+      // Verificar patrones sospechosos
+      for (const pattern of SPAM_CONFIG.SPAM_PATTERNS) {
+        if (pattern.test(message)) {
+          return {
+            isSpam: true,
+            reason: "El mensaje contiene contenido no permitido",
+          };
+        }
+      }
+
+      // Verificar palabras muy cortas o sin sentido
+      const words = message.trim().split(/\s+/);
+      const validWords = words.filter((word) => word.length > 2);
+      if (validWords.length < 3) {
+        return {
+          isSpam: true,
+          reason: "El mensaje debe contener al menos 3 palabras válidas",
+        };
+      }
+
+      // Verificar que tenga vocales (texto normal)
+      const vowelCount = (message.match(/[aeiouáéíóúAEIOUÁÉÍÓÚ]/g) || [])
+        .length;
+      if (vowelCount < message.length * 0.15) {
+        return { isSpam: true, reason: "El mensaje no parece texto válido" };
+      }
+
+      return { isSpam: false };
+    }
+
+    // Verificar tiempo de llenado del formulario (anti-bot)
+    function isFilledTooQuickly() {
+      const currentTime = Date.now();
+      const timeSpent = (currentTime - formLoadTime) / 1000; // segundos
+      return timeSpent < SPAM_CONFIG.MIN_FORM_TIME_SECONDS;
+    }
+
+    // Manejo del envío del formulario hacia la API NestJS
+    if (form && submitButton) {
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        if (!navigator.onLine) {
+          console.warn("Sin conexión a Internet.");
+          updateModalMessage(
+            "errorModal",
+            "No hay conexión a Internet. Por favor, verifica tu conexión e intenta nuevamente.",
+          );
+          openModal("errorModal");
+          return;
+        }
+
+        // =====================
+        // VALIDACIONES ANTI-SPAM
+        // =====================
+
+        // 1. Verificar cooldown
+        if (isInCooldown()) {
+          const remainingSeconds = getCooldownTimeRemaining();
+          const minutes = Math.floor(remainingSeconds / 60);
+          const seconds = remainingSeconds % 60;
+          const timeText =
+            minutes > 0
+              ? `${minutes} minuto${minutes > 1 ? "s" : ""} y ${seconds} segundo${seconds !== 1 ? "s" : ""}`
+              : `${seconds} segundo${seconds !== 1 ? "s" : ""}`;
+
+          updateModalMessage(
+            "errorModal",
+            `Por favor espera ${timeText} antes de enviar otro mensaje. Esto ayuda a prevenir spam.`,
+          );
+          openModal("errorModal");
+          return;
+        }
+
+        // 2. Honeypot
+        const honey = form.querySelector(`[name="${HONEYPOT_FIELD}"]`);
+        if (honey && honey.value) {
+          // Bot sospechoso: abortar silenciosamente
+          console.warn("Honeypot detectado spam");
+          return;
+        }
+
+        // 3. Verificar tiempo de llenado (anti-bot)
+        if (isFilledTooQuickly()) {
+          updateModalMessage(
+            "errorModal",
+            "Por favor, tómate tu tiempo para completar el formulario. Parece que fue enviado demasiado rápido.",
+          );
+          openModal("errorModal");
+          return;
+        }
+
+        // 4. Validar contenido del mensaje
+        const messageValue = form
+          .querySelector('[name="message"]')
+          .value.trim();
+        const spamCheck = isSpamContent(messageValue);
+        if (spamCheck.isSpam) {
+          updateModalMessage("errorModal", spamCheck.reason);
+          openModal("errorModal");
+          return;
+        }
+
+        // Validación campos requeridos
+        let isFormValid = true;
+        const requiredFields = ["name", "email", "message"];
+        requiredFields.forEach((fieldName) => {
+          const field = form.querySelector(`[name="${fieldName}"]`);
+          if (!field || !validateField(field)) {
+            isFormValid = false;
+          }
+        });
+        if (!isFormValid) return;
+
+        submitButton.classList.add("loading");
+        submitButton.disabled = true;
+
+        // Cancelar petición previa si hubiera
+        if (inFlightController) {
+          try {
+            inFlightController.abort("new-submit");
+          } catch (_) {}
+        }
+        inFlightController = new AbortController();
+
+        try {
+          const formData = new FormData(form);
+
+          const payload = {
+            name: String(formData.get("name") || "").trim(),
+            email: String(formData.get("email") || "").trim(),
+            phone: String(formData.get("phone") || "").trim() || null,
+            message: String(formData.get("message") || "").trim(),
+            meta: {
+              userAgent: navigator.userAgent,
+              referrer: document.referrer || null,
+              page: window.location.pathname,
+              ts: new Date().toISOString(),
+            },
+          };
+
+          console.log("[ContactForm] Enviando payload:", payload);
+
+          await apiClient.post("/api/v1/leads/contact", payload, {
+            timeout: REQUEST_TIMEOUT_MS,
+            signal: inFlightController.signal,
+            injectTurnstile: true,
+          });
+
+          localStorage.setItem("lastFormSubmit", Date.now().toString());
+
+          openModal("successModal");
+          form.reset();
+          inputs?.forEach((input) => clearErrors(input));
+          if (currentCount) currentCount.textContent = "0";
+          if (characterCounter)
+            characterCounter.classList.remove("warning", "error");
+          if (submitButton) submitButton.disabled = true;
+        } catch (err) {
+          let errorMessage =
+            "No se pudo enviar el formulario. Inténtalo nuevamente en unos segundos.";
+
+          if (err instanceof ApiError) {
+            if (err.type === "TIMEOUT_ERROR") {
+              errorMessage =
+                "La solicitud fue cancelada o expiró. Intenta nuevamente.";
+            } else if (err.type === "NETWORK_ERROR") {
+              errorMessage =
+                "Error de conexión. Verifica que la API esté disponible y que no hay problemas de CORS.";
+            } else if (err.type === "HTTP_ERROR") {
+              errorMessage = err.message;
+            }
+          } else if (!navigator.onLine) {
+            errorMessage =
+              "Sin conexión a Internet. Revisa tu red e intenta de nuevo.";
+          } else if (err?.message) {
+            errorMessage = `Error: ${err.message}`;
+          }
+
+          updateModalMessage("errorModal", errorMessage);
+          openModal("errorModal");
+        } finally {
+          submitButton.classList.remove("loading");
+          submitButton.disabled = false;
+          inFlightController = null;
+        }
+      });
+    }
+  });
+</script>

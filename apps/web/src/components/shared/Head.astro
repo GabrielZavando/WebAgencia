@@ -1,0 +1,96 @@
+---
+import "../../styles/global.css";
+import { ClientRouter } from 'astro:transitions';
+
+interface Props {
+  title: string
+  description?: string
+  faviconUrl?: string
+  forcedTheme?: 'light' | 'dark'
+  ogTitle?: string
+  ogDescription?: string
+  ogImage?: string
+}
+
+const {
+  title,
+  description = "Construyo sitios web a medida, tiendas online"
+    + " y chatbots con IA. Desarrollo freelance con"
+    + " experiencia, claridad y soporte cercano.",
+  faviconUrl = "/favicon.svg",
+  forcedTheme,
+  ogTitle,
+  ogDescription,
+  ogImage
+} = Astro.props
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://gabrielzavando.cl');
+const gtmId = import.meta.env.PUBLIC_GTM_ID
+---
+
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content={description} />
+<link rel="icon" href={faviconUrl} sizes="any" />
+<link rel="icon" type="image/svg+xml" href={faviconUrl} />
+<link rel="canonical" href={canonicalURL} />
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website" />
+<meta property="og:title" content={ogTitle || title} />
+<meta property="og:description" content={ogDescription || description} />
+{ogImage && <meta property="og:image" content={ogImage} />}
+
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"
+/>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  rel="preload"
+  as="style"
+  href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Open+Sans:wght@400;500;600;700&display=swap"
+/>
+<link
+  href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Open+Sans:wght@400;500;600;700&display=swap"
+  rel="stylesheet"
+/>
+
+<script is:inline define:vars={{ forcedTheme }}>
+  const setTheme = () => {
+    if (forcedTheme) {
+      document.documentElement.setAttribute('data-theme', forcedTheme)
+      return
+    }
+    const savedTheme = localStorage.getItem('theme')
+    if (savedTheme) {
+      document.documentElement.setAttribute('data-theme', savedTheme)
+    } else {
+      const prefersDark = window
+        .matchMedia('(prefers-color-scheme: dark)').matches
+      document.documentElement.setAttribute(
+        'data-theme', prefersDark ? 'dark' : 'light'
+      )
+    }
+  }
+
+  setTheme()
+  document.addEventListener('astro:after-swap', setTheme)
+</script>
+
+<title>{title}</title>
+
+<!-- Google Tag Manager -->
+{gtmId && (
+  <script is:inline define:vars={{ gtmId }}>
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer',gtmId);
+  </script>
+)}
+<!-- End Google Tag Manager -->
+
+<ClientRouter />

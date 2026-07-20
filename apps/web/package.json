@@ -1,0 +1,51 @@
+{
+  "name": "@webastro/landing",
+  "version": "1.4.2",
+  "description": "Landing page con Astro para Agencia Digital Gabriel Zavando",
+  "scripts": {
+    "dev": "astro dev --open",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "test": "vitest run",
+    "test:ui": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test",
+    "test:validation": "pnpm run test:validation:static && pnpm run test:validation:e2e",
+    "test:validation:static": "vitest run --config vitest.config.ts tests/validation/*.test.ts",
+    "test:validation:e2e": "playwright test --config playwright-validation.config.ts",
+    "link-api-local-dev": "bash scripts/link-api-local-dev.sh"
+  },
+  "dependencies": {
+    "@astrojs/react": "^6.0.0",
+    "@heroicons/react": "^2.2.0",
+    "@tailwindcss/vite": "^4.2.4",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "astro": "^7.0.3",
+    "firebase": "^12.15.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "sharp": "^0.33.5",
+    "tailwindcss": "^4.2.4"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.9",
+    "@playwright/test": "^1.59.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@vitejs/plugin-react": "^6.0.3",
+    "@vitest/coverage-v8": "^4.1.2",
+    "jsdom": "^29.0.1",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.2"
+  },
+  "pnpm": {
+    "allowBuilds": [
+      "@parcel/watcher",
+      "esbuild",
+      "protobufjs",
+      "sharp"
+    ]
+  }
+}

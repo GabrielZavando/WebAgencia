@@ -1,0 +1,200 @@
+---
+interface Props {
+    placeholder?: string;
+    actionUrl?: string;
+    outlined?: boolean;
+}
+
+const { placeholder = "Buscar artículos...", actionUrl = "/blog", outlined = false } = Astro.props;
+
+// Componente de buscador reutilizable. 
+// - Si se usa en la página principal del blog (index.astro), el script interceptará el submit y filtrará los posts vía JS.
+// - Si se usa en un artículo individiual o en otro lado, su actionUrl dirigirá a "/blog?q=termino"
+---
+
+<div class="search-container fade-in">
+    <form action={actionUrl} method="GET" class="search-form global-search-form">
+        <input 
+            type="text" 
+            name="q"
+            class={`search-input global-search-input ${outlined ? 'is-outlined' : ''}`} 
+            placeholder={placeholder} 
+            autocomplete="off"
+        />
+        <button type="submit" class="search-btn">Buscar</button>
+    </form>
+</div>
+
+<style>
+.search-container {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.search-form {
+    display: flex;
+    gap: 0;
+    width: 100%;
+}
+
+.search-input {
+    flex: 1;
+    padding: 0.875rem 1.25rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-right: none;
+    color: var(--color-text);
+    font-size: var(--text-base, 1rem);
+    font-family: inherit;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+}
+
+.search-input.is-outlined {
+    background: transparent;
+    border-color: rgba(255, 255, 255, 0.3);
+    color: var(--color-white);
+}
+
+.search-input.is-outlined:focus {
+    border-color: var(--color-primary);
+}
+
+.search-input.is-outlined::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.search-btn {
+    padding: 0.875rem 1.5rem;
+    background: var(--color-primary);
+    color: var(--color-white);
+    border: 1px solid var(--color-primary);
+    font-size: var(--text-base, 1rem);
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.search-btn:hover {
+    opacity: 0.85;
+}
+
+.search-btn:active {
+    opacity: 0.7;
+}
+</style>
+
+<script>
+  function initializeSearchComponent() {
+    const searchForms = document.querySelectorAll('.global-search-form');
+    const postCards = document.querySelectorAll('.post-card');
+    const noResultsMsg = document.getElementById('noResultsMsg');
+
+    // Si estamos en la página del índice del blog (donde existen '.post-card'), interceptamos la búsqueda en este componente.
+    const isBlogIndex = postCards.length > 0;
+
+    searchForms.forEach(form => {
+        const searchInput = form.querySelector('.global-search-input') as HTMLInputElement;
+        if (!searchInput) return;
+
+        // Detectar query params iniciales en caso de venir de otra vista o por URL compartida
+        if (isBlogIndex) {
+            const urlParams = new URLSearchParams(window.location.search);
+            const initialQuery = urlParams.get('q');
+            const initialCategory = urlParams.get('category');
+
+            if (initialCategory) {
+                filterByCategory(initialCategory);
+            } else if (initialQuery) {
+                searchInput.value = initialQuery;
+                filterPosts(initialQuery);
+            }
+
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                filterPosts(searchInput.value);
+                updateUrlParam('q', searchInput.value);
+            });
+
+            searchInput.addEventListener('input', () => {
+                filterPosts(searchInput.value);
+                updateUrlParam('q', searchInput.value);
+            });
+        }
+    });
+
+    // Funciones Helper    
+    function filterPosts(query: string) {
+      if (!isBlogIndex) return;
+
+      const term = query.toLowerCase().trim();
+      let visibleCount = 0;
+
+      postCards.forEach((card) => {
+        const title = card.getAttribute('data-title') || '';
+        // Extendemos la búsqueda de texto base para que también abarque categorías
+        const category = card.getAttribute('data-category') || '';
+        
+        if (title.includes(term) || category.includes(term)) {
+          (card as HTMLElement).style.display = 'flex';
+          visibleCount++;
+        } else {
+          (card as HTMLElement).style.display = 'none';
+        }
+      });
+
+      toggleNoResults(visibleCount);
+    }
+
+    function filterByCategory(category: string) {
+      if (!isBlogIndex) return;
+
+      const term = category.toLowerCase().trim();
+      let visibleCount = 0;
+
+      postCards.forEach((card) => {
+        const cat = card.getAttribute('data-category') || '';
+        
+        if (cat === term) {
+          (card as HTMLElement).style.display = 'flex';
+          visibleCount++;
+        } else {
+          (card as HTMLElement).style.display = 'none';
+        }
+      });
+
+      toggleNoResults(visibleCount);
+    }
+
+    function toggleNoResults(visibleCount: number) {
+      if (noResultsMsg) {
+        if (visibleCount === 0) {
+          (noResultsMsg as HTMLElement).style.display = 'flex';
+        } else {
+          (noResultsMsg as HTMLElement).style.display = 'none';
+        }
+      }
+    }
+
+    function updateUrlParam(key: string, value: string) {
+       const newUrl = new URL(window.location.href);
+       // Si el usuario empieza a buscar, borramos la categoria inicial para no estancarlo
+       newUrl.searchParams.delete('category'); 
+       
+       if (value.trim()) {
+           newUrl.searchParams.set(key, value.trim());
+       } else {
+           newUrl.searchParams.delete(key);
+       }
+       window.history.replaceState({}, "", newUrl);
+    }
+  }
+
+  // Inicializar al cargar por primera vez y manejar transiciones de vista fluidas en Astro
+  document.addEventListener('DOMContentLoaded', initializeSearchComponent);
+  document.addEventListener('astro:page-load', initializeSearchComponent);
+</script>

@@ -1,0 +1,642 @@
+---
+import menuData from "../../data/menu.json";
+import ModalMessage from "./ModalMessage.astro";
+import type { SystemConfig } from "../../utils/config";
+
+const currentYear = new Date().getFullYear();
+const { menuItems } = menuData;
+
+interface Props {
+  config: SystemConfig;
+}
+
+const { config } = Astro.props;
+
+const API_BASE_URL =
+  import.meta.env.PUBLIC_API_BASE_URL ||
+  "https://api-agencia-201828783555.southamerica-west1.run.app";
+// Site Key de Cloudflare Turnstile
+const TURNSTILE_SITE_KEY = import.meta.env.DEV
+  ? "1x00000000000000000000AA"
+  : import.meta.env.PUBLIC_TURNSTILE_SITE_KEY || "";
+---
+
+<footer class="footer">
+  <div class="footer__container">
+    <!-- Navegación -->
+    <div class="footer__section footer__section--nav">
+      <h3 class="footer__title">Navegación</h3>
+      <ul class="footer__list">
+        {
+          menuItems.map((item) => (
+            <li class="footer__item">
+              <a href={item.href} class="footer__link">
+                {item.text}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <!-- Redes sociales -->
+    <div class="footer__section footer__section--social">
+      <h3 class="footer__title">Conecta conmigo</h3>
+      <div class="footer__social-icons">
+        {
+          [
+            { name: 'LinkedIn', url: config.social?.linkedinUrl },
+            { name: 'GitHub', url: config.social?.githubUrl },
+            { name: 'Instagram', url: config.social?.instagramUrl },
+            { name: 'YouTube', url: config.social?.youtubeUrl }
+          ].filter(link => link.url).map((link) => {
+            const getSocialSvg = (name: string) => {
+              if (name === 'LinkedIn') return '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>';
+              if (name === 'GitHub') return '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.042-1.416-4.042-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.841 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>';
+              if (name === 'Instagram') return '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.791-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.209-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>';
+              if (name === 'YouTube') return '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 4-8 4z"/></svg>';
+              return '';
+            };
+            
+            return (
+              <a
+                href={link.url}
+                class="footer__icon"
+                title={link.name}
+                aria-label={link.name}
+                target="_blank"
+                rel="noopener"
+                set:html={getSocialSvg(link.name)}
+              />
+            )
+          })
+        }
+      </div>
+    </div>
+
+    <!-- Suscripción -->
+    <div class="footer__section footer__section--subscribe">
+      <h3 class="footer__title">Suscríbete</h3>
+      <!-- BACKEND: Este formulario envía los datos a la API de leads (POST /api/v1/leads/subscribe) con JSON { email, meta, turnstileToken }. -->
+      <form class="footer__form" id="subscribeForm" novalidate>
+        <div class="footer__form-group">
+          <input
+            type="email"
+            class="footer__input"
+            name="email"
+            placeholder="Tu correo electrónico"
+            required
+            id="subscribeEmail"
+          />
+        </div>
+
+        <!-- Honeypot anti-spam (debe permanecer vacío) -->
+        <div style="display:none;visibility:hidden;height:0;overflow:hidden;">
+          <label>Tu sitio web (no completar)</label>
+          <input type="text" name="website" tabindex="-1" autocomplete="off" />
+        </div>
+
+        <!-- Timestamp de carga (anti-bot: tiempo mínimo de llenado) -->
+        <input type="hidden" name="formLoadTime" id="subFormLoadTime" value="" />
+
+        <!-- Cloudflare Turnstile (invisible) -->
+        <div
+          class="cf-turnstile"
+          data-sitekey={TURNSTILE_SITE_KEY}
+          data-size="invisible"
+        ></div>
+
+        <div class="footer__form-group">
+          <label class="footer__checkbox">
+            <input type="checkbox" name="terms" required id="subscribeTerms" />
+            <span class="footer__checkbox-custom"></span>
+            <span class="footer__checkbox-text">
+              Acepto la <a href="/politica-de-privacidad" class="footer__link"
+                >Política de privacidad</a
+              >
+            </span>
+          </label>
+        </div>
+        <button type="submit" class="btn-cta footer__submit-btn">
+          Suscribirme
+        </button>
+      </form>
+      <p class="footer__note">
+        Recibe tips de transformación digital sin spam.
+      </p>
+    </div>
+  </div>
+
+  <!-- Cierre del footer -->
+  <div class="footer__bottom">
+    <p class="footer__legal">
+      <a href="/politica-de-privacidad" class="footer__link"
+        >Política de privacidad</a
+      >
+    </p>
+    <p class="footer__copyright">
+      © {currentYear} {config.name}. Todos los derechos reservados.
+    </p>
+  </div>
+</footer>
+
+
+
+<!-- Inyectar configuración del servidor al cliente -->
+<script define:vars={{ apiBaseUrl: API_BASE_URL }}>
+  // Hacer disponible la configuración globalmente
+  window.__SUBSCRIBE_CONFIG = {
+    API_BASE_URL: apiBaseUrl,
+  };
+</script>
+
+<!-- Modales de éxito y error (newsletter) -->
+<ModalMessage
+  id="subscribeSuccessModal"
+  type="success"
+  title="¡Casi listo!"
+  message="Te enviamos un correo de confirmación. Haz clic en el enlace del email para activar tu suscripción."
+/>
+
+<ModalMessage
+  id="subscribeErrorModal"
+  type="error"
+  title="Error en la suscripción"
+  message="Ocurrió un problema al suscribirte. Intenta nuevamente más tarde."
+/>
+
+<ModalMessage
+  id="subscribeInfoModal"
+  type="info"
+  title="Ya estás suscrito"
+  message="El correo ya está suscrito a nuestro newsletter."
+/>
+
+<style>
+.footer {
+  background-color: var(--color-dark);
+  color: var(--color-white);
+  padding: var(--space-2xl) 0 var(--space-lg) 0;
+  margin-top: auto;
+}
+
+.footer__container {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 var(--padding-container);
+  display: grid;
+  gap: var(--space-lg);
+  align-items: start;
+  grid-template-columns: 1fr;
+  grid-template-areas: "nav" "social" "subscribe";
+}
+
+@media (min-width: 480px) {
+  .footer__container {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas: "nav social" "nav subscribe";
+  }
+}
+
+@media (min-width: 820px) {
+  .footer__container {
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-areas: "nav social subscribe";
+    gap: var(--space-xl);
+  }
+}
+
+.footer__section { margin-bottom: 0; }
+
+.footer__section--nav {
+  grid-area: nav;
+  min-width: 200px;
+}
+
+@media (min-width: 820px) {
+  .footer__section--nav {
+    margin-right: 0;
+    min-width: auto;
+  }
+}
+
+.footer__section--social { grid-area: social; }
+
+.footer__section--subscribe { grid-area: subscribe; }
+
+.footer__title {
+  font-family: var(--font-headings);
+  font-weight: 700;
+  font-size: var(--text-md);
+  color: var(--color-white);
+  margin-bottom: var(--space-md);
+}
+
+.footer__nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.footer__nav :global(a) {
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  font-size: var(--text-sm);
+  transition: color var(--transition-normal) ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.footer__nav :global(a:hover) {
+  color: var(--color-primary);
+}
+
+.footer__social {
+  display: flex;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+.footer__social :global(a) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  transition: all var(--transition-normal) ease;
+}
+
+.footer__social :global(a:hover) {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  transform: translateY(-2px);
+}
+
+.footer__social :global(a .material-symbols-outlined) {
+  font-size: 1.2rem;
+}
+
+.footer__subscribe-text {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-md);
+  line-height: 1.5;
+}
+
+.footer__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.footer__input-group {
+  display: flex;
+  gap: 0;
+}
+
+.footer__input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--color-white);
+  font-size: var(--text-sm);
+  outline: none;
+  transition: border-color var(--transition-normal) ease;
+}
+
+.footer__input:focus {
+  border-color: var(--color-primary);
+}
+
+.footer__input::placeholder {
+  color: var(--color-text-muted);
+}
+
+.footer__submit-btn {
+  padding: 0.75rem 1.5rem;
+  background: var(--color-primary);
+  color: var(--color-white);
+  border: 1px solid var(--color-primary);
+  font-family: var(--font-headings);
+  font-weight: 600;
+  font-size: var(--text-sm);
+  cursor: pointer;
+  transition: all var(--transition-normal) ease;
+  white-space: nowrap;
+}
+
+.footer__submit-btn:hover {
+  background: var(--color-secondary);
+  border-color: var(--color-secondary);
+}
+
+.footer__submit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.footer__terms {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+
+.footer__terms :global(input[type="checkbox"]) {
+  margin-top: 2px;
+  accent-color: var(--color-primary);
+}
+
+.footer__terms :global(a) {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.footer__terms :global(a:hover) {
+  text-decoration: underline;
+}
+
+.footer__consent {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  line-height: 1.4;
+  margin-top: var(--space-xs);
+}
+
+.footer__consent :global(a) {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.footer__consent :global(a:hover) {
+  text-decoration: underline;
+}
+
+.footer__bottom {
+  margin-top: var(--space-xl);
+  padding-top: var(--space-lg);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: center;
+}
+
+.footer__copyright {
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  line-height: 1.6;
+}
+
+.footer__copyright :global(a) {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.footer__copyright :global(a:hover) {
+  text-decoration: underline;
+}
+
+.footer__error-message {
+  color: var(--color-error);
+  font-size: var(--text-xs);
+  margin-top: var(--space-xs);
+  display: none;
+}
+</style>
+
+<script>
+  import { apiClient, ApiError } from "../../lib/api-client";
+
+  function getAPIBaseURL() {
+    if (window.__SUBSCRIBE_CONFIG && window.__SUBSCRIBE_CONFIG.API_BASE_URL) {
+      return window.__SUBSCRIBE_CONFIG.API_BASE_URL;
+    }
+    if (window.__APP_CONFIG && window.__APP_CONFIG.PUBLIC_API_BASE_URL) {
+      return window.__APP_CONFIG.PUBLIC_API_BASE_URL;
+    }
+    return "https://api-agencia-201828783555.southamerica-west1.run.app";
+  }
+
+  const API_BASE_URL = getAPIBaseURL().replace(/\/$/, "");
+  const DEV_SIMULATION = API_BASE_URL.includes("localhost");
+  const REQUEST_TIMEOUT_MS = 30000;
+  const HONEYPOT_FIELD = "website";
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const subscribeForm = document.getElementById("subscribeForm");
+    const emailInput = document.getElementById("subscribeEmail");
+    const termsCheckbox = document.getElementById("subscribeTerms");
+    const submitButton = subscribeForm?.querySelector(".footer__submit-btn");
+    if (!subscribeForm || !emailInput || !termsCheckbox || !submitButton)
+      return;
+
+    // Registrar timestamp de carga del formulario (anti-bot)
+    const subFormLoadTime = Date.now();
+    const loadTimeInput = document.getElementById("subFormLoadTime");
+    if (loadTimeInput) loadTimeInput.value = subFormLoadTime.toString();
+    const MIN_FORM_TIME_SECONDS = 3;
+    const COOLDOWN_MINUTES = 2;
+
+    // Deshabilitar botón hasta tener email válido + términos
+    submitButton.disabled = true;
+
+    // Validación en tiempo real
+    emailInput.addEventListener("blur", () => validateEmail(emailInput));
+    emailInput.addEventListener("input", () => {
+      clearErrors(emailInput);
+      updateSubmitState();
+    });
+    termsCheckbox.addEventListener("change", updateSubmitState);
+
+    function updateSubmitState() {
+      const value = emailInput.value.trim();
+      const emailOk = !!value && isValidEmailFormat(value);
+      const termsOk = !!termsCheckbox.checked;
+      submitButton.disabled = !(emailOk && termsOk);
+    }
+
+    function validateEmail(field) {
+      const formGroup = field.closest(".footer__form-group");
+      const value = field.value.trim();
+      let isValid = true;
+      let errorMessage = "";
+      clearErrors(field);
+      if (!value) {
+        isValid = false;
+        errorMessage = "El correo electrónico es requerido";
+      } else if (!isValidEmailFormat(value)) {
+        isValid = false;
+        errorMessage = "Por favor ingresa un correo electrónico válido";
+      }
+      if (formGroup) {
+        if (isValid && value) {
+          formGroup.classList.add("success");
+          formGroup.classList.remove("error");
+        } else if (!isValid) {
+          formGroup.classList.add("error");
+          formGroup.classList.remove("success");
+          showError(field, errorMessage);
+        }
+      }
+      return isValid;
+    }
+    function showError(field, message) {
+      const formGroup = field.closest(".footer__form-group");
+      if (formGroup) {
+        let errorElement = formGroup.querySelector(".footer__error-message");
+        if (!errorElement) {
+          errorElement = document.createElement("span");
+          errorElement.classList.add("footer__error-message");
+          formGroup.appendChild(errorElement);
+        }
+        errorElement.textContent = message;
+      }
+    }
+    function clearErrors(field) {
+      const formGroup = field.closest(".footer__form-group");
+      if (formGroup) {
+        formGroup.classList.remove("error", "success");
+        const errorElement = formGroup.querySelector(".footer__error-message");
+        if (errorElement) errorElement.remove();
+      }
+    }
+    function isValidEmailFormat(email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return emailRegex.test(email);
+    }
+
+    // Funciones helper de modal (delegan a window.modalHelpers del componente ModalMessage)
+    function openModal(modalId) {
+      window.modalHelpers?.openModal(modalId);
+    }
+    function updateModalMessage(modalId, message) {
+      window.modalHelpers?.updateModalMessage(modalId, message);
+    }
+
+    // Envío
+    let inFlightController = null;
+    subscribeForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      // Honeypot
+      const honey = subscribeForm.querySelector(`[name="${HONEYPOT_FIELD}"]`);
+      if (honey && honey.value) return;
+
+      // Tiempo mínimo de llenado (anti-bot)
+      const timeSpent = (Date.now() - subFormLoadTime) / 1000;
+      if (timeSpent < MIN_FORM_TIME_SECONDS) {
+        updateModalMessage(
+          "subscribeErrorModal",
+          "Formulario enviado demasiado rápido. Por favor inténtalo de nuevo.",
+        );
+        openModal("subscribeErrorModal");
+        return;
+      }
+
+      // Cooldown de localStorage
+      const lastSub = localStorage.getItem("lastSubscribeSubmit");
+      if (lastSub) {
+        const elapsed = Date.now() - parseInt(lastSub);
+        if (elapsed < COOLDOWN_MINUTES * 60 * 1000) {
+          const rem = Math.ceil((COOLDOWN_MINUTES * 60 * 1000 - elapsed) / 1000);
+          updateModalMessage(
+            "subscribeErrorModal",
+            `Por favor espera ${rem}s antes de intentar de nuevo.`,
+          );
+          openModal("subscribeErrorModal");
+          return;
+        }
+      }
+
+      // Validaciones
+      const emailOk = validateEmail(emailInput);
+      const termsOk = termsCheckbox.checked;
+      if (!emailOk || !termsOk) return;
+
+      if (!navigator.onLine) {
+        updateModalMessage(
+          "subscribeErrorModal",
+          "Sin conexión a Internet. Revisa tu red e intenta de nuevo.",
+        );
+        openModal("subscribeErrorModal");
+        return;
+      }
+
+      submitButton.classList.add("loading");
+      submitButton.disabled = true;
+      if (inFlightController) {
+        try {
+          inFlightController.abort("new-submit");
+        } catch (_) {}
+      }
+      inFlightController = new AbortController();
+
+      try {
+        const payload = {
+          email: String(emailInput.value || "").trim(),
+          meta: {
+            userAgent: navigator.userAgent,
+            referrer: document.referrer || null,
+            page: window.location.pathname,
+            ts: new Date().toISOString(),
+          },
+        };
+
+        const responseData = await apiClient.post<{
+          success: boolean;
+          message?: string;
+        }>("/api/v1/leads/subscribe", payload, {
+          timeout: REQUEST_TIMEOUT_MS,
+          signal: inFlightController.signal,
+          injectTurnstile: true,
+        });
+
+        console.log("📋 Respuesta backend:", responseData);
+
+        openModal("subscribeSuccessModal");
+
+        subscribeForm.reset();
+        clearErrors(emailInput);
+        submitButton.disabled = true;
+      } catch (err) {
+        console.error("❌ Error suscripción:", err);
+        let errorMessage =
+          "No se pudo completar la suscripción. Intenta nuevamente en unos segundos.";
+
+        if (err instanceof ApiError) {
+          if (err.type === "HTTP_ERROR" && err.status === 409) {
+            updateModalMessage(
+              "subscribeInfoModal",
+              err.message || "El correo ya está suscrito",
+            );
+            openModal("subscribeInfoModal");
+            return;
+          } else if (err.type === "TIMEOUT_ERROR") {
+            errorMessage =
+              "La solicitud fue cancelada o expiró. Intenta nuevamente.";
+          } else if (err.type === "NETWORK_ERROR") {
+            errorMessage =
+              "Sin conexión a Internet. Revisa tu red e intenta de nuevo.";
+          } else if (err.type === "HTTP_ERROR") {
+            errorMessage = err.message;
+          }
+        } else if (!navigator.onLine) {
+          errorMessage =
+            "Sin conexión a Internet. Revisa tu red e intenta de nuevo.";
+        }
+
+        updateModalMessage("subscribeErrorModal", errorMessage);
+        openModal("subscribeErrorModal");
+      } finally {
+        submitButton.classList.remove("loading");
+        submitButton.disabled = false;
+        inFlightController = null;
+      }
+    });
+  });
+</script>

@@ -1,0 +1,191 @@
+---
+import { Image } from "astro:assets";
+import Logo from "../../assets/img/logo-medium.png";
+import ThemeSwitcher from "./ThemeSwitcher.astro";
+import menuData from "../../data/menu.json";
+import type { SystemConfig } from "../../utils/config";
+
+const currentPath = Astro.url.pathname;
+const { menuItems } = menuData;
+
+interface Props {
+  alwaysScrolled?: boolean;
+  config: SystemConfig;
+}
+
+const { alwaysScrolled = false, config } = Astro.props;
+---
+
+<header class:list={["header fade-in-down", { "scrolled": alwaysScrolled }]} data-always-scrolled={alwaysScrolled ? "true" : undefined} transition:persist="header">
+    <div class="header__container">
+        <h1 class="header__logo" transition:name="site-logo">
+            <a href="/">
+                <img
+                    src={config.logoUrl}
+                    alt={config.name}
+                    width="150"
+                    height="150"
+                    class="logo"
+                    loading="lazy"
+                />
+            </a>
+        </h1>
+        
+        <button class="nav-toggle" aria-label="Abrir menú">
+            <span class="hamburger"></span>
+        </button>
+
+        <nav class="nav">
+            <ul class="nav__list">
+                {menuItems.map(item => (
+                    <li class="nav__item">
+                        <a href={item.href}
+                           class:list={[
+                            'btn-nav',
+                            { 'active': currentPath === item.href
+                             || (item.href === '/' && currentPath === '/')}
+                           ]}>
+                            {item.text}
+                        </a>
+                    </li>
+                ))}
+                <li class="nav__theme-toggle">
+                    <ThemeSwitcher />
+                </li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<script>
+    function initHeader() {
+        const navToggle = document.querySelector('.nav-toggle') as HTMLElement;
+        const nav = document.querySelector('.nav');
+        const hamburger = document.querySelector('.hamburger');
+        const body = document.body;
+        
+        // Limpiar listeners previos (clonando nodos o removiendo handlers para evitar duplicates)
+        // Para simplicidad, podemos usar onclick si no necesitamos múltiples listeners
+        if (navToggle) {
+            navToggle.onclick = () => {
+                const isActive = nav?.classList.toggle('active');
+                hamburger?.classList.toggle('active');
+                
+                // Añadir/quitar clase al body para cambiar variables contextuales
+                if (isActive) {
+                    body.classList.add('menu-active');
+                } else {
+                    body.classList.remove('menu-active');
+                }
+            };
+        }
+        
+        // Cerrar menú al hacer click en un enlace (móvil)
+        const currentLinks = document.querySelectorAll('.nav__item a');
+        currentLinks.forEach(link => {
+            (link as HTMLAnchorElement).onclick = () => {
+                nav?.classList.remove('active');
+                hamburger?.classList.remove('active');
+                body.classList.remove('menu-active');
+            };
+        });
+        
+        // Animación de entrada del header
+        const header = document.querySelector('.header');
+        if (header) {
+            // Activar animación inmediatamente
+            setTimeout(() => {
+                header.classList.add('animate');
+            }, 100);
+        }
+        
+        // Cambiar color del header al hacer scroll
+        const isAlwaysScrolled = header?.hasAttribute('data-always-scrolled');
+        
+        if (!isAlwaysScrolled) {
+            window.removeEventListener('scroll', (window as any)._headerScrollHandler);
+            (window as any)._headerScrollHandler = () => {
+                if (window.scrollY > 100) {
+                    header?.classList.add('scrolled');
+                } else {
+                    header?.classList.remove('scrolled');
+                }
+            };
+            window.addEventListener('scroll', (window as any)._headerScrollHandler);
+        }
+
+        // --- Active State Calculation (Fix for transition:persist) ---
+        const currentPath = window.location.pathname;
+        const navLinks = document.querySelectorAll('.btn-nav');
+        
+        // Reset all active states first
+        navLinks.forEach(link => link.classList.remove('active'));
+
+        // Match the current path with menu items
+        navLinks.forEach(link => {
+            const href = link.getAttribute('href');
+            if (!href) return;
+            // Match exact path or sub-paths (for blog posts)
+            if (currentPath === href || 
+               (href !== '/' && currentPath.startsWith(href)) ||
+               (href === '/' && currentPath === '/')) {
+                link.classList.add('active');
+            }
+        });
+
+        // --- Intersection Observer for Scroll-Spy (Only on Landing Page) ---
+        const isLandingPage = currentPath === '/';
+        
+        if (isLandingPage) {
+            const observerOptions = {
+                root: null,
+                rootMargin: '-20% 0px -70% 0px', 
+                threshold: 0
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        if (!id) return;
+
+                        navLinks.forEach(link => {
+                            const href = link.getAttribute('href');
+                            if (href === `/#${id}` || (id === 'inicio' && href === '/')) {
+                                // Limpiar otros antes de marcar el observado (scroll-spy priority)
+                                navLinks.forEach(l => l.classList.remove('active'));
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, observerOptions);
+
+            // Observar todas las secciones que tengan un ID
+            const sections = document.querySelectorAll('section[id]');
+            sections.forEach(section => observer.observe(section));
+            
+            // También observar el hero/inicio si tiene ID o es el tope
+            const hero = document.querySelector('#inicio') || document.querySelector('section');
+            if (hero) observer.observe(hero);
+
+            // Limpiar observer al cambiar de página (Astro View Transitions)
+            document.addEventListener('astro:before-preparation', () => {
+                observer.disconnect();
+            }, { once: true });
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', initHeader);
+    document.addEventListener('astro:page-load', initHeader);
+</script>
+
+
+
+
+
+
+
+
+
+

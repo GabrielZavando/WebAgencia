@@ -1,0 +1,21 @@
+export const companyConfig = {
+  name: 'Desarrollador Freelance | Sitios Web, E-commerce y Chatbots con IA',
+  description: 'Construyo sitios web a medida, tiendas online y chatbots con IA. Desarrollo freelance con experiencia, claridad y soporte cercano para tu proyecto digital.',
+  websiteUrl: 'https://gabrielzavando.cl',
+  logoUrl: '/favicon.svg',
+  faviconUrl: '/favicon.svg',
+  address: 'Viña del Mar, Chile',
+  phone: '+56 9 641 65 631',
+  email: 'contacto@gabrielzavando.cl',
+  servicesUrl: '#servicios',
+  social: {
+    linkedinUrl: 'https://linkedin.com/in/gabrielzavando',
+    instagramUrl: 'https://instagram.com/gabrielzavando',
+    githubUrl: 'https://github.com/gabrielzavando',
+    youtubeUrl: 'https://www.youtube.com/@gabrielzavando',
+    linkedinIconUrl: '',
+    instagramIconUrl: '',
+    githubIconUrl: '',
+    youtubeIconUrl: '',
+  },
+};

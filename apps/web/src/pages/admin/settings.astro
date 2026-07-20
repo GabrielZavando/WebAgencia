@@ -1,0 +1,21 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro';
+---
+
+<MainLayout
+  title="Configuración | Admin"
+  description="Configuración del sistema"
+  hideHeader={true}
+  hideFooter={true}
+>
+  <div class="flex min-h-screen items-center justify-center bg-surface-secondary dark:bg-body p-4">
+    <div class="text-center max-w-md">
+      <span class="material-symbols-outlined text-6xl text-primary mb-4 block">settings</span>
+      <h1 class="text-2xl font-bold text-text mb-2">Próximamente</h1>
+      <p class="text-text-secondary">
+        La configuración del sistema estará disponible pronto.
+      </p>
+      <a href="/admin/dashboard" class="btn-cta mt-6">Volver al Dashboard</a>
+    </div>
+  </div>
+</MainLayout>

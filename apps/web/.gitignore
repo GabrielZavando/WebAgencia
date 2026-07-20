@@ -1,0 +1,9 @@
+node_modules/
+.astro/
+dist/
+.env
+*.log
+.cache/
+.opencode/
+playwright-report/
+test-results/

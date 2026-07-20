@@ -1,0 +1,167 @@
+
+---
+import Layout from '../../layouts/MainLayout.astro';
+import Banner from '../../components/landing/Banner.astro';
+import Search from '../../components/shared/Search.astro';
+import bannerBlogImg from '../../assets/img/banner-blog.jpg';
+---
+
+<Layout title="Blog | Agencia Digital">
+  <Banner image={bannerBlogImg} size="half" align="center">
+      <h1 class="blog-page-title fade-in">Blog</h1>
+      <p class="blog-page-subtitle fade-in">Noticias, consejos y estrategias digitales.</p>
+      <Search />
+  </Banner>
+
+  <section class="blog-section">
+    <div class="mx-auto w-full max-w-[1440px] px-4">
+      <div id="blogStatus" class="blog-status"></div>
+      <div id="noResultsMsg" class="no-results-message hidden">
+        <span class="material-symbols-outlined">search</span>
+        <p>No hay coincidencias con la búsqueda.</p>
+      </div>
+
+      <div class="posts-grid" id="postsGrid">
+        <div class="skeleton-card">
+          <div class="skeleton-image"></div>
+          <div class="skeleton-content">
+            <div class="skeleton-line skeleton-line--title"></div>
+            <div class="skeleton-line skeleton-line--short"></div>
+            <div class="skeleton-line skeleton-line--full"></div>
+            <div class="skeleton-line skeleton-line--medium"></div>
+          </div>
+        </div>
+        <div class="skeleton-card">
+          <div class="skeleton-image"></div>
+          <div class="skeleton-content">
+            <div class="skeleton-line skeleton-line--title"></div>
+            <div class="skeleton-line skeleton-line--short"></div>
+            <div class="skeleton-line skeleton-line--full"></div>
+            <div class="skeleton-line skeleton-line--medium"></div>
+          </div>
+        </div>
+        <div class="skeleton-card">
+          <div class="skeleton-image"></div>
+          <div class="skeleton-content">
+            <div class="skeleton-line skeleton-line--title"></div>
+            <div class="skeleton-line skeleton-line--short"></div>
+            <div class="skeleton-line skeleton-line--full"></div>
+            <div class="skeleton-line skeleton-line--medium"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  import { ApiError } from '../../lib/api-client';
+  import { fetchBlogPosts } from '../../scripts/blog-fetch';
+
+  function sanitizeContent(content: string): string {
+    let safe = content;
+    safe = safe.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '');
+    safe = safe.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '');
+    safe = safe.replace(/<\/?(?:html|head|body|meta|link|title|!DOCTYPE|xml)[^>]*>/gi, '');
+    return safe.trim();
+  }
+
+  function getExcerpt(post: any): string {
+    if (post.excerpt) {
+      return post.excerpt.length > 150 ? post.excerpt.substring(0, 150) + '...' : post.excerpt;
+    }
+    if (post.content) {
+      const stripped = post.content.replace(/<[^>]*>?/gm, '').replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '').replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '').replace(/\s+/g, ' ').trim();
+      return stripped.length > 150 ? stripped.substring(0, 150) + '...' : stripped;
+    }
+    return '';
+  }
+
+  function renderPost(post: any): string {
+    const excerpt = getExcerpt(post);
+    return `
+      <article class="post-card fade-in" data-title="${(post.title || '').toLowerCase()}" data-category="${(post.category || '').toLowerCase()}">
+        ${post.coverImage ? `
+          <div class="post-card__image">
+            <img src="${post.coverImage}" alt="${post.title}" loading="lazy" decoding="async" width="800" height="450" />
+          </div>
+        ` : ''}
+        <div class="post-card__content">
+          <h2 class="post-card__title">
+            <a href="/blog/${post.slug}">${post.title}</a>
+          </h2>
+          <div class="post-card__meta">
+            <span><span class="material-symbols-outlined" aria-hidden="true">edit_note</span>${post.author || 'Administrador'}</span>
+            ${post.category ? `<a href="/blog?category=${encodeURIComponent(post.category)}" class="post-card__category"><span class="material-symbols-outlined" aria-hidden="true">label</span>${post.category}</a>` : ''}
+          </div>
+          <p class="post-card__excerpt">${excerpt}</p>
+          <a href="/blog/${post.slug}" class="btn-cta">Leer más</a>
+        </div>
+      </article>
+    `;
+  }
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    const grid = document.getElementById('postsGrid');
+    const status = document.getElementById('blogStatus');
+    const noResults = document.getElementById('noResultsMsg');
+    if (!grid || !status) return;
+
+    async function loadPosts() {
+      status.innerHTML = '';
+      grid.querySelectorAll('.skeleton-card').forEach(el => (el as HTMLElement).style.display = '');
+
+      const startTime = Date.now();
+
+      try {
+        const posts = await fetchBlogPosts();
+
+        const elapsed = Date.now() - startTime;
+        if (elapsed < 800) {
+          await new Promise(r => setTimeout(r, 800 - elapsed));
+        }
+
+        grid.querySelectorAll('.skeleton-card').forEach(el => el.remove());
+
+        if (!posts || posts.length === 0) {
+          status.innerHTML = '<p class="blog-empty-message">No hay artículos publicados aún</p>';
+          return;
+        }
+
+        grid.innerHTML = posts.map(renderPost).join('');
+
+        // Aplicar categoría desde URL si existe
+        const params = new URLSearchParams(window.location.search);
+        const categoryFilter = params.get('category');
+        if (categoryFilter) {
+          grid.querySelectorAll('.post-card').forEach(card => {
+            const cat = (card as HTMLElement).dataset.category;
+            if (cat !== categoryFilter.toLowerCase()) {
+              (card as HTMLElement).style.display = 'none';
+            }
+          });
+        }
+
+        if (noResults) noResults.style.display = 'none';
+      } catch (err: any) {
+        const elapsed = Date.now() - startTime;
+        if (elapsed < 1200) {
+          await new Promise(r => setTimeout(r, 1200 - elapsed));
+        }
+
+        grid.querySelectorAll('.skeleton-card').forEach(el => el.remove());
+        status.innerHTML = `
+          <div class="blog-error-message">
+            <span class="material-symbols-outlined text-5xl text-primary mb-2">cloud_off</span>
+            <p>No se pudieron cargar los artículos. Verifica tu conexión o intenta más tarde.</p>
+            <button class="btn-cta blog-error-retry" id="retryBtn">Reintentar</button>
+          </div>
+        `;
+        document.getElementById('retryBtn')?.addEventListener('click', loadPosts);
+      }
+    }
+
+    await loadPosts();
+  });
+</script>
+

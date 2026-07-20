@@ -1,0 +1,205 @@
+---
+// MaturitySpiral.astro
+---
+
+<section class="maturity-spiral fade-in">
+  <div class="maturity-spiral__content">
+    <div class="maturity-spiral__header">
+      <h2 class="title-section">Tu transformación no termina: La Espiral de Madurez</h2>
+      <p class="subtitle-section">Al completar las 3 fases, no cerramos el proyecto. Establecemos un ciclo de mejora continua para que tu negocio evolucione al ritmo de la tecnología.</p>
+    </div>
+
+    <div class="maturity-spiral__steps">
+      <!-- 90 días -->
+      <div class="spiral-step">
+        <div class="spiral-step__icon">
+          <span class="material-symbols-outlined">update</span>
+        </div>
+        <div class="spiral-step__info">
+          <h3>Cada 90 días: Auditoría de Resultados</h3>
+          <ul class="spiral-list">
+            <li>¿Se cumplieron los OKRs?</li>
+            <li>Ajustes finos al software</li>
+            <li>Nuevas oportunidades de automatización</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 6 meses -->
+      <div class="spiral-step">
+        <div class="spiral-step__icon">
+          <span class="material-symbols-outlined">restart_alt</span>
+        </div>
+        <div class="spiral-step__info">
+          <h3>Cada 6 meses: Re-limpieza Operativa</h3>
+          <ul class="spiral-list">
+            <li>El crecimiento genera nuevos procesos</li>
+            <li>Detectamos y eliminamos nuevos desperdicios</li>
+            <li>Mantenemos la agilidad del sistema</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 12 meses -->
+      <div class="spiral-step">
+        <div class="spiral-step__icon">
+          <span class="material-symbols-outlined">trending_up</span>
+        </div>
+        <div class="spiral-step__info">
+          <h3>Cada 12 meses: Escalamiento Estratégico</h3>
+          <ul class="spiral-list">
+            <li>Revisamos la robustez de los cimientos digitales</li>
+            <li>Planificamos la siguiente vuelta del CTP</li>
+            <li>Evaluamos implementación de IA avanzada</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .maturity-spiral {
+    padding: 10px 0 40px;
+    background-color: var(--color-body);
+  }
+
+  .maturity-spiral__content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--padding-container);
+  }
+
+  .maturity-spiral__steps {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xl);
+    margin: 80px auto;
+    max-width: 700px;
+    position: relative;
+  }
+
+  @media (min-width: 768px) {
+    .maturity-spiral__steps {
+      gap: var(--space-2xl);
+    }
+
+    .maturity-spiral__steps::before {
+      content: '';
+      position: absolute;
+      left: 40px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, 
+        var(--color-primary), 
+        var(--color-secondary), 
+        var(--color-accent)
+      );
+      opacity: 0.2;
+    }
+  }
+
+  .maturity-spiral__footer {
+    display: flex;
+    justify-content: center;
+    margin-top: 60px;
+  }
+
+  .spiral-step {
+    display: flex;
+    gap: var(--space-lg);
+    align-items: center;
+  }
+
+  .spiral-step__icon {
+    flex-shrink: 0;
+    width: 80px;
+    height: 80px;
+    background-color: var(--color-surface);
+    border: 2px solid var(--color-border);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+    transition: all 0.3s ease;
+  }
+
+  .spiral-step__icon .material-symbols-outlined {
+    font-size: 2.5rem;
+    color: var(--color-primary);
+  }
+
+  .spiral-step:nth-child(2) .spiral-step__icon .material-symbols-outlined {
+    color: var(--color-secondary);
+  }
+
+  .spiral-step:nth-child(3) .spiral-step__icon .material-symbols-outlined {
+    color: var(--color-accent);
+  }
+
+  .spiral-step__info h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: var(--space-sm);
+    color: var(--color-text);
+  }
+
+  .spiral-step:hover .spiral-step__icon {
+    transform: scale(1.1);
+    border-color: var(--color-primary);
+    box-shadow: 0 0 20px rgba(var(--color-primary-rgb), 0.15);
+  }
+
+  .spiral-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .spiral-list li {
+    position: relative;
+    padding-left: 24px;
+    margin-bottom: 12px;
+    font-size: 1.05rem;
+    color: var(--color-text-secondary);
+    line-height: 1.4;
+  }
+
+  .spiral-list li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--color-primary);
+    font-weight: bold;
+  }
+
+  .maturity-badge {
+    background: rgba(var(--color-primary-rgb), 0.05);
+    border: 1px solid var(--color-primary);
+    padding: var(--space-xl);
+    max-width: 800px;
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    text-align: center;
+    justify-content: center;
+  }
+
+  .maturity-badge .emoji {
+    font-size: 2rem;
+  }
+
+  .maturity-quote {
+    font-size: 1.35rem;
+    font-weight: 600;
+    font-style: italic;
+    color: var(--color-text);
+    margin: 0;
+    border: none;
+    background: transparent;
+    padding: 0;
+    line-height: 1.4;
+  }
+</style>

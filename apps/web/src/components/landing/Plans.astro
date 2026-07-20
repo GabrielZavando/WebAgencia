@@ -1,0 +1,620 @@
+---
+import plansData from '../../data/plans.json';
+
+const plans = plansData.planes.map(plan => ({
+  name: plan.nombre,
+  icon: plan.icono,
+  tagline: plan.tagline,
+  objective: plan.objetivo,
+  price6mes: plan.precio_6_meses_mes,
+  price6total: plan.precio_6_meses_total,
+  price12mes: plan.precio_12_meses_mes,
+  price12total: plan.precio_12_meses_total,
+  ahorro: plan.ahorro,
+  features: plan.caracteristicas,
+  mantenimiento: plan.mantenimiento,
+  bonus: plan.bonus || [],
+  soberania: plan.soberania,
+  garantia: plan.garantia,
+  disponibilidad: plan.disponibilidad,
+  ctaCalendly: plan.cta_calendly,
+  ctaContratar: plan.cta_contratar,
+  ctaContratarText: plan.cta_contratar_text || 'Contratar ahora',
+  featured: plan.destacado || false
+}));
+---
+
+<section class="plans" id="planes">
+  <div class="plans__container">
+    <div class="plans__header">
+      <h2 class="title-section fade-in">Planes</h2>
+      <h3 class="subtitle-section fade-in fade-in-delay-1">No vendo paquetes genéricos. Diseño soluciones que se adaptan a tu realidad: desde tu presencia web profesional hasta la automatización completa de tu operación.</h3>
+    </div>
+
+    <!-- Switch para seleccionar periodo de pago -->
+    <div class="plans__switch-container fade-in fade-in-delay-2">
+      <span class="switch__label switch__label--6">6 meses</span>
+      <div class="plans__switch">
+        <input type="checkbox" id="period-switch" class="switch__input" />
+        <label for="period-switch" class="switch__toggle">
+          <span class="switch__slider"></span>
+        </label>
+      </div>
+      <span class="switch__label switch__label--12">
+        12 meses
+        <span class="switch__badge">Ahorra más</span>
+      </span>
+    </div>
+
+    <div class="plans__grid">
+      {plans.map((plan, index) => (
+        <div class={`plan-card plan-item ${plan.featured ? 'plan-card--featured' : ''} fade-in fade-in-delay-${index + 3}`}>
+          {plan.featured && <div class="plan-card__badge">Más popular</div>}
+          
+          <div class="plan-card__header">
+            {plan.icon && <span class="material-symbols-outlined plan-card__icon">{plan.icon}</span>}
+            <h3 class="plan-card__title">{plan.name}</h3>
+            <p class="plan-card__tagline">{plan.tagline}</p>
+          </div>
+
+          <div class="plan-card__price-section">
+            <div class="price__main">
+              <span class="price__currency">$</span>
+              <span class="price__amount" 
+                data-price-6={plan.price6mes} 
+                data-price-12={plan.price12mes}
+              >
+                {plan.price6mes}
+              </span>
+            </div>
+            <span class="price__period">/6 meses</span>
+            
+            <div class="price__details">
+              <p class="price__total" 
+                data-total-6={plan.price6total} 
+                data-total-12={plan.price12total}
+              >
+                Total periodo: ${plan.price6total}
+              </p>
+              <p class="price__savings" 
+                data-ahorro={plan.ahorro}
+                style="display: none;"
+              >
+                Ahorro: <strong>{plan.ahorro}</strong>
+              </p>
+            </div>
+          </div>
+
+          <div class="plan-card__divider"></div>
+
+          <div class="plan-card__objective">
+            <span class="material-symbols-outlined">target</span>
+            <div class="objective__content">
+              <span class="label">OBJETIVO:</span>
+              <p>{plan.objective}</p>
+            </div>
+          </div>
+
+          <div class="plan-card__section">
+            <span class="label">LO QUE RECIBES:</span>
+            <ul class="plan-card__features">
+              {plan.features.map(feature => {
+                const isBusinessHeader = feature.startsWith('BUSINESS:');
+                const isShoppingHeader = feature.startsWith('SHOPPING:');
+                const isHeader = isBusinessHeader || isShoppingHeader;
+                const cleanFeature = feature.replace('BUSINESS: ', '').replace('SHOPPING: ', '');
+                
+                return (
+                  <li class={`feature ${isHeader ? 'feature--category' : ''}`}>
+                    {isBusinessHeader && <span class="material-symbols-outlined feature__icon">business</span>}
+                    {isShoppingHeader && <span class="material-symbols-outlined feature__icon">shopping_cart</span>}
+                    {!isHeader && <span class="material-symbols-outlined feature__icon">check_circle</span>}
+                    <span class="feature__text">{cleanFeature}</span>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+
+          <div class="plan-card__soberania">
+            <span class="material-symbols-outlined">key</span>
+            <div class="soberania__content">
+              <span class="label">SOBERANÍA:</span>
+              <p>{plan.soberania}</p>
+            </div>
+          </div>
+
+          <div class="plan-card__mantenimiento">
+            <span class="label">Incluye:</span>
+            <ul class="mantenimiento__list">
+              {plan.mantenimiento.map(item => (
+                <li>• {item}</li>
+              ))}
+            </ul>
+          </div>
+
+          {plan.bonus.length > 0 && (
+            <div class="plan-card__bonus">
+              <span class="label">
+                <span class="material-symbols-outlined">redeem</span>
+                BONUS DE LANZAMIENTO:
+              </span>
+              <ul class="bonus__list">
+                {plan.bonus.map(item => (
+                  <li>
+                    <span class="material-symbols-outlined">redeem</span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          <div class="plan-card__divider"></div>
+
+          <div class="plan-card__garantia">
+            <span class="material-symbols-outlined">shield</span>
+            <div class="garantia__content">
+              <span class="label">GARANTÍA:</span>
+              <p>{plan.garantia}</p>
+            </div>
+          </div>
+
+          {plan.disponibilidad && (
+            <div class="plan-card__availability">
+              <span class="material-symbols-outlined">local_fire_department</span>
+              <p>{plan.disponibilidad}</p>
+            </div>
+          )}
+
+          <div class="plan-card__actions">
+            <a href={plan.ctaCalendly} target="_blank" rel="noopener noreferrer" class="btn-cta btn-cta--secondary">
+              <span class="material-symbols-outlined">calendar_today</span> Agendar diagnóstico gratis
+            </a>
+            <a href={plan.ctaContratar} class="btn-cta">
+              {plan.ctaContratarText} <span class="material-symbols-outlined">arrow_forward</span>
+            </a>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+.plans {
+  padding: var(--space-xl) 0;
+  background-color: var(--color-body);
+}
+
+.plans__container {
+  width: 100%;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 var(--padding-container);
+}
+
+.plans__header {
+  text-align: center;
+  margin-bottom: var(--space-xl);
+  max-width: 1440px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.plans__switch-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+  margin-bottom: var(--space-md);
+  position: relative;
+  z-index: 10;
+  padding: 20px 20px 0 20px;
+}
+
+.switch__label {
+  font-family: var(--font-headings);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  font-size: var(--text-base);
+  position: relative;
+  transition: color var(--transition-normal) ease;
+}
+
+.switch__label--6.active,
+.switch__label--12.active {
+  color: var(--color-primary);
+}
+
+.switch__badge {
+  position: absolute;
+  top: -30px;
+  right: -12px;
+  background: var(--color-teal);
+  color: var(--color-white);
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.switch__toggle {
+  position: relative;
+  width: 56px;
+  height: 28px;
+  appearance: none;
+  -webkit-appearance: none;
+  background: var(--color-border);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: background var(--transition-normal) ease;
+  outline: none;
+}
+
+.switch__toggle:checked {
+  background: var(--color-primary);
+}
+
+.switch__toggle::before {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 24px;
+  height: 24px;
+  background: var(--color-white);
+  border-radius: 50%;
+  transition: transform var(--transition-normal) ease;
+}
+
+.switch__toggle:checked::before {
+  transform: translateX(28px);
+}
+
+.plans__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-lg);
+  max-width: 1440px;
+  margin: 0 auto;
+}
+
+@media (min-width: 820px) {
+  .plans__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1200px) {
+  .plans__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.plan-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: all var(--transition-normal) ease;
+}
+
+.plan-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+}
+
+.plan-card--featured {
+  border: 2px solid var(--color-primary);
+}
+
+.plan-card--featured::before {
+  content: 'Más popular';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: var(--color-primary);
+  color: var(--color-white);
+  text-align: center;
+  padding: 0.35rem;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.plan-card--featured .plan-card__header {
+  padding-top: calc(var(--space-lg) + 1.5rem);
+}
+
+.plan-card__header {
+  padding: var(--space-lg);
+  text-align: center;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.plan-card__icon {
+  font-size: 2.5rem;
+  color: var(--color-primary);
+  margin-bottom: var(--space-sm);
+}
+
+.plan-card__name {
+  font-family: var(--font-headings);
+  font-size: var(--text-xl);
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: var(--space-xs);
+}
+
+.plan-card__tagline {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}
+
+.plan-card__pricing {
+  padding: var(--space-lg);
+  text-align: center;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.price {
+  margin-bottom: var(--space-sm);
+}
+
+.price__amount {
+  font-family: var(--font-headings);
+  font-size: var(--text-3xl);
+  font-weight: 800;
+  color: var(--color-text);
+}
+
+.price__period {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+
+.price__total {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-xs);
+}
+
+.price__savings {
+  display: inline-block;
+  background: rgba(var(--color-teal-rgb), 0.1);
+  color: var(--color-teal);
+  padding: 0.2rem 0.75rem;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.plan-card__features {
+  padding: var(--space-lg);
+  flex-grow: 1;
+}
+
+.plan-card__features-title {
+  font-family: var(--font-headings);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-text);
+  margin-bottom: var(--space-md);
+}
+
+.feature-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.feature-list :global(li) {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}
+
+.feature-list :global(li .material-symbols-outlined) {
+  font-size: 1.1rem;
+  color: var(--color-teal);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.plan-card__maintenance {
+  padding: 0 var(--space-lg) var(--space-lg);
+}
+
+.maintenance-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(var(--color-teal-rgb), 0.08);
+  border: 1px solid rgba(var(--color-teal-rgb), 0.2);
+  padding: var(--space-sm) var(--space-md);
+  font-size: var(--text-sm);
+  color: var(--color-text);
+}
+
+.maintenance-badge :global(.material-symbols-outlined) {
+  color: var(--color-teal);
+  font-size: 1.2rem;
+}
+
+.plan-card__bonus {
+  padding: 0 var(--space-lg) var(--space-lg);
+}
+
+.bonus-title {
+  font-family: var(--font-headings);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-warning);
+  margin-bottom: var(--space-sm);
+}
+
+.bonus-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.bonus-list :global(li) {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+}
+
+.bonus-list :global(li .material-symbols-outlined) {
+  font-size: 0.9rem;
+  color: var(--color-warning);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.plan-card__soberania {
+  padding: 0 var(--space-lg) var(--space-lg);
+}
+
+.soberania-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(var(--color-primary-rgb), 0.08);
+  border: 1px solid rgba(var(--color-primary-rgb), 0.2);
+  padding: var(--space-sm) var(--space-md);
+  font-size: var(--text-sm);
+  color: var(--color-text);
+}
+
+.soberania-badge :global(.material-symbols-outlined) {
+  color: var(--color-primary);
+  font-size: 1.2rem;
+}
+
+.plan-card__garantia {
+  padding: 0 var(--space-lg) var(--space-lg);
+}
+
+.garantia-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+  font-style: italic;
+}
+
+.garantia-badge :global(.material-symbols-outlined) {
+  font-size: 1rem;
+  color: var(--color-text-muted);
+}
+
+.plan-card__availability {
+  padding: 0 var(--space-lg) var(--space-lg);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: var(--text-xs);
+  color: var(--color-error);
+  font-weight: 600;
+}
+
+.plan-card__availability :global(.material-symbols-outlined) {
+  font-size: 1rem;
+}
+
+.plan-card__cta {
+  padding: var(--space-lg);
+  border-top: 1px solid var(--color-border);
+}
+
+.plan-card__cta .btn-cta {
+  width: 100%;
+  text-align: center;
+  justify-content: center;
+}
+</style>
+
+<script>
+  // Funcionalidad del switch de precios
+  document.addEventListener('DOMContentLoaded', () => {
+    const switchInput = document.querySelector('#period-switch') as HTMLInputElement;
+    const label6 = document.querySelector('.switch__label--6');
+    const label12 = document.querySelector('.switch__label--12');
+    
+    const priceAmounts = document.querySelectorAll('.price__amount');
+    const pricePeriods = document.querySelectorAll('.price__period');
+    const priceTotals = document.querySelectorAll('.price__total');
+    const priceSavings = document.querySelectorAll('.price__savings');
+
+    // Función para actualizar el estado visual de los precios
+    function updatePeriodState(is12Months: boolean) {
+      // Actualizar labels del switch
+      if (label6 && label12) {
+        if (is12Months) {
+          label6.classList.remove('active');
+          label12.classList.add('active');
+        } else {
+          label6.classList.add('active');
+          label12.classList.remove('active');
+        }
+      }
+
+      // Actualizar precios en las tarjetas
+      priceAmounts.forEach((el, i) => {
+        const amount = is12Months ? el.getAttribute('data-price-12') : el.getAttribute('data-price-6');
+        el.textContent = amount;
+      });
+
+      // Actualizar periodos
+      pricePeriods.forEach(el => {
+        el.textContent = is12Months ? '/12 meses' : '/6 meses';
+      });
+
+      // Actualizar totales y ahorros
+      priceTotals.forEach((el, i) => {
+        const total = is12Months ? el.getAttribute('data-total-12') : el.getAttribute('data-total-6');
+        el.textContent = `Total periodo: $${total}`;
+      });
+
+      priceSavings.forEach(el => {
+        (el as HTMLElement).style.display = is12Months ? 'block' : 'none';
+      });
+    }
+
+    // Inicializar estado (6 meses por defecto)
+    updatePeriodState(false);
+
+    // Event listener para el switch
+    if (switchInput) {
+      switchInput.addEventListener('change', () => {
+        updatePeriodState(switchInput.checked);
+      });
+    }
+  });
+</script>

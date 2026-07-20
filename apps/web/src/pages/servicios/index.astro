@@ -1,0 +1,514 @@
+---
+import Layout from '../../layouts/MainLayout.astro';
+import Banner from '../../components/landing/Banner.astro';
+import Services from '../../components/landing/Services.astro';
+import PackWebProfesional from '../../components/landing/PackWebProfesional.astro';
+import PackSistemas from '../../components/landing/PackSistemas.astro';
+import SolucionesModulares from '../../components/landing/SolucionesModulares.astro';
+import MetodologiaCTP from '../../components/landing/MetodologiaCTP.astro';
+import bannerServiciosImg from '../../assets/img/servicios-banner.webp';
+---
+
+<Layout 
+  title="Soluciones Digitales Soberanas | Gabriel Zavando"
+  description="Desarrollo web y automatización con acompañamiento permanente. Packs desde $290.000 CLP. Soberanía digital garantizada para Pymes en Chile."
+>
+  <Banner image={bannerServiciosImg} size="half" align="center">
+      <h1 class="banner__title fade-in">
+        <span class="title-2xl">Soluciones Digitales</span>
+        <span class="title-md">Tecnología que se adapta a tu negocio.</span>
+      </h1>
+      
+      <div class="mt-8 flex justify-center fade-in fade-in-delay-2">
+        <a href="https://calendly.com/gabrielzavando/30min" class="btn-cta" target="_blank" rel="noopener noreferrer">
+          Agendar Consultoría
+        </a>
+      </div>
+  </Banner>
+
+  <Services />
+  <SolucionesModulares />
+  <PackWebProfesional />
+  <PackSistemas />
+  <MetodologiaCTP />
+</Layout>
+
+<style>
+  /* PackSistemas styles */
+  .pack-sistemas-section {
+    padding: var(--space-xl) 0;
+    background-color: var(--color-surface);
+  }
+  
+  .pack-content {
+    width: 100%;
+    max-width: var(--container-wide);
+    margin: 0 auto;
+    padding: 0 var(--padding-container);
+  }
+  
+  .pack-header {
+    text-align: center;
+    margin-bottom: var(--space-2xl);
+  }
+  
+  .pack-sistemas-grid {
+    display: grid;
+    gap: var(--space-xl);
+  }
+  
+  @media (min-width: 1024px) {
+    .pack-sistemas-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  
+  .pack-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+  }
+  
+  .timeline-step {
+    display: flex;
+    gap: var(--space-md);
+    padding: var(--space-lg);
+    background: var(--color-surface-secondary);
+    border-radius: 0.5rem;
+    border: 1px solid var(--color-border);
+  }
+  
+  .timeline-step.highlight-step {
+    border: 2px solid var(--color-primary);
+    background: rgba(var(--color-primary-rgb), 0.05);
+  }
+  
+  .step-icon {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-primary);
+    color: var(--color-white);
+    border-radius: 50%;
+  }
+  
+  .step-icon .material-symbols-outlined {
+    font-size: 1.5rem;
+  }
+  
+  .step-content h3 {
+    font-family: var(--font-headings);
+    font-size: var(--text-lg);
+    font-weight: 700;
+    color: var(--color-text);
+    margin-bottom: var(--space-sm);
+  }
+  
+  .step-content p {
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+  }
+  
+  .pack-details {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+  }
+  
+  .pack-badge {
+    padding: var(--space-lg);
+    background: rgba(var(--color-success-rgb), 0.08);
+    border: 1px solid var(--color-success);
+    border-radius: 0.5rem;
+  }
+  
+  .pack-badge.guarantee-badge h3 {
+    font-family: var(--font-headings);
+    font-size: var(--text-base);
+    font-weight: 700;
+    color: var(--color-success);
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-sm);
+  }
+  
+  .pack-badge p {
+    color: var(--color-text);
+    font-size: var(--text-sm);
+    line-height: 1.6;
+  }
+  
+  .pack-pricing .availability {
+    padding: var(--space-md);
+    background: var(--color-surface-secondary);
+    border-radius: 0.5rem;
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+  
+  .pack-pricing .material-symbols-outlined {
+    color: var(--color-primary);
+    font-size: 1.25rem;
+  }
+  
+  .pack-actions {
+    margin-top: var(--space-md);
+  }
+  
+  .pack-microcopy {
+    font-size: var(--text-xs);
+    color: var(--color-text-secondary);
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    margin-top: var(--space-sm);
+  }
+  
+  .pack-microcopy .material-symbols-outlined {
+    color: var(--color-success);
+    font-size: 1rem;
+  }
+  
+  /* SolucionesModulares styles */
+  .modulares-section {
+    padding: var(--space-xl) 0;
+    background-color: var(--color-body);
+  }
+  
+  .modulares-content {
+    width: 100%;
+    max-width: var(--container-wide);
+    margin: 0 auto;
+    padding: 0 var(--padding-container);
+  }
+  
+  .modulares-header {
+    text-align: center;
+    margin-bottom: var(--space-2xl);
+  }
+  
+  .modulares-grid {
+    display: grid;
+    gap: var(--space-lg);
+    grid-template-columns: 1fr;
+  }
+  
+  @media (min-width: 768px) {
+    .modulares-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .modulares-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  
+  .modular-card {
+    padding: var(--space-xl);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    transition: transform var(--transition-normal) ease, box-shadow var(--transition-normal) ease;
+  }
+  
+  .modular-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+  }
+  
+  .modular-card__icon {
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(var(--color-primary-rgb), 0.1);
+    color: var(--color-primary);
+    border-radius: 50%;
+    margin-bottom: var(--space-lg);
+  }
+  
+  .modular-card__icon .material-symbols-outlined {
+    font-size: 2rem;
+  }
+  
+  .modular-card__title {
+    font-family: var(--font-headings);
+    font-size: var(--text-xl);
+    font-weight: 700;
+    color: var(--color-text);
+    margin-bottom: var(--space-md);
+  }
+  
+  .modular-card__description {
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    font-size: var(--text-sm);
+  }
+  
+  .modulares-footer {
+    text-align: center;
+    margin-top: var(--space-2xl);
+  }
+  
+  /* PackWebProfesional styles */
+  .pack-grid {
+    display: grid;
+    gap: var(--space-xl);
+  }
+  
+  @media (min-width: 1024px) {
+    .pack-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  
+  .pack-benefits {
+    background: var(--color-surface);
+    padding: var(--space-xl);
+    border-radius: 0.5rem;
+    border: 1px solid var(--color-border);
+  }
+  
+  .benefits-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+  }
+  
+  .benefits-list li {
+    display: flex;
+    gap: var(--space-md);
+    align-items: flex-start;
+  }
+  
+  .benefits-list li .icon {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(var(--color-primary-rgb), 0.1);
+    color: var(--color-primary);
+    border-radius: 50%;
+  }
+  
+  .benefits-list li .icon .material-symbols-outlined {
+    font-size: 1.25rem;
+  }
+  
+  .benefits-list li p {
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    font-size: var(--text-sm);
+  }
+  
+  .benefits-list li strong {
+    color: var(--color-text);
+    font-weight: 600;
+  }
+  
+  .benefits-list li.highlight {
+    margin-top: var(--space-md);
+    padding-top: var(--space-md);
+    border-top: 2px solid var(--color-primary);
+  }
+  
+  .benefits-list li.highlight .icon {
+    background: var(--color-primary);
+    color: var(--color-white);
+  }
+  
+  .pack-details {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+  }
+  
+  .pack-badge h3 {
+    font-family: var(--font-headings);
+    font-size: var(--text-base);
+    font-weight: 700;
+    color: var(--color-primary);
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    margin-bottom: var(--space-sm);
+  }
+  
+  .pack-badge p {
+    color: var(--color-text);
+    font-size: var(--text-sm);
+    line-height: 1.6;
+  }
+  
+  .pack-pricing .guarantee {
+    padding: var(--space-md);
+    background: rgba(var(--color-warning-rgb), 0.08);
+    border: 1px solid var(--color-warning);
+    border-radius: 0.5rem;
+    font-size: var(--text-sm);
+    color: var(--color-text);
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+  
+  .pack-pricing .material-symbols-outlined {
+    color: var(--color-warning);
+    font-size: 1.25rem;
+  }
+  
+  .pack-actions {
+    margin-top: var(--space-md);
+  }
+  
+  .pack-microcopy {
+    font-size: var(--text-xs);
+    color: var(--color-text-secondary);
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    margin-top: var(--space-sm);
+  }
+  
+  .pack-microcopy .material-symbols-outlined {
+    color: var(--color-success);
+    font-size: 1rem;
+  }
+  
+  /* MetodologiaCTP styles */
+  .metodologia-section {
+    padding: var(--space-xl) 0;
+    background-color: var(--color-surface);
+  }
+  
+  .metodologia-content {
+    width: 100%;
+    max-width: var(--container-wide);
+    margin: 0 auto;
+    padding: 0 var(--padding-container);
+  }
+  
+  .metodologia-header {
+    text-align: center;
+    margin-bottom: var(--space-2xl);
+  }
+  
+  .metodologia-subtitle {
+    color: var(--color-text-secondary);
+    font-size: var(--text-lg);
+    margin-top: var(--space-md);
+    line-height: 1.6;
+  }
+  
+  .metodologia-steps {
+    display: grid;
+    gap: var(--space-lg);
+    grid-template-columns: 1fr;
+  }
+  
+  @media (min-width: 768px) {
+    .metodologia-steps {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .metodologia-steps {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+  
+  .step-card {
+    padding: var(--space-xl);
+    background: var(--color-surface-secondary);
+    border-radius: 0.5rem;
+    border: 1px solid var(--color-border);
+    text-align: center;
+    transition: transform var(--transition-normal) ease, box-shadow var(--transition-normal) ease;
+  }
+  
+  .step-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+  }
+  
+  .step-card__number {
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-primary);
+    color: var(--color-white);
+    border-radius: 50%;
+    margin: 0 auto var(--space-lg);
+  }
+  
+  .step-card__number .material-symbols-outlined {
+    font-size: 2rem;
+  }
+  
+  .step-card__title {
+    font-family: var(--font-headings);
+    font-size: var(--text-lg);
+    font-weight: 700;
+    color: var(--color-text);
+    margin-bottom: var(--space-sm);
+  }
+  
+  .step-card__title span {
+    display: block;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--color-primary);
+    margin-top: var(--space-xs);
+  }
+  
+  .step-card__description {
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    font-size: var(--text-sm);
+  }
+  
+  .metodologia-badge {
+    text-align: center;
+    margin-top: var(--space-2xl);
+    padding: var(--space-lg);
+    background: rgba(var(--color-primary-rgb), 0.08);
+    border: 1px solid var(--color-primary);
+    border-radius: 0.5rem;
+  }
+  
+  .metodologia-badge p {
+    color: var(--color-text);
+    font-size: var(--text-base);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm);
+  }
+  
+  .metodologia-badge .material-symbols-outlined {
+    color: var(--color-primary);
+    font-size: 1.5rem;
+  }
+  
+  .metodologia-badge strong {
+    font-weight: 600;
+  }
+</style>

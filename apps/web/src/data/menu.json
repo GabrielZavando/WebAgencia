@@ -1,0 +1,28 @@
+{
+  "menuItems": [
+    {
+      "text": "Inicio",
+      "href": "/"
+    },
+    {
+      "text": "Servicios",
+      "href": "/servicios"
+    },
+    {
+      "text": "Metodología",
+      "href": "/metodologia"
+    },
+    {
+      "text": "Planes",
+      "href": "/#planes"
+    },
+    {
+      "text": "Blog",
+      "href": "/blog"
+    },
+    {
+      "text": "Contacto",
+      "href": "/#contacto"
+    }
+  ]
+}

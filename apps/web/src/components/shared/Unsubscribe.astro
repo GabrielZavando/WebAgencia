@@ -1,0 +1,112 @@
+---
+// Componente de desuscripción
+const API_BASE_URL =
+    import.meta.env.PUBLIC_API_BASE_URL ||
+    "https://api-agencia-201828783555.southamerica-west1.run.app";
+---
+
+<section class="unsubscribe-section">
+    <div class="unsubscribe-container fade-in">
+        <div class="unsubscribe-card" id="unsubscribeCard">
+            <!-- Loading State -->
+            <div id="loadingState" class="state-content">
+                <div class="spinner"></div>
+                <h2 class="state-title">Procesando tu solicitud...</h2>
+                <p class="state-text">
+                    Por favor espera un momento mientras te damos de baja de
+                    nuestra lista.
+                </p>
+            </div>
+
+            <!-- Success State -->
+            <div id="successState" class="state-content hidden">
+                <div class="icon-circle success">
+                    <span class="material-symbols-outlined">check</span>
+                </div>
+                <h2 class="state-title">¡Te has desuscrito correctamente!</h2>
+                <p class="state-text">
+                    Lamentamos verte partir. Tu correo ha sido eliminado
+                    exitosamente de nuestra base de datos. Ya no recibirás más
+                    correos de nosotros.
+                </p>
+                <a href="/" class="btn-cta">Volver al inicio</a>
+            </div>
+
+            <!-- Error State -->
+            <div id="errorState" class="state-content hidden">
+                <div class="icon-circle error">
+                    <span class="material-symbols-outlined">warning</span>
+                </div>
+                <h2 class="state-title" id="errorTitle">Ups, algo salió mal</h2>
+                <p class="state-text" id="errorMessage">
+                    No pudimos procesar tu solicitud. Puede que el enlace haya
+                    expirado o sea inválido.
+                </p>
+                <a href="/" class="btn-cta">Volver al inicio</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<script define:vars={{ apiBaseUrl: API_BASE_URL }}>
+    // Configuración segura disponible para el script del cliente
+    window.__UNSUBSCRIBE_CONFIG = {
+        API_BASE_URL: apiBaseUrl,
+    };
+</script>
+
+<script type="module">
+    import { apiClient, ApiError } from "../../lib/api-client";
+
+    document.addEventListener("DOMContentLoaded", async () => {
+        const loadingState = document.getElementById("loadingState");
+        const successState = document.getElementById("successState");
+        const errorState = document.getElementById("errorState");
+        const errorTitle = document.getElementById("errorTitle");
+        const errorMessage = document.getElementById("errorMessage");
+
+        function showState(stateId) {
+            [loadingState, successState, errorState].forEach((el) => {
+                if (el) el.classList.add("hidden");
+            });
+            document.getElementById(stateId)?.classList.remove("hidden");
+        }
+
+        function showError(title, message) {
+            if (errorTitle) errorTitle.textContent = title;
+            if (errorMessage) errorMessage.textContent = message;
+            showState("errorState");
+        }
+
+        const params = new URLSearchParams(window.location.search);
+        const email = params.get("email");
+
+        if (!email) {
+            showError(
+                "Enlace inválido",
+                "No se encontró ninguna dirección de correo electrónico en el enlace. Por favor, verifica que hayas copiado el enlace completo.",
+            );
+            return;
+        }
+
+        try {
+            const data = await apiClient.post<{ success: boolean; message?: string }>(
+                `/forms/unsubscribe?email=${encodeURIComponent(email)}`,
+            );
+
+            if (data.success) {
+                showState("successState");
+            } else {
+                showError("Error", data.message || "Error desconocido");
+            }
+        } catch (err) {
+            console.error("Error al desuscribir:", err);
+            const message =
+                err instanceof ApiError
+                    ? err.message
+                    : "Tuvimos un problema al conectar con el servidor. Por favor, intenta de nuevo más tarde o contáctame directamente.";
+            showError("Error de conexión", message);
+        }
+    });
+</script>

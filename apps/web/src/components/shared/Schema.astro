@@ -1,0 +1,83 @@
+---
+import type { SystemConfig } from "../../utils/config";
+
+interface Props {
+  config: SystemConfig;
+  type?: 'WebSite' | 'Organization' | 'BreadcrumbList';
+}
+
+const { config, type = 'WebSite' } = Astro.props;
+
+const siteUrl = config.websiteUrl || 'https://gabrielzavando.cl';
+
+// Esquema de Organización
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": config.name,
+  "url": siteUrl,
+  "logo": config.logoUrl,
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "telephone": config.phone,
+    "contactType": "customer service",
+    "email": config.email
+  },
+  "sameAs": [
+    config.social.linkedinUrl,
+    config.social.instagramUrl,
+    config.social.githubUrl,
+    config.social.youtubeUrl
+  ].filter(url => !!url)
+};
+
+// Esquema de Sitio Web (ayuda con los Sitelinks y caja de búsqueda)
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": config.name,
+  "alternateName": "Agencia Digital Gabriel Zavando",
+  "url": siteUrl,
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": `${siteUrl}/blog?q={search_term_string}`,
+    "query-input": "required name=search_term_string"
+  }
+};
+
+// Esquema de Navegación (Sugerencia para Google sobre secciones clave)
+const navigationSchema = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "itemListElement": [
+    {
+      "@type": "SiteNavigationElement",
+      "position": 1,
+      "name": "Servicios",
+      "url": `${siteUrl}/servicios`
+    },
+    {
+      "@type": "SiteNavigationElement",
+      "position": 2,
+      "name": "Metodología",
+      "url": `${siteUrl}/metodologia`
+    },
+    {
+      "@type": "SiteNavigationElement",
+      "position": 3,
+      "name": "Diagnóstico Digital",
+      "url": `${siteUrl}/diagnostico`
+    },
+    {
+      "@type": "SiteNavigationElement",
+      "position": 4,
+      "name": "Blog",
+      "url": `${siteUrl}/blog`
+    }
+  ]
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(organizationSchema)} />
+<script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
+<script type="application/ld+json" set:html={JSON.stringify(navigationSchema)} />

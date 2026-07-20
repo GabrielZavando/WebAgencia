@@ -1,0 +1,64 @@
+{
+  "section": {
+    "title": "¿Con cuál situación te identificas?",
+    "description": "No todos los negocios necesitan lo mismo. Por eso diseñé dos caminos claros, con acompañamiento permanente en cada paso."
+  },
+  "services": [
+    {
+      "id": "pack-web",
+      "need": "NECESITO ORDEN Y PRESENCIA",
+      "icon": "<span class=\"material-symbols-outlined\">devices</span>",
+      "anchor": "#web-profesional",
+      "title": "Pack Web Profesional",
+      "description": "Deja de improvisar tu presencia digital. Centraliza tus clientes, proyecta autoridad y recupera el control de tu operación con un activo web bajo tu mando absoluto.",
+      "ctaText": "Ver detalles",
+      "modalContent": {
+        "extendedDescription": "Consigue una presencia digital impecable que proyecte autoridad y profesionalismo. No es solo un sitio web, es tu base de operaciones digitales bajo control total.",
+        "benefits": [
+          "Listo en 14 días: Sin procesos eternos ni demoras injustificadas.",
+          "Control Total: Soy dueño de mi tecnología, sin ataduras a plataformas propietarias.",
+          "Diseño Estratégico: Enfocado en convertir visitantes en clientes reales.",
+          "Optimización SEO & Velocidad: Carga instantánea y listo para Google.",
+          "Soporte Incluido: Acompañamiento constante para que nunca estés solo."
+        ],
+        "implementation": [
+          "Sesión de Estrategia: Definimos el objetivo y la estructura.",
+          "Diseño y Prototipado: Creamos la cara de tu negocio.",
+          "Desarrollo Ágil: Construcción en tiempo récord.",
+          "Pruebas y Lanzamiento: Todo funcionando al 100%."
+        ],
+        "hook": "¿Listo para tener la web que tu negocio merece?",
+        "videoId": "próximamente",
+        "ctaText": "Consultar por Pack Web"
+      }
+    },
+    {
+      "id": "pack-sistemas",
+      "need": "NECESITO AUTOMATIZAR Y ESCALAR",
+      "icon": "<span class=\"material-symbols-outlined\">trending_up</span>",
+      "anchor": "#automatizacion",
+      "title": "Pack Sistemas & Automatización",
+      "description": "Tu tiempo vale más que repetir lo mismo. Diseña flujos automáticos e IA que operan en segundo plano, liberándote para enfocarte en lo que realmente genera valor.",
+      "ctaText": "Ver detalles",
+      "modalContent": {
+        "extendedDescription": "Libérate de las tareas repetitivas y el caos operativo. Construyo los sistemas que permiten que tu negocio crezca mientras tú recuperas tu tiempo.",
+        "benefits": [
+          "Automatización de Procesos: Deja que la tecnología haga el trabajo pesado.",
+          "Escalabilidad Real: Sistemas preparados para crecer sin aumentar el caos.",
+          "Reducción de Errores: Menos intervención manual significa menos fallos.",
+          "Integración Total: Tus herramientas conversan entre sí sin fricciones.",
+          "IA Estratégica: Implementación de agentes inteligentes donde realmente aportan valor."
+        ],
+        "implementation": [
+          "Auditoría de Procesos: Identificamos cuellos de botella.",
+          "Diseño de Flujos: Mapeamos la solución ideal.",
+          "Implementación Técnica: Conectamos y automatizamos.",
+          "Capacitación y Soporte: Te enseñamos a dominar el sistema."
+        ],
+        "hook": "¿Listo para que tu negocio trabaje para ti y no al revés?",
+        "videoId": "próximamente",
+        "ctaText": "Consultar por Pack Sistemas"
+      }
+    }
+  ]
+}

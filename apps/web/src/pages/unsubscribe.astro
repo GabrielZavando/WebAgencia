@@ -1,0 +1,33 @@
+---
+import MainLayout from "../layouts/MainLayout.astro";
+import UnsubscribeComponent from "../components/shared/Unsubscribe.astro";
+import { getSystemConfig } from "../utils/config";
+
+const config = await getSystemConfig();
+---
+
+<MainLayout
+    title="Darse de baja | Gabriel Zavando"
+    description="Página de confirmación de desuscripción del newsletter."
+    hideHeader={true}
+    hideFooter={true}
+>
+    <nav class="assessment-nav fade-in-down">
+        <div class="assessment-nav__container">
+            <a href="/" class="assessment-nav__logo" title="Volver al inicio">
+                <img
+                    src={config.logoUrl}
+                    alt={config.name}
+                    width="150"
+                    height="150"
+                    class="logo"
+                />
+            </a>
+            <a href="/" class="btn-cta__border btn-sm assessment-nav__back">
+                <span class="material-symbols-outlined">arrow_back</span>
+                Volver al home
+            </a>
+        </div>
+    </nav>
+    <UnsubscribeComponent />
+</MainLayout>
