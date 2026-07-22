@@ -6,6 +6,7 @@ import {
   UseGuards,
   HttpCode,
   HttpStatus,
+  Res,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -14,6 +15,7 @@ import {
   ApiBearerAuth,
   ApiBody,
 } from '@nestjs/swagger';
+import { Response } from 'express';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { AuthGuard } from '../common/guards/auth.guard';
@@ -125,5 +127,31 @@ export class AuthController {
   ): Promise<{ data: User }> {
     const fullUser = await this.usersService.findById(user.userId);
     return { data: fullUser };
+  }
+
+  @Post('logout')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Cerrar sesión y limpiar cookie de sesión' })
+  @ApiResponse({
+    status: 200,
+    description: 'Sesión cerrada exitosamente',
+    schema: {
+      example: {
+        data: null,
+        meta: { message: 'Sesión cerrada exitosamente' },
+      },
+    },
+  })
+  logout(@Res({ passthrough: true }) res: Response) {
+    // Clear session cookie if it exists
+    res.setHeader('Set-Cookie', [
+      'session=; Path=/; Max-Age=0; HttpOnly; SameSite=Strict',
+      'token=; Path=/; Max-Age=0; HttpOnly; SameSite=Strict',
+    ]);
+
+    return {
+      data: null,
+      meta: { message: 'Sesión cerrada exitosamente' },
+    };
   }
 }
