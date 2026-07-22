@@ -68,6 +68,17 @@ The system **SHALL** invalidar la sesión del lado del servidor al cerrar sesió
 - **WHEN** hay error de red
 - **THEN** se limpia la sesión localmente y redirige a `/login` de todos modos
 
+#### Scenario: Endpoint logout existe en backend
+- **GIVEN** el backend NestJS está corriendo
+- **WHEN** se envía `POST /api/v1/auth/logout`
+- **THEN** el endpoint existe y retorna HTTP 200 con `{ data: null, meta: { message: "Sesión cerrada exitosamente" } }`
+
+#### Scenario: Logout limpia cookie de sesión
+- **GIVEN** el usuario tiene una cookie de sesión
+- **WHEN** el endpoint logout se ejecuta
+- **THEN** la respuesta incluye header `Set-Cookie` con `max-age=0` para expirar la cookie
+- **AND** la cookie se marca como `httpOnly` y `sameSite=strict`
+
 ### Requirement: Persistencia de tema entre sitio público y admin
 The system **SHALL** respetar la preferencia de tema (claro/oscuro) del usuario en el dashboard.
 
