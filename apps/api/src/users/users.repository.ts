@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { DocumentData, QueryDocumentSnapshot } from 'firebase-admin/firestore';
 import { FirebaseService } from '../firebase/firebase.service';
 import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -34,10 +35,12 @@ export class UsersRepository {
 
     const total = countSnapshot.data().count;
 
-    const users: User[] = snapshot.docs.map((doc: any) => ({
-      id: doc.id,
-      ...doc.data(),
-    })) as User[];
+    const users: User[] = snapshot.docs.map(
+      (doc: QueryDocumentSnapshot<DocumentData>) => ({
+        id: doc.id,
+        ...doc.data(),
+      }),
+    ) as User[];
 
     return {
       data: users,

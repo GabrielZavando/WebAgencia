@@ -1,4 +1,9 @@
 import { Injectable } from '@nestjs/common';
+import {
+  DocumentData,
+  Query,
+  QueryDocumentSnapshot,
+} from 'firebase-admin/firestore';
 import { FirebaseService } from '../firebase/firebase.service';
 import { Article } from './entities/article.entity';
 import { CreateArticleDto } from './dto/create-article.dto';
@@ -28,7 +33,7 @@ export class ArticlesRepository {
     limit: number = 10,
   ): Promise<PaginationResult<Article>> {
     const firestore = this.firebaseService.getFirestore();
-    let query: any = firestore.collection(this.collectionName);
+    let query: Query<DocumentData> = firestore.collection(this.collectionName);
 
     if (filters.category_id) {
       query = query.where('category_id', '==', filters.category_id);
@@ -45,12 +50,14 @@ export class ArticlesRepository {
       query.count().get(),
     ]);
 
-    const total = countSnapshot.data().count;
+    const total = (countSnapshot.data() as { count: number }).count;
 
-    const articles: Article[] = snapshot.docs.map((doc: any) => ({
-      id: doc.id,
-      ...doc.data(),
-    })) as Article[];
+    const articles: Article[] = snapshot.docs.map(
+      (doc: QueryDocumentSnapshot<DocumentData>) => ({
+        id: doc.id,
+        ...doc.data(),
+      }),
+    ) as Article[];
 
     return {
       data: articles,

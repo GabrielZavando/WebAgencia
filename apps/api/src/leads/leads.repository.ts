@@ -21,32 +21,36 @@ export class LeadsRepository {
 
   constructor(private readonly supabase: SupabaseService) {}
 
-  async findLeadByEmail(email: string) {
+  async findLeadByEmail(
+    email: string,
+  ): Promise<Record<string, unknown> | null> {
     try {
-      const { data, error } = await this.supabase.getClient()
+      const result = await this.supabase
+        .getClient()
         .from('leads')
         .select('*')
         .eq('email', email)
         .single();
 
-      if (error) {
-        if (error.code === 'PGRST116') {
+      if (result.error) {
+        if (result.error.code === 'PGRST116') {
           // No rows found
           return null;
         }
-        throw error;
+        throw result.error;
       }
 
-      return data;
+      return result.data as Record<string, unknown>;
     } catch (error) {
       this.logger.error('Error finding lead by email', error);
       throw error;
     }
   }
 
-  async createLead(data: CreateLeadData) {
+  async createLead(data: CreateLeadData): Promise<Record<string, unknown>> {
     try {
-      const { data: lead, error } = await this.supabase.getClient()
+      const result = await this.supabase
+        .getClient()
         .from('leads')
         .insert({
           email: data.email,
@@ -59,20 +63,23 @@ export class LeadsRepository {
         .select()
         .single();
 
-      if (error) {
-        throw error;
+      if (result.error) {
+        throw result.error;
       }
 
-      return lead;
+      return result.data as Record<string, unknown>;
     } catch (error) {
       this.logger.error('Error creating lead', error);
       throw error;
     }
   }
 
-  async createContactMessage(data: CreateContactMessageData) {
+  async createContactMessage(
+    data: CreateContactMessageData,
+  ): Promise<Record<string, unknown>> {
     try {
-      const { data: message, error } = await this.supabase.getClient()
+      const result = await this.supabase
+        .getClient()
         .from('contact_messages')
         .insert({
           lead_id: data.leadId,
@@ -81,11 +88,11 @@ export class LeadsRepository {
         .select()
         .single();
 
-      if (error) {
-        throw error;
+      if (result.error) {
+        throw result.error;
       }
 
-      return message;
+      return result.data as Record<string, unknown>;
     } catch (error) {
       this.logger.error('Error creating contact message', error);
       throw error;
