@@ -22,9 +22,9 @@
 ### Supabase PostgreSQL (Leads/Prospectos)
 - Tablas: `leads`, `contact_messages`
 - Campos JSONB para metadata, attribution, payload (estructura semi-flexible)
-- Prisma como ORM
-- Migraciones versionadas con `prisma migrate dev`
-- Nunca modificar migraciones ya ejecutadas en producción
+- **SDK:** `@supabase/supabase-js` (cliente de Supabase)
+- Migraciones se gestionan directamente en Supabase Dashboard o vía SQL
+- SupabaseModule global para acceso al cliente desde cualquier módulo
 
 ## Testing backend
 
@@ -55,10 +55,10 @@
 ```
 Runtime: Node.js 20 LTS
 Framework: NestJS 11
-ORM: Prisma 6 (para Supabase PostgreSQL)
 SDK Cliente: firebase-admin (para Firestore y Firebase Auth)
+Supabase SDK: @supabase/supabase-js (para PostgreSQL)
 Base de datos 1: Firebase Firestore (SDK admin)
-Base de datos 2: Supabase PostgreSQL (via Prisma)
+Base de datos 2: Supabase PostgreSQL (via Supabase SDK)
 Contenedor: Docker + Docker Compose
 Tests: Jest
 Validation: class-validator + class-transformer

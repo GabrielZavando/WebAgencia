@@ -317,12 +317,21 @@ Aún no tienen backend; el Frontend las anticipa en su diseño.
 - ❌ Rol distinto a `admin` en JWT del cliente
 - ❌ Persistir datos de Lead en `src/data/` (siempre dinámica API)
 
-## Migraciones Prisma
+## Gestión de Base de Datos
+
+### Supabase PostgreSQL (Leads)
+
+Las tablas de Leads (`leads`, `contact_messages`) se gestionan directamente en Supabase:
+
+- **SDK:** `@supabase/supabase-js` (cliente de Supabase para NestJS)
+- **Migraciones:** Se realizan directamente en el Dashboard de Supabase o vía SQL
+- **RLS:** Row Level Security se implementará en futuros cambios
 
 ```bash
-# Crear nueva migración
-npx prisma migrate dev --name nombre_de_la_migracion
-
-# Aplicar migraciones en producción
-npx prisma migrate deploy
+# Las migraciones se hacen directamente en Supabase Dashboard
+# O vía SQL en el Editor de SQL de Supabase
 ```
+
+### Firebase Firestore (Auth, Blog)
+
+Las colecciones de Firebase (`users`, `roles`, `articles`, `categories`) se gestionan vía Firebase Admin SDK.
