@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { FirebaseModule } from './firebase/firebase.module';
-import { PrismaModule } from './prisma/prisma.module';
+import { SupabaseModule } from './supabase/supabase.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { CategoriesModule } from './categories/categories.module';
@@ -20,7 +20,7 @@ import { HealthController } from './health.controller';
       },
     ]),
     FirebaseModule,
-    PrismaModule,
+    SupabaseModule,
     AuthModule,
     UsersModule,
     CategoriesModule,
