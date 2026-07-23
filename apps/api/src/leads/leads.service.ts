@@ -1,5 +1,5 @@
 import { Injectable, Logger, ServiceUnavailableException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { SupabaseService } from '../supabase/supabase.service';
 import { LeadsRepository } from './leads.repository';
 import { CreateLeadDto } from './dto/create-lead.dto';
 
@@ -15,12 +15,12 @@ export class LeadsService {
   private readonly logger = new Logger(LeadsService.name);
 
   constructor(
-    private readonly prisma: PrismaService,
+    private readonly supabase: SupabaseService,
     private readonly leadsRepository: LeadsRepository,
   ) {}
 
   async createLead(dto: CreateLeadDto): Promise<LeadCreatedResponse> {
-    if (!this.prisma.isConnected) {
+    if (!this.supabase.isConnected) {
       throw new ServiceUnavailableException({
         error: 'Service Unavailable',
         message: 'Base de datos no configurada',

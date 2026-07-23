@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { LeadsService } from './leads.service';
-import { PrismaService } from '../prisma/prisma.service';
+import { SupabaseService } from '../supabase/supabase.service';
 import { LeadsRepository } from './leads.repository';
 import { CreateLeadDto } from './dto/create-lead.dto';
 import { ServiceUnavailableException } from '@nestjs/common';
@@ -8,9 +8,9 @@ import { ServiceUnavailableException } from '@nestjs/common';
 describe('LeadsService', () => {
   let service: LeadsService;
   let repository: LeadsRepository;
-  let prisma: PrismaService;
+  let supabase: SupabaseService;
 
-  const mockPrismaService = {
+  const mockSupabaseService = {
     isConnected: false,
   };
 
@@ -24,14 +24,14 @@ describe('LeadsService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         LeadsService,
-        { provide: PrismaService, useValue: mockPrismaService },
+        { provide: SupabaseService, useValue: mockSupabaseService },
         { provide: LeadsRepository, useValue: mockLeadsRepository },
       ],
     }).compile();
 
     service = module.get<LeadsService>(LeadsService);
     repository = module.get<LeadsRepository>(LeadsRepository);
-    prisma = module.get<PrismaService>(PrismaService);
+    supabase = module.get<SupabaseService>(SupabaseService);
 
     jest.clearAllMocks();
   });
@@ -48,13 +48,13 @@ describe('LeadsService', () => {
     };
 
     it('should throw ServiceUnavailableException when database is not connected', async () => {
-      (prisma as any).isConnected = false;
+      (supabase as any).isConnected = false;
 
       await expect(service.createLead(validDto)).rejects.toThrow(ServiceUnavailableException);
     });
 
     it('should create a new lead when email does not exist', async () => {
-      (prisma as any).isConnected = true;
+      (supabase as any).isConnected = true;
       mockLeadsRepository.findLeadByEmail.mockResolvedValue(null);
       mockLeadsRepository.createLead.mockResolvedValue({ id: 'uuid-lead-123' });
       mockLeadsRepository.createContactMessage.mockResolvedValue({ id: 'uuid-msg-123' });
@@ -92,7 +92,7 @@ describe('LeadsService', () => {
     });
 
     it('should add contact message to existing lead (duplicate email)', async () => {
-      (prisma as any).isConnected = true;
+      (supabase as any).isConnected = true;
       mockLeadsRepository.findLeadByEmail.mockResolvedValue({
         id: 'uuid-lead-existente',
         email: 'juan@ejemplo.com',
@@ -114,7 +114,7 @@ describe('LeadsService', () => {
     });
 
     it('should normalize email to lowercase', async () => {
-      (prisma as any).isConnected = true;
+      (supabase as any).isConnected = true;
       mockLeadsRepository.findLeadByEmail.mockResolvedValue(null);
       mockLeadsRepository.createLead.mockResolvedValue({ id: 'uuid-lead-789' });
       mockLeadsRepository.createContactMessage.mockResolvedValue({ id: 'uuid-msg-789' });
@@ -133,7 +133,7 @@ describe('LeadsService', () => {
     });
 
     it('should trim whitespace from name', async () => {
-      (prisma as any).isConnected = true;
+      (supabase as any).isConnected = true;
       mockLeadsRepository.findLeadByEmail.mockResolvedValue(null);
       mockLeadsRepository.createLead.mockResolvedValue({ id: 'uuid-lead-trim' });
       mockLeadsRepository.createContactMessage.mockResolvedValue({ id: 'uuid-msg-trim' });
@@ -151,7 +151,7 @@ describe('LeadsService', () => {
     });
 
     it('should include optional phone in payload', async () => {
-      (prisma as any).isConnected = true;
+      (supabase as any).isConnected = true;
       mockLeadsRepository.findLeadByEmail.mockResolvedValue(null);
       mockLeadsRepository.createLead.mockResolvedValue({ id: 'uuid-lead-phone' });
       mockLeadsRepository.createContactMessage.mockResolvedValue({ id: 'uuid-msg-phone' });
@@ -173,7 +173,7 @@ describe('LeadsService', () => {
     });
 
     it('should set phone to null when not provided', async () => {
-      (prisma as any).isConnected = true;
+      (supabase as any).isConnected = true;
       mockLeadsRepository.findLeadByEmail.mockResolvedValue(null);
       mockLeadsRepository.createLead.mockResolvedValue({ id: 'uuid-lead-nophone' });
       mockLeadsRepository.createContactMessage.mockResolvedValue({ id: 'uuid-msg-nophone' });
