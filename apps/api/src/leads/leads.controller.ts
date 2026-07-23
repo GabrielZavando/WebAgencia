@@ -1,17 +1,5 @@
-import {
-  Controller,
-  Post,
-  Body,
-  HttpCode,
-  HttpStatus,
-  Res,
-} from '@nestjs/common';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiBody,
-} from '@nestjs/swagger';
+import { Controller, Post, Body, HttpStatus, Res } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { Response } from 'express';
 import { LeadsService } from './leads.service';
 import { CreateLeadDto } from './dto/create-lead.dto';
@@ -82,7 +70,8 @@ export class LeadsController {
     @Body() createLeadDto: CreateLeadDto,
     @Res({ passthrough: true }) res: Response,
   ): Promise<LeadResponse> {
-    const { isNew, ...result } = await this.leadsService.createLead(createLeadDto);
+    const { isNew, ...result } =
+      await this.leadsService.createLead(createLeadDto);
 
     // 201 = new lead, 200 = existing lead (duplicate email)
     res.status(isNew ? HttpStatus.CREATED : HttpStatus.OK);

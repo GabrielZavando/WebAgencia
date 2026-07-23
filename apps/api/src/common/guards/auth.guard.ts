@@ -6,13 +6,18 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import { FirebaseService } from '../../firebase/firebase.service';
+import { CurrentUserData } from '../decorators/current-user.decorator';
+
+interface AuthRequest extends Request {
+  user: CurrentUserData;
+}
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(private readonly firebaseService: FirebaseService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest<Request>();
+    const request = context.switchToHttp().getRequest<AuthRequest>();
     const authHeader = request.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -36,10 +41,10 @@ export class AuthGuard implements CanActivate {
     try {
       const decoded = await this.firebaseService.verifyIdToken(token);
 
-      (request as any).user = {
+      request.user = {
         userId: decoded.uid,
-        email: decoded.email,
-        role: decoded.role,
+        email: decoded.email ?? '',
+        role: (decoded.role as string) ?? 'user',
       };
 
       return true;

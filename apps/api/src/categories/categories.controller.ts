@@ -104,7 +104,8 @@ export class CategoriesController {
     schema: {
       example: {
         error: 'Bad Request',
-        message: 'El slug debe ser URL-friendly (solo letras minúsculas, números y guiones)',
+        message:
+          'El slug debe ser URL-friendly (solo letras minúsculas, números y guiones)',
         statusCode: 400,
       },
     },

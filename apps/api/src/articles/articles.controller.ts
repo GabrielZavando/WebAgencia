@@ -86,7 +86,9 @@ export class ArticlesController {
               content: [
                 {
                   type: 'paragraph',
-                  content: [{ type: 'text', text: 'Contenido del artículo...' }],
+                  content: [
+                    { type: 'text', text: 'Contenido del artículo...' },
+                  ],
                 },
               ],
             },
