@@ -8,7 +8,7 @@ API REST para gestión de usuarios, blog y captación de leads de sitio web.
 - **Autenticación:** Firebase Auth
 - **Base de Datos 1:** Firebase Firestore (usuarios, roles, artículos, categorías)
 - **Base de Datos 2:** Supabase PostgreSQL (leads/prospectos)
-- **ORM:** Prisma
+- **SDK Supabase:** @supabase/supabase-js
 - **Contenedor:** Docker + Docker Compose
 
 ## Requisitos
@@ -35,7 +35,8 @@ cp .env.example .env
 | `FIREBASE_PROJECT_ID` | ID del proyecto en Firebase Console |
 | `FIREBASE_CLIENT_EMAIL` | Email del service account |
 | `FIREBASE_PRIVATE_KEY` | Clave privada del service account |
-| `DATABASE_URL` | Connection string de Supabase PostgreSQL |
+| `SUPABASE_URL` | URL del proyecto Supabase |
+| `SUPABASE_SECRET_KEY` | Service role key de Supabase |
 
 ### 2. Obtener credenciales de Firebase
 
@@ -49,24 +50,9 @@ cp .env.example .env
 
 1. Ir a [Supabase Dashboard](https://supabase.com/dashboard)
 2. Seleccionar proyecto
-3. Settings > Database
-4. Copiar Connection string a `DATABASE_URL`
-
-### 4. Generar Prisma Client
-
-```bash
-npx prisma generate
-```
-
-### 5. Aplicar migraciones
-
-```bash
-# Desarrollo (crea nueva migración si es necesario)
-npx prisma migrate dev
-
-# Producción (solo aplica migraciones existentes)
-npx prisma migrate deploy
-```
+3. Settings > API
+4. Copiar URL a `SUPABASE_URL`
+5. Copiar service_role key a `SUPABASE_SECRET_KEY`
 
 ## Desarrollo local
 
@@ -143,10 +129,10 @@ docker compose -f docker/docker-compose.yml up -d
 ├── src/                       # Código fuente NestJS
 │   ├── main.ts
 │   ├── app.module.ts
+│   ├── supabase/              # Cliente Supabase
+│   │   ├── supabase.module.ts
+│   │   └── supabase.service.ts
 │   └── ...
-│
-├── prisma/
-│   └── schema.prisma          # Esquema de base de datos
 │
 ├── docker/
 │   ├── Dockerfile
