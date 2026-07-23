@@ -13,7 +13,7 @@ Monorepo para el sitio web y API de **Agencia Digital Gabriel Zavando**. Combina
 
 ## Requisitos
 
-- **Node.js** >= 20.19
+- **Node.js** >= 22.12
 - **pnpm** >= 10
 - **Docker** y Docker Compose (opcional, para la API)
 - **Cuenta de Firebase** (proyecto configurado para Auth y Firestore)
