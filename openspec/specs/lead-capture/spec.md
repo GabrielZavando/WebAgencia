@@ -98,12 +98,12 @@ The system **SHALL** interpretar `ApiError` y mostrar mensajes amigables:
 - **Then** aparece "No pudimos enviar tu mensaje. Intenta más tarde o escríbenos directamente a contacto@...".
 
 ### Requirement: Backend endpoint for lead capture
-The system **SHALL** exponer un endpoint `POST /api/v1/leads/contact` que recibe el payload del formulario de contacto y lo persiste en PostgreSQL via Prisma.
+The system **SHALL** exponer un endpoint `POST /api/v1/leads/contact` que recibe el payload del formulario de contacto y lo persiste en PostgreSQL via Supabase SDK.
 
 #### Scenario: Lead creado exitosamente
 - **GIVEN** el frontend envía `{ name, email, message }` válidos
 - **WHEN** el backend recibe la petición
-- **THEN** crea un `Lead` en PostgreSQL con `status = "contact"`
+- **THEN** crea un `Lead` en PostgreSQL con `status = "contact"` usando Supabase SDK
 - **AND** crea un `ContactMessage` vinculado al lead
 - **AND** retorna HTTP 201 con `{ data: { leadId, message: "Contacto registrado exitosamente" } }`
 
@@ -119,12 +119,17 @@ The system **SHALL** exponer un endpoint `POST /api/v1/leads/contact` que recibe
 - **THEN** retorna HTTP 400 con errores de validación por campo
 
 ### Requirement: Leads module architecture
-The system **SHALL** implementar el módulo `LeadsModule` siguiendo el patrón de arquitectura existente (Controller → Service → Repository).
+The system **SHALL** implementar el módulo `LeadsModule` siguiendo el patrón de arquitectura existente (Controller → Service → Repository), usando `SupabaseService` en lugar de `PrismaService`.
 
 #### Scenario: Estructura del módulo
 - **GIVEN** se inspecciona `apps/api/src/leads/`
 - **WHEN** se listan los archivos
 - **THEN** existen: `leads.module.ts`, `leads.controller.ts`, `leads.service.ts`, `leads.repository.ts`, `dto/create-lead.dto.ts`
+
+#### Scenario: LeadsRepository usa SupabaseService
+- **GIVEN** `LeadsRepository` necesita acceder a la base de datos
+- **WHEN** se revisa la inyección de dependencias
+- **THEN** inyecta `SupabaseService` en lugar de `PrismaService`
 
 ### Requirement: Public endpoint (no auth required)
 The system **SHALL** exponer `POST /api/v1/leads/contact` sin requerir autenticación.
@@ -134,15 +139,15 @@ The system **SHALL** exponer `POST /api/v1/leads/contact` sin requerir autentica
 - **WHEN** envía `POST /api/v1/leads/contact` con payload válido
 - **THEN** el endpoint procesa la petición normalmente (no retorna 401)
 
-### Requirement: Prisma conditional availability
-The system **SHALL** funcionar parcialmente cuando `DATABASE_URL` no está configurado.
+### Requirement: Supabase conditional availability
+The system **SHALL** funcionar parcialmente cuando `SUPABASE_URL` no está configurado.
 
-#### Scenario: Leads endpoint sin Prisma
-- **GIVEN** `DATABASE_URL` no está definido
+#### Scenario: Leads endpoint sin Supabase
+- **GIVEN** `SUPABASE_URL` no está definido
 - **WHEN** se envía `POST /api/v1/leads/contact`
 - **THEN** retorna HTTP 503 con `{ error: "Service Unavailable", message: "Base de datos no configurada" }`
 
-#### Scenario: Leads endpoint con Prisma
-- **GIVEN** `DATABASE_URL` está definido y Prisma está conectado
+#### Scenario: Leads endpoint con Supabase
+- **GIVEN** `SUPABASE_URL` está definido y Supabase está conectado
 - **WHEN** se envía `POST /api/v1/leads/contact` con payload válido
-- **THEN** procesa y persiste el lead normalmente.
+- **THEN** procesa y persiste el lead normalmente usando Supabase SDK
