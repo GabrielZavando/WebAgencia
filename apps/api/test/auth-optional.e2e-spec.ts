@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication, Module, Controller, Get } from '@nestjs/common';
+import { INestApplication, Module } from '@nestjs/common';
 import * as request from 'supertest';
 import { App } from 'supertest/types';
 import { FirebaseService } from '../src/firebase/firebase.service';
@@ -95,7 +95,9 @@ describe('Optional Auth & Token Revocation (e2e)', () => {
         10,
       );
 
-      expect(res.body.data).toEqual(publishedArticles);
+      expect((res.body as Record<string, unknown>).data).toEqual(
+        publishedArticles,
+      );
     });
   });
 
@@ -112,9 +114,7 @@ describe('Optional Auth & Token Revocation (e2e)', () => {
 
   describe('GET /articles — revoked token returns 401', () => {
     it('should return 401 when token has been revoked', async () => {
-      mockVerifyIdToken.mockRejectedValue(
-        new Error('auth/id-token-revoked'),
-      );
+      mockVerifyIdToken.mockRejectedValue(new Error('auth/id-token-revoked'));
 
       await request(app.getHttpServer())
         .get('/articles')
@@ -159,7 +159,7 @@ describe('Optional Auth & Token Revocation (e2e)', () => {
         10,
       );
 
-      expect(res.body.data).toEqual(draftArticles);
+      expect((res.body as Record<string, unknown>).data).toEqual(draftArticles);
     });
   });
 });

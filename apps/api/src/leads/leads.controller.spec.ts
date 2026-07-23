@@ -3,10 +3,10 @@ import { LeadsController } from './leads.controller';
 import { LeadsService } from './leads.service';
 import { CreateLeadDto } from './dto/create-lead.dto';
 import { HttpStatus } from '@nestjs/common';
+import { Response } from 'express';
 
 describe('LeadsController', () => {
   let controller: LeadsController;
-  let service: LeadsService;
 
   const mockLeadsService = {
     createLead: jest.fn(),
@@ -15,13 +15,10 @@ describe('LeadsController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [LeadsController],
-      providers: [
-        { provide: LeadsService, useValue: mockLeadsService },
-      ],
+      providers: [{ provide: LeadsService, useValue: mockLeadsService }],
     }).compile();
 
     controller = module.get<LeadsController>(LeadsController);
-    service = module.get<LeadsService>(LeadsService);
   });
 
   afterEach(() => {
@@ -48,7 +45,7 @@ describe('LeadsController', () => {
 
       const mockResponse = {
         status: jest.fn().mockReturnThis(),
-      } as any;
+      } as unknown as Response;
 
       await controller.createContact(validDto, mockResponse);
 
@@ -64,7 +61,7 @@ describe('LeadsController', () => {
 
       const mockResponse = {
         status: jest.fn().mockReturnThis(),
-      } as any;
+      } as unknown as Response;
 
       await controller.createContact(validDto, mockResponse);
 
@@ -80,7 +77,7 @@ describe('LeadsController', () => {
 
       const mockResponse = {
         status: jest.fn().mockReturnThis(),
-      } as any;
+      } as unknown as Response;
 
       const result = await controller.createContact(validDto, mockResponse);
 
@@ -102,7 +99,7 @@ describe('LeadsController', () => {
 
       const mockResponse = {
         status: jest.fn().mockReturnThis(),
-      } as any;
+      } as unknown as Response;
 
       const result = await controller.createContact(validDto, mockResponse);
 

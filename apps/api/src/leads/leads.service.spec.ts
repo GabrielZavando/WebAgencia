@@ -7,7 +7,6 @@ import { ServiceUnavailableException } from '@nestjs/common';
 
 describe('LeadsService', () => {
   let service: LeadsService;
-  let repository: LeadsRepository;
   let supabase: SupabaseService;
 
   const mockSupabaseService = {
@@ -30,7 +29,6 @@ describe('LeadsService', () => {
     }).compile();
 
     service = module.get<LeadsService>(LeadsService);
-    repository = module.get<LeadsRepository>(LeadsRepository);
     supabase = module.get<SupabaseService>(SupabaseService);
 
     jest.clearAllMocks();
@@ -50,14 +48,18 @@ describe('LeadsService', () => {
     it('should throw ServiceUnavailableException when database is not connected', async () => {
       (supabase as any).isConnected = false;
 
-      await expect(service.createLead(validDto)).rejects.toThrow(ServiceUnavailableException);
+      await expect(service.createLead(validDto)).rejects.toThrow(
+        ServiceUnavailableException,
+      );
     });
 
     it('should create a new lead when email does not exist', async () => {
       (supabase as any).isConnected = true;
       mockLeadsRepository.findLeadByEmail.mockResolvedValue(null);
       mockLeadsRepository.createLead.mockResolvedValue({ id: 'uuid-lead-123' });
-      mockLeadsRepository.createContactMessage.mockResolvedValue({ id: 'uuid-msg-123' });
+      mockLeadsRepository.createContactMessage.mockResolvedValue({
+        id: 'uuid-msg-123',
+      });
 
       const result = await service.createLead(validDto);
 
@@ -97,7 +99,9 @@ describe('LeadsService', () => {
         id: 'uuid-lead-existente',
         email: 'juan@ejemplo.com',
       });
-      mockLeadsRepository.createContactMessage.mockResolvedValue({ id: 'uuid-msg-456' });
+      mockLeadsRepository.createContactMessage.mockResolvedValue({
+        id: 'uuid-msg-456',
+      });
 
       const result = await service.createLead(validDto);
 
@@ -117,7 +121,9 @@ describe('LeadsService', () => {
       (supabase as any).isConnected = true;
       mockLeadsRepository.findLeadByEmail.mockResolvedValue(null);
       mockLeadsRepository.createLead.mockResolvedValue({ id: 'uuid-lead-789' });
-      mockLeadsRepository.createContactMessage.mockResolvedValue({ id: 'uuid-msg-789' });
+      mockLeadsRepository.createContactMessage.mockResolvedValue({
+        id: 'uuid-msg-789',
+      });
 
       const dtoWithUppercaseEmail: CreateLeadDto = {
         ...validDto,
@@ -126,7 +132,9 @@ describe('LeadsService', () => {
 
       await service.createLead(dtoWithUppercaseEmail);
 
-      expect(mockLeadsRepository.findLeadByEmail).toHaveBeenCalledWith('juan@ejemplo.com');
+      expect(mockLeadsRepository.findLeadByEmail).toHaveBeenCalledWith(
+        'juan@ejemplo.com',
+      );
       expect(mockLeadsRepository.createLead).toHaveBeenCalledWith(
         expect.objectContaining({ email: 'juan@ejemplo.com' }),
       );
@@ -135,8 +143,12 @@ describe('LeadsService', () => {
     it('should trim whitespace from name', async () => {
       (supabase as any).isConnected = true;
       mockLeadsRepository.findLeadByEmail.mockResolvedValue(null);
-      mockLeadsRepository.createLead.mockResolvedValue({ id: 'uuid-lead-trim' });
-      mockLeadsRepository.createContactMessage.mockResolvedValue({ id: 'uuid-msg-trim' });
+      mockLeadsRepository.createLead.mockResolvedValue({
+        id: 'uuid-lead-trim',
+      });
+      mockLeadsRepository.createContactMessage.mockResolvedValue({
+        id: 'uuid-msg-trim',
+      });
 
       const dtoWithSpaces: CreateLeadDto = {
         ...validDto,
@@ -153,8 +165,12 @@ describe('LeadsService', () => {
     it('should include optional phone in payload', async () => {
       (supabase as any).isConnected = true;
       mockLeadsRepository.findLeadByEmail.mockResolvedValue(null);
-      mockLeadsRepository.createLead.mockResolvedValue({ id: 'uuid-lead-phone' });
-      mockLeadsRepository.createContactMessage.mockResolvedValue({ id: 'uuid-msg-phone' });
+      mockLeadsRepository.createLead.mockResolvedValue({
+        id: 'uuid-lead-phone',
+      });
+      mockLeadsRepository.createContactMessage.mockResolvedValue({
+        id: 'uuid-msg-phone',
+      });
 
       const dtoWithPhone: CreateLeadDto = {
         ...validDto,
@@ -175,8 +191,12 @@ describe('LeadsService', () => {
     it('should set phone to null when not provided', async () => {
       (supabase as any).isConnected = true;
       mockLeadsRepository.findLeadByEmail.mockResolvedValue(null);
-      mockLeadsRepository.createLead.mockResolvedValue({ id: 'uuid-lead-nophone' });
-      mockLeadsRepository.createContactMessage.mockResolvedValue({ id: 'uuid-msg-nophone' });
+      mockLeadsRepository.createLead.mockResolvedValue({
+        id: 'uuid-lead-nophone',
+      });
+      mockLeadsRepository.createContactMessage.mockResolvedValue({
+        id: 'uuid-msg-nophone',
+      });
 
       await service.createLead(validDto);
 
