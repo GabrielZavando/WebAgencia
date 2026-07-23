@@ -147,7 +147,7 @@ describe('CategoriesService', () => {
       jest.spyOn(repository, 'existsBySlug').mockResolvedValue(false);
       jest.spyOn(repository, 'update').mockResolvedValue(mockCategory);
 
-      const result = await service.update('cat-123', { name: 'New Name' });
+      await service.update('cat-123', { name: 'New Name' });
 
       expect(repository.existsBySlug).not.toHaveBeenCalled();
     });

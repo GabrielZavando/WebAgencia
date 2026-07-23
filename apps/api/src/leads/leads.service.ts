@@ -1,4 +1,8 @@
-import { Injectable, Logger, ServiceUnavailableException } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  ServiceUnavailableException,
+} from '@nestjs/common';
 import { SupabaseService } from '../supabase/supabase.service';
 import { LeadsRepository } from './leads.repository';
 import { CreateLeadDto } from './dto/create-lead.dto';
@@ -32,15 +36,14 @@ export class LeadsService {
     const sanitizedName = dto.name.trim();
 
     // Check if lead already exists
-    const existingLead = await this.leadsRepository.findLeadByEmail(
-      normalizedEmail,
-    );
+    const existingLead =
+      await this.leadsRepository.findLeadByEmail(normalizedEmail);
 
     let leadId: string;
 
     if (existingLead) {
       // Lead exists — create new contact message linked to existing lead
-      leadId = existingLead.id;
+      leadId = existingLead.id as string;
       this.logger.log(
         `Lead already exists for ${normalizedEmail}, adding contact message`,
       );
@@ -72,7 +75,7 @@ export class LeadsService {
           },
         },
       });
-      leadId = lead.id;
+      leadId = lead.id as string;
       this.logger.log(`New lead created: ${leadId}`);
     }
 

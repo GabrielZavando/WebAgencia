@@ -21,6 +21,8 @@ describe('SupabaseService', () => {
   });
 
   it('should throw error when getting client before initialization', () => {
-    expect(() => service.getClient()).toThrow('Supabase client not initialized');
+    expect(() => service.getClient()).toThrow(
+      'Supabase client not initialized',
+    );
   });
 });

@@ -6,17 +6,21 @@ export class SupabaseService implements OnModuleInit {
   private readonly logger = new Logger(SupabaseService.name);
   private _client: SupabaseClient | null = null;
 
-  async onModuleInit() {
+  onModuleInit() {
     const supabaseUrl = process.env.SUPABASE_URL;
     const supabaseSecretKey = process.env.SUPABASE_SECRET_KEY;
 
     if (!supabaseUrl) {
-      this.logger.warn('SUPABASE_URL not configured — Supabase will not connect');
+      this.logger.warn(
+        'SUPABASE_URL not configured — Supabase will not connect',
+      );
       return;
     }
 
     if (!supabaseSecretKey) {
-      this.logger.warn('SUPABASE_SECRET_KEY not configured — Supabase will not connect');
+      this.logger.warn(
+        'SUPABASE_SECRET_KEY not configured — Supabase will not connect',
+      );
       return;
     }
 
@@ -30,7 +34,9 @@ export class SupabaseService implements OnModuleInit {
 
   getClient(): SupabaseClient {
     if (!this._client) {
-      throw new Error('Supabase client not initialized. Check SUPABASE_URL and SUPABASE_SECRET_KEY environment variables.');
+      throw new Error(
+        'Supabase client not initialized. Check SUPABASE_URL and SUPABASE_SECRET_KEY environment variables.',
+      );
     }
     return this._client;
   }

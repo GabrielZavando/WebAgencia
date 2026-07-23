@@ -23,7 +23,7 @@ export class FirebaseService implements OnModuleInit, OnModuleDestroy {
       try {
         await deleteApp(this.app);
         this.logger.log('Firebase app deleted');
-      } catch (error) {
+      } catch {
         this.logger.error('Failed to delete Firebase app');
       }
     }

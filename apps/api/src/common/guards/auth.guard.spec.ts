@@ -5,7 +5,6 @@ import { FirebaseService } from '../../firebase/firebase.service';
 
 describe('AuthGuard', () => {
   let guard: AuthGuard;
-  let firebaseService: FirebaseService;
 
   const mockFirebaseService = {
     verifyIdToken: jest.fn(),
@@ -23,7 +22,6 @@ describe('AuthGuard', () => {
     }).compile();
 
     guard = module.get<AuthGuard>(AuthGuard);
-    firebaseService = module.get<FirebaseService>(FirebaseService);
   });
 
   afterEach(() => {

@@ -29,7 +29,9 @@ describe('LeadsRepository', () => {
       const mockFrom = jest.fn().mockReturnValue({
         select: jest.fn().mockReturnValue({
           eq: jest.fn().mockReturnValue({
-            single: jest.fn().mockResolvedValue({ data: null, error: { code: 'PGRST116' } }),
+            single: jest
+              .fn()
+              .mockResolvedValue({ data: null, error: { code: 'PGRST116' } }),
           }),
         }),
       });
@@ -40,11 +42,17 @@ describe('LeadsRepository', () => {
     });
 
     it('should return lead when found', async () => {
-      const mockLead = { id: '1', email: 'test@example.com', full_name: 'Test User' };
+      const mockLead = {
+        id: '1',
+        email: 'test@example.com',
+        full_name: 'Test User',
+      };
       const mockFrom = jest.fn().mockReturnValue({
         select: jest.fn().mockReturnValue({
           eq: jest.fn().mockReturnValue({
-            single: jest.fn().mockResolvedValue({ data: mockLead, error: null }),
+            single: jest
+              .fn()
+              .mockResolvedValue({ data: mockLead, error: null }),
           }),
         }),
       });
@@ -57,17 +65,27 @@ describe('LeadsRepository', () => {
 
   describe('createLead', () => {
     it('should create and return a lead', async () => {
-      const mockLead = { id: '1', email: 'test@example.com', full_name: 'Test User', status: 'contact' };
+      const mockLead = {
+        id: '1',
+        email: 'test@example.com',
+        full_name: 'Test User',
+        status: 'contact',
+      };
       const mockFrom = jest.fn().mockReturnValue({
         insert: jest.fn().mockReturnValue({
           select: jest.fn().mockReturnValue({
-            single: jest.fn().mockResolvedValue({ data: mockLead, error: null }),
+            single: jest
+              .fn()
+              .mockResolvedValue({ data: mockLead, error: null }),
           }),
         }),
       });
       mockSupabaseService.getClient.mockReturnValue({ from: mockFrom });
 
-      const result = await repository.createLead({ email: 'test@example.com', fullName: 'Test User' });
+      const result = await repository.createLead({
+        email: 'test@example.com',
+        fullName: 'Test User',
+      });
       expect(result).toEqual(mockLead);
     });
   });
@@ -78,13 +96,18 @@ describe('LeadsRepository', () => {
       const mockFrom = jest.fn().mockReturnValue({
         insert: jest.fn().mockReturnValue({
           select: jest.fn().mockReturnValue({
-            single: jest.fn().mockResolvedValue({ data: mockMessage, error: null }),
+            single: jest
+              .fn()
+              .mockResolvedValue({ data: mockMessage, error: null }),
           }),
         }),
       });
       mockSupabaseService.getClient.mockReturnValue({ from: mockFrom });
 
-      const result = await repository.createContactMessage({ leadId: '1', message: 'Hello' });
+      const result = await repository.createContactMessage({
+        leadId: '1',
+        message: 'Hello',
+      });
       expect(result).toEqual(mockMessage);
     });
   });

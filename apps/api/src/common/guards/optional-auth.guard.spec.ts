@@ -5,7 +5,6 @@ import { FirebaseService } from '../../firebase/firebase.service';
 
 describe('OptionalAuthGuard', () => {
   let guard: OptionalAuthGuard;
-  let firebaseService: FirebaseService;
 
   const mockFirebaseService = {
     verifyIdToken: jest.fn(),
@@ -23,7 +22,6 @@ describe('OptionalAuthGuard', () => {
     }).compile();
 
     guard = module.get<OptionalAuthGuard>(OptionalAuthGuard);
-    firebaseService = module.get<FirebaseService>(FirebaseService);
   });
 
   afterEach(() => {
@@ -155,7 +153,9 @@ describe('OptionalAuthGuard', () => {
 
       await guard.canActivate(context);
 
-      expect(mockFirebaseService.verifyIdToken).toHaveBeenCalledWith('valid-token');
+      expect(mockFirebaseService.verifyIdToken).toHaveBeenCalledWith(
+        'valid-token',
+      );
     });
   });
 });

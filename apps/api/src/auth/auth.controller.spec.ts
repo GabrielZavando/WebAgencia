@@ -3,6 +3,7 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { UsersService } from '../users/users.service';
 import { FirebaseService } from '../firebase/firebase.service';
+import { Response } from 'express';
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -38,9 +39,8 @@ describe('AuthController', () => {
 
   describe('logout', () => {
     it('should return success message with data null', () => {
-      const mockResponse = {
-        setHeader: jest.fn(),
-      } as any;
+      const mockSetHeader = jest.fn();
+      const mockResponse = { setHeader: mockSetHeader } as unknown as Response;
 
       const result = controller.logout(mockResponse);
 
@@ -51,26 +51,24 @@ describe('AuthController', () => {
     });
 
     it('should set Set-Cookie header to clear session cookies', () => {
-      const mockResponse = {
-        setHeader: jest.fn(),
-      } as any;
+      const mockSetHeader = jest.fn();
+      const mockResponse = { setHeader: mockSetHeader } as unknown as Response;
 
       controller.logout(mockResponse);
 
-      expect(mockResponse.setHeader).toHaveBeenCalledWith('Set-Cookie', [
+      expect(mockSetHeader).toHaveBeenCalledWith('Set-Cookie', [
         'session=; Path=/; Max-Age=0; HttpOnly; SameSite=Strict',
         'token=; Path=/; Max-Age=0; HttpOnly; SameSite=Strict',
       ]);
     });
 
     it('should clear both session and token cookies', () => {
-      const mockResponse = {
-        setHeader: jest.fn(),
-      } as any;
+      const mockSetHeader = jest.fn();
+      const mockResponse = { setHeader: mockSetHeader } as unknown as Response;
 
       controller.logout(mockResponse);
 
-      const cookieHeader = mockResponse.setHeader.mock.calls[0][1];
+      const cookieHeader = mockSetHeader.mock.calls[0][1];
       expect(cookieHeader).toHaveLength(2);
       expect(cookieHeader[0]).toContain('session=');
       expect(cookieHeader[1]).toContain('token=');

@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { DocumentData, QueryDocumentSnapshot } from 'firebase-admin/firestore';
 import { FirebaseService } from '../firebase/firebase.service';
 import { Category } from './entities/category.entity';
 import { CreateCategoryDto } from './dto/create-category.dto';
@@ -17,7 +18,7 @@ export class CategoriesRepository {
       .orderBy('created_at', 'desc')
       .get();
 
-    return snapshot.docs.map((doc: any) => ({
+    return snapshot.docs.map((doc: QueryDocumentSnapshot<DocumentData>) => ({
       id: doc.id,
       ...doc.data(),
     })) as Category[];

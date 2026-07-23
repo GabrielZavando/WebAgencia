@@ -37,7 +37,7 @@ export class ResponseInterceptor<T> implements NestInterceptor<T, Response<T>> {
         }
 
         return {
-          data: responseData,
+          data: responseData as T,
         };
       }),
     );
