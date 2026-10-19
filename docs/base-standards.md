@@ -96,7 +96,7 @@ Mensajes API:   Español (Latinoamericano neutro)
 
 ## 9. Flujo OpenSpec (Spec-Driven Development)
 
-Este proyecto usa **OpenSpec 1.4+** como sistema de gobernanza de cambios. Toda feature, fix o refactor significativo debe pasar por este flujo.
+Este proyecto usa **OpenSpec 1.14+** como sistema de gobernanza de cambios. Toda feature, fix o refactor significativo debe pasar por este flujo.
 
 ### Principios
 
@@ -140,7 +140,7 @@ openspec/
 ### CLI de OpenSpec (referencia)
 
 ```bash
-npx openspec --version             # Versión instalada (debe ser 1.4+)
+npx openspec --version             # Versión instalada (debe ser 1.14+)
 npx openspec list --json            # Listar cambios activos
 npx openspec status --change <name> --json   # Estado de artefactos
 npx openspec instructions <artifact> --change <name> --json  # Instrucciones

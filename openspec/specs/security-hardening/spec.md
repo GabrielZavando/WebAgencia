@@ -1,4 +1,8 @@
-## ADDED Requirements
+## Purpose
+
+Definir los controles de seguridad de la API NestJS: gestión obligatoria de secretos al arrancar, CORS explícito, cabeceras de seguridad, rate limiting, verificación de revocación de tokens Firebase y autenticación opcional en el listado de artículos.
+
+## Requirements
 
 ### Requirement: JWT secret is mandatory at startup
 The system SHALL throw an error at startup if `JWT_SECRET` environment variable is not defined. The system SHALL NOT use a hardcoded fallback secret.

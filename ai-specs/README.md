@@ -25,7 +25,7 @@ ai-specs/
     └── tasks.md
 ```
 
-> **Note:** OpenSpec 1.4 skills (opsx-propose, opsx-apply, opsx-archive, opsx-explore)
+> **Note:** OpenSpec 1.14 skills (opsx-propose, opsx-apply, opsx-archive, opsx-explore)
 > live in `.opencode/skills/`. They are referenced from `opencode.json` commands.
 > Do not confuse `ai-specs/skills/` (agency-specific) with `.opencode/skills/` (OpenSpec protocol).
 

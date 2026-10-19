@@ -1,5 +1,7 @@
 # Project Onboarding
 
+## Purpose
+
 Root-level README that serves as the single entry point for onboarding new developers and team members to the monorepo.
 
 ## Requirements

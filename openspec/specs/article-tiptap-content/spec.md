@@ -1,7 +1,16 @@
-## ADDED Requirements
+## Purpose
+
+Definir cómo el contenido de los artículos se almacena, valida y expone como un documento Tiptap JSON, incluyendo las reglas de creación, actualización, publicación y borrado de artículos.
+
+## Requirements
 
 ### Requirement: Article content is stored as Tiptap JSON
 The system SHALL store the `content` field of an article as a Tiptap JSON document (object with `type: 'doc'` and `content: array`) in Firestore, and SHALL return the exact same object on reads.
+
+#### Scenario: Article content persists as a Tiptap JSON object
+- **WHEN** an article is created with a valid Tiptap JSON document
+- **THEN** the `content` field stored in Firestore is a JSON object with `type: 'doc'` and a `content` array (not a serialized string)
+- **AND** subsequent reads of the article return the exact same object
 
 ### Requirement: Create article with Tiptap content
 The system SHALL allow authenticated admin/editor users to create articles where the `content` field is a valid Tiptap JSON document.

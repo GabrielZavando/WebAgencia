@@ -1,3 +1,7 @@
+## Purpose
+
+Definir el comportamiento de navegación y accesibilidad del logo mostrado en la página de login, asegurando que enlace a la página de inicio sin alterar su apariencia.
+
 ## Requirements
 
 ### Requirement: Login logo links to home page

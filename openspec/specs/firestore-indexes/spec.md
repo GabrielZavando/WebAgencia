@@ -1,7 +1,9 @@
 # firestore-indexes Specification
 
 ## Purpose
-TBD - created by archiving change fix-firestore-articles-index. Update Purpose after archive.
+
+Garantizar que las consultas de artículos (filtrado por `status` y orden por `created_at`) cuenten con los índices compuestos de Firestore necesarios, evitando errores `FAILED_PRECONDITION` en producción y asegurando que dichos índices se definan de forma reproducible.
+
 ## Requirements
 ### Requirement: Firestore Composite Index for Articles
 The system SHALL have a composite index on the `articles` collection to support queries that filter by `status` and order by `created_at`.
