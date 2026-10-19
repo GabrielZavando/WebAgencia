@@ -143,7 +143,7 @@ docker compose -f docker/docker-compose.yml up -d
 │   ├── specs/                 # Capabilities base
 │   └── changes/               # Active + archived changes
 │
-├── .opencode/                 # 🔧 OpenSpec 1.4 skills & commands (no editar manualmente)
+├── .opencode/                 # 🔧 OpenSpec 1.14 skills & commands (no editar manualmente)
 │   ├── skills/                # opsx-propose, opsx-apply, opsx-archive, opsx-explore
 │   └── commands/              # Command templates for OpenCode
 │
@@ -159,9 +159,9 @@ docker compose -f docker/docker-compose.yml up -d
 └── README.md                  # Start here
 ```
 
-## Flujo de desarrollo con Specboot
+## Flujo de desarrollo con OpenSpec
 
-Este proyecto usa el flujo **Spec-Driven Development (SSD)** con OpenSpec 1.4:
+Este proyecto usa el flujo **Spec-Driven Development (SSD)** con OpenSpec 1.14:
 
 ```bash
 /enrich-us TICKET-ID      # Enriquecer ticket vago

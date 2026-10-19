@@ -22,6 +22,9 @@ jobs:
       - name: Install
         run: pnpm install --frozen-lockfile
 
+      - name: Validate OpenSpec specs
+        run: pnpm exec openspec validate --all --strict
+
       - name: Build
         run: pnpm -r build
 
@@ -30,9 +33,3 @@ jobs:
 
       - name: Test
         run: pnpm -r test
-
-      - name: Specboot context validation
-        run: bash specboot.sh --ci
-
-      - name: Reference integrity
-        run: bash check-refs.sh

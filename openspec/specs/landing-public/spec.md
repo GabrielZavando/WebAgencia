@@ -62,8 +62,6 @@ The system **SHALL** ser completamente funcional entre 320px y 1920px de ancho. 
 - **When** se carga `/`
 - **Then** todas las secciones son legibles y operables sin scroll horizontal.
 
-## ADDED Requirements
-
 ### Requirement: Design system compliance
 The system **SHALL** que todos los componentes en `src/components/landing/` y `src/components/shared/` cumplan con el design system documentado en `docs/DESIGN.md`.
 

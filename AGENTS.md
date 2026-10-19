@@ -1,4 +1,4 @@
-# Zavando Specboot — Agent Instructions
+# Zavando — Agent Instructions
 
 This file is read automatically by OpenCode, Codex, and other compatible agents.
 
@@ -59,4 +59,4 @@ The following custom commands are defined in `opencode.json` for the SSD workflo
 5. If anything is ambiguous in the specs, ask before assuming.
 6. Documentation is the source of truth — specs before code, always.
 7. Project uses `openspec/` (not `.openspec/`) for OpenSpec artifacts.
-8. This project uses **OpenSpec 1.4+** — ensure the CLI is installed (`npm install --save-dev @fission-ai/openspec`) before running SSD commands.
+8. This project uses **OpenSpec 1.14+** — ensure the CLI is installed (`npm install --save-dev @fission-ai/openspec`) before running SSD commands.
