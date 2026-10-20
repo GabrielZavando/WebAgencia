@@ -121,7 +121,7 @@ export default function LoginForm() {
         
         // Redirect after brief delay
         setTimeout(() => {
-          window.location.href = '/admin/dashboard';
+           window.location.href = '/admin';
         }, 500);
       }
     } catch (err: unknown) {

@@ -70,7 +70,7 @@ pnpm dev
 4. Cliente envía token a `/auth/login` en API NestJS
 5. API verifica token con Firebase Admin SDK
 6. API valida que usuario tenga rol `admin`
-7. Redirección a `/admin/dashboard`
+7. Redirección a `/admin` (placeholder público)
 
 ## Solución de Problemas
 

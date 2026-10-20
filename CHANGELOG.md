@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 - Specboot validation tooling (`specboot.sh`, `check-refs.sh`, `Makefile` targets `validate` / `refcheck`, and the corresponding CI steps).
 - Obsolete `apps/web/IMPLEMENTACION_COMPLETADA.md` (historical record from the Specboot era).
+- Legacy admin panel and its associated components; `/admin` is now a public placeholder page.
 
 ### Fixed
 - OpenSpec strict validation: 6 pre-existing specs (`article-tiptap-content`, `security-hardening`, `landing-public`, `firestore-indexes`, `login-logo-navigation`, `project-onboarding`) aligned with the current spec format (`## Purpose`, `## Requirements`, `#### Scenario`). `openspec validate --all --strict` now reports 19/19.

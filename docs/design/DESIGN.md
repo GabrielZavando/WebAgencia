@@ -49,9 +49,8 @@ El sistema visual de WebAgenciaAstro se define por:
 
 **Decisión oficial (v1.1):** El proyecto usa **Tailwind CSS utility-first** como estrategia principal de estilos.
 
-### Componentes nuevos y admin
+### Componentes nuevos
 - **Todo nuevo** se escribe con clases Tailwind utility-first directamente en el markup.
-- **Admin** (`src/components/admin/`) usa exclusivamente Tailwind utility classes + tokens del sistema (`bg-primary`, `text-secondary`, etc.).
 - **Login** (`src/pages/login/index.astro`) usa Tailwind utility-first.
 
 ### Componentes legacy (en migración)
@@ -61,7 +60,6 @@ El sistema visual de WebAgenciaAstro se define por:
 
 ### Regla para agentes IA
 - **Componentes nuevos**: SIEMPRE Tailwind utility-first.
-- **Admin**: SIEMPRE Tailwind utility-first con tokens del sistema.
 - **Legacy**: No migrar salvo que se modifique activamente. Si se modifica, migrar a Tailwind.
 
 ## Gobernanza
@@ -97,6 +95,6 @@ Estas tareas quedan registradas como deuda documentada:
 
 ## Referencias cruzadas
 
-- **Código fuente**: `src/styles/global.css` (tokens + componentes legacy BEM en migración a Tailwind), `src/components/shared/`, `src/components/landing/`, `src/components/admin/`, `src/components/metodologia/`.
+- **Código fuente**: `src/styles/global.css` (tokens + componentes legacy BEM en migración a Tailwind), `src/components/shared/`, `src/components/landing/`, `src/components/metodologia/`.
 - **Stack**: Astro 5 + Tailwind 4 + React Islands (opcional).
 - **Workflow**: Spec-Driven con OpenSpec (`/opsx:propose`, `/opsx:apply`, `/opsx:verify`, `/opsx:archive`).

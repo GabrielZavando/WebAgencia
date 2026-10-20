@@ -28,15 +28,24 @@ test.describe('Login Flow', () => {
     await expect(page.locator('#password-error')).toContainText('al menos 8 caracteres');
   });
 
-  test('submits successfully and redirects to home', async ({ page }) => {
+  test('submits successfully and redirects to admin', async ({ page }) => {
     await page.route('/api/v1/auth/login', async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
         json: {
-          token: 'fake-jwt-token',
-          user: { email: 'admin@example.com', role: 'admin' },
-          expiresAt: new Date().toISOString(),
+          data: {
+            user: {
+              id: 'admin-1',
+              email: 'admin@example.com',
+              full_name: 'Admin Example',
+              role: 'admin',
+              is_active: true,
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+            },
+          },
+          meta: { message: 'Login exitoso' },
         },
       });
     });
@@ -45,7 +54,7 @@ test.describe('Login Flow', () => {
     await page.locator('input[type="password"]').fill('password123');
     await page.locator('button[type="submit"]').click();
 
-    await expect(page).toHaveURL('/');
+    await expect(page).toHaveURL('/admin');
   });
 
   test('shows error message for invalid credentials', async ({ page }) => {
@@ -105,9 +114,18 @@ test.describe('Login Flow', () => {
         status: 200,
         contentType: 'application/json',
         json: {
-          token: 'fake-jwt-token',
-          user: { email: 'admin@example.com', role: 'admin' },
-          expiresAt: new Date().toISOString(),
+          data: {
+            user: {
+              id: 'admin-1',
+              email: 'admin@example.com',
+              full_name: 'Admin Example',
+              role: 'admin',
+              is_active: true,
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+            },
+          },
+          meta: { message: 'Login exitoso' },
         },
       });
     });
@@ -116,6 +134,6 @@ test.describe('Login Flow', () => {
     await page.locator('input[type="password"]').fill('password123');
     await page.locator('input[type="password"]').press('Enter');
 
-    await expect(page).toHaveURL('/');
+    await expect(page).toHaveURL('/admin');
   });
 });

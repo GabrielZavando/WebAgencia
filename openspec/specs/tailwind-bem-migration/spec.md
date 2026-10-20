@@ -77,16 +77,13 @@ The system **SHALL** que la página de login use Tailwind utility-first sin valo
 - **WHEN** se revisan las clases CSS
 - **THEN** no tiene `bg-[var(--...)]` ni `max-w-[450px]` ni otros valores arbitrarios — usa clases Tailwind estándar o tokens mapeados
 
-### Requirement: Placeholder admin pages exist
+### Requirement: Admin entry placeholder exists
+The system **SHALL** exponer `/admin` como página placeholder estática construida con Tailwind utility-first y tokens del sistema.
 
-The system **SHALL** que las rutas `/admin/leads` y `/admin/settings` existan como páginas placeholder.
+#### Scenario: /admin exists
+- **WHEN** el usuario accede a `/admin`
+- **THEN** llega a una página placeholder con estilos Tailwind y tokens del sistema
 
-#### Scenario: /admin/leads exists
-- **GIVEN** el sidebar lista "Leads" como enlace
-- **WHEN** el usuario hace click
-- **THEN** llega a una página con layout admin y mensaje "Próximamente"
-
-#### Scenario: /admin/settings exists
-- **GIVEN** el sidebar lista "Configuración" como enlace
-- **WHEN** el usuario hace click
-- **THEN** llega a una página con layout admin y mensaje "Próximamente"
+#### Scenario: No legacy admin placeholders
+- **WHEN** el usuario intenta acceder a `/admin/leads` o `/admin/settings`
+- **THEN** esas rutas ya no existen
