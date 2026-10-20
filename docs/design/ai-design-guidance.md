@@ -118,7 +118,6 @@ Cuando se cree `ai-specs/skills/design-system-keeper/`:
 | Escenario | Estrategia |
 |-----------|-----------|
 | Componente **nuevo** | **Tailwind utility-first** en el markup |
-| Componente **admin** (`src/components/admin/`) | **Tailwind utility-first** con tokens del sistema |
 | Componente **legacy** sin modificar | **No se toca** (BEM en `global.css`) |
 | Componente **legacy** que se modifica | **Migrar a Tailwind** oportunamente |
 
