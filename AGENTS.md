@@ -59,4 +59,7 @@ The following custom commands are defined in `opencode.json` for the SSD workflo
 5. If anything is ambiguous in the specs, ask before assuming.
 6. Documentation is the source of truth — specs before code, always.
 7. Project uses `openspec/` (not `.openspec/`) for OpenSpec artifacts.
-8. This project uses **OpenSpec 1.14+** — ensure the CLI is installed (`npm install --save-dev @fission-ai/openspec`) before running SSD commands.
+8. This project uses **OpenSpec 1.15+** — ensure the CLI is installed (`npm install --save-dev @fission-ai/openspec`) before running SSD commands.
+9. **Archiving**: Always archive changes with the native CLI, never manually:
+   `pnpm exec openspec archive <change-name> --yes`
+   This bypasses the interactive prompt that the generated skill tries to trigger manually. Do NOT hand-edit specs to "sync" them before archiving — the CLI with `--yes` syncs deltas to main specs automatically. If the change has no spec deltas (e.g., only tooling/docs), the archive still runs cleanly.

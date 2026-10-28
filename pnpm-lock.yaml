@@ -9,8 +9,8 @@ importers:
   .:
     devDependencies:
       '@fission-ai/openspec':
-        specifier: ^1.14.3
-        version: 1.14.3(@types/node@22.20.1)
+        specifier: ^1.15.0
+        version: 1.15.0(@types/node@22.20.1)
 
   apps/api:
     dependencies:
@@ -1147,6 +1147,11 @@ packages:
 
   '@fission-ai/openspec@1.14.3':
     resolution: {integrity: sha512-ALFW1d5bSm6t27Kmcle93SDFuqUc8fLwy5ZdBfIiNffo0Yk9AEOJxw6xDqBv38eMM7l7TeOZBB/7C08luxYGfg==}
+    engines: {node: '>=20.19.0'}
+    hasBin: true
+
+  '@fission-ai/openspec@1.15.0':
+    resolution: {integrity: sha512-lG/EPEiL22bB70yKJhWWSPk1UQGLnwO7Dp+hNc/jUmBwb0qxPLzHCUkXEfkny4iYDOsgnsNQmc39/g9QcvnBnA==}
     engines: {node: '>=20.19.0'}
     hasBin: true
 
@@ -8853,6 +8858,23 @@ snapshots:
   '@firebase/webchannel-wrapper@1.0.6': {}
 
   '@fission-ai/openspec@1.14.3(@types/node@22.20.1)':
+    dependencies:
+      '@inquirer/core': 12.0.4(@types/node@22.20.1)
+      '@inquirer/prompts': 8.7.3(@types/node@22.20.1)
+      brace-expansion: 5.0.12
+      chalk: 5.6.2
+      commander: 14.0.3
+      cross-spawn: 7.0.6
+      diff: 9.0.0
+      ora: 9.4.1
+      picomatch: 4.0.5
+      tinyglobby: 0.2.17
+      yaml: 2.9.0
+      zod: 4.4.3
+    transitivePeerDependencies:
+      - '@types/node'
+
+  '@fission-ai/openspec@1.15.0(@types/node@22.20.1)':
     dependencies:
       '@inquirer/core': 12.0.4(@types/node@22.20.1)
       '@inquirer/prompts': 8.7.3(@types/node@22.20.1)
