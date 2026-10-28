@@ -3,6 +3,7 @@ import { FirebaseService } from './firebase.service';
 import { initializeApp, cert, deleteApp } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getAuth } from 'firebase-admin/auth';
+import { getStorage } from 'firebase-admin/storage';
 
 jest.mock('firebase-admin/app', () => ({
   initializeApp: jest.fn(),
@@ -18,6 +19,10 @@ jest.mock('firebase-admin/firestore', () => ({
 
 jest.mock('firebase-admin/auth', () => ({
   getAuth: jest.fn(),
+}));
+
+jest.mock('firebase-admin/storage', () => ({
+  getStorage: jest.fn(),
 }));
 
 describe('FirebaseService', () => {
@@ -40,6 +45,7 @@ describe('FirebaseService', () => {
     (getAuth as jest.Mock).mockReturnValue({
       verifyIdToken: jest.fn().mockResolvedValue({ uid: 'test-uid' }),
     });
+    (getStorage as jest.Mock).mockReturnValue({ bucket: () => jest.fn() });
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [FirebaseService],
@@ -52,6 +58,7 @@ describe('FirebaseService', () => {
     delete process.env.FIREBASE_PROJECT_ID;
     delete process.env.FIREBASE_CLIENT_EMAIL;
     delete process.env.FIREBASE_PRIVATE_KEY;
+    delete process.env.FIREBASE_STORAGE_BUCKET;
     jest.resetModules();
   });
 
@@ -134,5 +141,35 @@ describe('FirebaseService', () => {
     await service.verifyIdToken('test-token');
 
     expect(mockAuth.verifyIdToken).toHaveBeenCalledWith('test-token', true);
+  });
+
+  it('should return Storage instance', () => {
+    service.onModuleInit();
+    const storage = service.getStorage();
+    expect(storage).toBeDefined();
+    expect(getStorage).toHaveBeenCalledTimes(1);
+  });
+
+  it('should throw error when getting Storage before initialization', () => {
+    expect(() => service.getStorage()).toThrow('Firebase app not initialized');
+  });
+
+  it('should pass storageBucket to initializeApp when FIREBASE_STORAGE_BUCKET is defined', () => {
+    process.env.FIREBASE_STORAGE_BUCKET = 'test-bucket.appspot.com';
+    service.onModuleInit();
+    expect(initializeApp).toHaveBeenCalledWith(
+      expect.objectContaining({
+        storageBucket: 'test-bucket.appspot.com',
+      }),
+    );
+  });
+
+  it('should not pass storageBucket when FIREBASE_STORAGE_BUCKET is undefined', () => {
+    service.onModuleInit();
+    const config = (initializeApp as jest.Mock).mock.calls[0][0] as Record<
+      string,
+      unknown
+    >;
+    expect(config).not.toHaveProperty('storageBucket');
   });
 });

@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Monorepo pnpm workspace with `apps/api` (NestJS) and `apps/web` (Astro).
 - Shared SDD context at root: `docs/`, `ai-specs/`, `openspec/`, `.opencode/`, `AGENTS.md`, `opencode.json`.
 - OpenSpec-based SDD tooling: `Makefile`, CI/deploy workflows.
+- CMS skeleton (OpenSpec `feat-cms-skeleton`): admin shell at `/admin` (`AdminLayout` + `Sidebar` + `Header`, Tailwind utility-first + tokens), shadcn/ui base (`components.json`, `cn()`, token bridge in `global.css`), and Tiptap editor test page at `/admin/blog/editor-test` (React island, image insertion by URL; uploads land in a future change).
+- API: `FirebaseService.getStorage()` with optional `FIREBASE_STORAGE_BUCKET` env (no Storage endpoints yet — media library is a future change).
 
 ### Removed
 - Specboot validation tooling (`specboot.sh`, `check-refs.sh`, `Makefile` targets `validate` / `refcheck`, and the corresponding CI steps).

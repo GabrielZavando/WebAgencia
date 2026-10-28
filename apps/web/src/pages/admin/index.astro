@@ -1,21 +1,43 @@
 ---
-import MainLayout from '../../layouts/MainLayout.astro';
+/**
+ * Admin panel entry (/admin) — CMS skeleton.
+ * Renders the admin shell (sidebar + header + content) with no API calls
+ * and no data yet. CRUD views arrive in future changes.
+ */
+import AdminLayout from '../../layouts/AdminLayout.astro';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { FlaskConical } from 'lucide-react';
 ---
 
-<MainLayout
-  title="Administración | WebAstro"
-  description="Panel de administración en construcción"
->
-  <section class="flex min-h-[60vh] items-center justify-center bg-surface-secondary dark:bg-body px-4 py-16">
-    <div class="max-w-md text-center">
-      <span class="material-symbols-outlined text-6xl text-primary mb-4 block" aria-hidden="true">
-        construction
-      </span>
-      <h1 class="text-2xl font-bold text-text mb-2">Panel en construcción</h1>
-      <p class="text-text-secondary mb-6">
-        Estamos preparando el nuevo panel de administración. Vuelve pronto.
-      </p>
-      <a href="/" class="btn-cta">Volver al inicio</a>
-    </div>
+<AdminLayout>
+  <section class="mx-auto max-w-3xl space-y-4">
+    <Card>
+      <CardHeader>
+        <div class="flex items-center gap-2">
+          <CardTitle>CMS de Blog y Categorías</CardTitle>
+          <Badge variant="secondary">Esqueleto</Badge>
+        </div>
+        <CardDescription>
+          Base del panel de administración: layout, navegación y editor listo para
+          los próximos cambios (CRUD, subida de imágenes y biblioteca de medios).
+        </CardDescription>
+      </CardHeader>
+      <CardContent class="flex flex-col gap-4">
+        <p class="text-sm text-text-secondary">
+          Este panel todavía no consume datos de la API. Explora la página de
+          prueba del editor de texto enriquecido:
+        </p>
+        <div>
+          <Button asChild>
+            <a href="/admin/blog/editor-test">
+              <FlaskConical aria-hidden="true" />
+              Abrir editor de prueba
+            </a>
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
   </section>
-</MainLayout>
+</AdminLayout>

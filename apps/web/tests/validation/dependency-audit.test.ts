@@ -25,6 +25,18 @@ const ALLOWED_NEW_DEPS = [
   'match-sorter',
   'sort-by',
   'firebase',
+  // shadcn/ui base (feat-cms-skeleton) — approved in OpenSpec change
+  'class-variance-authority',
+  'clsx',
+  'tailwind-merge',
+  'lucide-react',
+  'tw-animate-css',
+  'radix-ui',
+  // Tiptap editor v3 (feat-cms-skeleton) — approved in OpenSpec change
+  '@tiptap/react',
+  '@tiptap/starter-kit',
+  '@tiptap/extension-image',
+  '@tiptap/pm',
 ];
 
 describe('Auditoría de dependencias', () => {

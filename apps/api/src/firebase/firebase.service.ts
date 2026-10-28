@@ -7,6 +7,7 @@ import {
 import { initializeApp, cert, deleteApp, App } from 'firebase-admin/app';
 import { getFirestore, Firestore } from 'firebase-admin/firestore';
 import { getAuth, Auth } from 'firebase-admin/auth';
+import { getStorage, Storage } from 'firebase-admin/storage';
 import { DecodedIdToken } from 'firebase-admin/auth';
 
 @Injectable()
@@ -47,6 +48,10 @@ export class FirebaseService implements OnModuleInit, OnModuleDestroy {
           clientEmail,
           privateKey: privateKeyFormatted,
         }),
+        // Storage bucket is optional; falls back to the project default bucket
+        ...(process.env.FIREBASE_STORAGE_BUCKET
+          ? { storageBucket: process.env.FIREBASE_STORAGE_BUCKET }
+          : {}),
       });
 
       this.logger.log('Firebase Admin SDK initialized successfully');
@@ -68,6 +73,13 @@ export class FirebaseService implements OnModuleInit, OnModuleDestroy {
       throw new Error('Firebase app not initialized');
     }
     return getAuth(this.app);
+  }
+
+  getStorage(): Storage {
+    if (!this.app) {
+      throw new Error('Firebase app not initialized');
+    }
+    return getStorage(this.app);
   }
 
   async verifyIdToken(idToken: string): Promise<DecodedIdToken> {

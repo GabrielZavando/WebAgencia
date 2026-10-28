@@ -1,4 +1,9 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+
+/* Dark variant follows the site theme mechanism (data-theme attribute set in Head.astro),
+   NOT the OS media query — keeps `dark:` utilities consistent with the manual toggle. */
+@custom-variant dark ([data-theme="dark"] &);
 
 @theme {
   /* === Colores base === */
@@ -160,6 +165,81 @@
   --color-nav-link-default: #FFFFFF;
   --color-nav-link-scrolled: #FFFFFF;
   --color-headings: var(--color-white);
+}
+
+/* ============================================================================
+   shadcn/ui bridge (feat-cms-skeleton) — ADDITIVE BLOCK, do not edit existing
+   tokens above. Maps design system tokens to the variables shadcn/ui expects.
+   Raw variables resolve from the site tokens (light + dark via [data-theme]),
+   so shadcn components and admin shell follow the site theme automatically.
+   ========================================================================== */
+
+:root {
+  /* shadcn/ui semantic variables → site design tokens */
+  --background: var(--color-background);
+  --foreground: var(--color-text);
+  --card: var(--color-surface);
+  --card-foreground: var(--color-text);
+  --popover: var(--color-surface);
+  --popover-foreground: var(--color-text);
+  --primary: var(--color-primary);
+  --primary-foreground: #fefffe;
+  --secondary: var(--color-secondary);
+  --secondary-foreground: #fefffe;
+  --muted: var(--color-surface-secondary);
+  --muted-foreground: var(--color-text-secondary);
+  --accent: var(--color-surface-secondary);
+  --accent-foreground: var(--color-text);
+  --destructive: var(--color-error);
+  --destructive-foreground: #fefffe;
+  --border: var(--color-border);
+  --input: var(--color-border);
+  --ring: var(--color-primary);
+  /* Site design language is squared (btn-cta uses border-radius: 0) */
+  --radius: 0rem;
+}
+
+@theme inline {
+  /* Register site semantic tokens so their utilities are generated and
+     follow the runtime theme (they were previously CSS-vars only). */
+  --color-body: var(--color-body);
+  --color-surface: var(--color-surface);
+  --color-surface-secondary: var(--color-surface-secondary);
+  --color-text: var(--color-text);
+  --color-text-secondary: var(--color-text-secondary);
+  --color-text-muted: var(--color-text-muted);
+  --color-input-text: var(--color-input-text);
+  --color-border: var(--color-border);
+  --color-border-secondary: var(--color-border-secondary);
+  --color-success: var(--color-success);
+  --color-error: var(--color-error);
+  --color-warning: var(--color-warning);
+  --color-info: var(--color-info);
+
+  /* shadcn/ui namespace → bridge variables.
+     NOTE: --color-primary/secondary/accent are intentionally NOT remapped:
+     they already exist as static brand utilities in @theme above. */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Radius scale driven by --radius (squared design language) */
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-xl: calc(var(--radius) + 4px);
 }
 
 body.menu-active {

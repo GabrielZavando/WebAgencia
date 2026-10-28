@@ -603,6 +603,48 @@
 6. **A11y**: cumplir WCAG AA (contraste, focus, ARIA).
 7. **Sin hex literales**: usar `var(--*)` de `design-tokens.md`.
 8. **Estrategia CSS**: nuevos componentes usan **Tailwind utility-first**. Componentes legacy usan BEM en `global.css` (no migrar salvo que se modifiquen).
+9. **shadcn/ui**: los componentes base viven en `src/components/ui/` (generados vía `components.json`); sus colores provienen del puente de variables CSS en `global.css` (bloque `shadcn/ui bridge`), mapeado a los tokens del design system.
+
+## Componentes del panel admin (`src/components/admin/`)
+
+> Introducidos en el change OpenSpec `feat-cms-skeleton` (esqueleto del CMS). Sin llamadas a la API todavía.
+
+### `layouts/AdminLayout.astro`
+
+**Propósito**: Layout del panel de administración. Reutiliza `MainLayout` con `hideHeader`/`hideFooter` para heredar el bootstrap de tema, y compone `Sidebar` + `Header` + área de contenido.
+
+**Casos de uso**:
+- ✅ Cualquier página bajo `/admin`.
+
+**A11y**: toggle de sidebar con `aria-label`, `aria-expanded` y `aria-controls`.
+
+---
+
+### `admin/Sidebar.astro`
+
+**Propósito**: Navegación lateral fija (colapsable en mobile vía script de `AdminLayout`).
+
+**Estados**:
+- `active` — enlace con `aria-current="page"` según `Astro.url.pathname`.
+- Disabled — secciones futuras (Artículos, Categorías) con `aria-disabled="true"`.
+
+---
+
+### `admin/Header.astro`
+
+**Propósito**: Barra superior sticky con toggle de menú móvil (`Button` shadcn, variante ghost) y badge de estado del panel.
+
+---
+
+### `admin/EditorTest.tsx` + `admin/tiptap/Toolbar.tsx`
+
+**Propósito**: Isla React con el editor Tiptap (página de prueba en `/admin/blog/editor-test`). Serializa el documento al formato Tiptap JSON que almacena la API (`{ type: 'doc', content: [...] }`).
+
+**Notas**:
+- `immediatelyRender: false` + `client:only="react"` (sin SSR de ProseMirror en el build SSG).
+- Imágenes por URL (validación http/https); la subida a Storage es un change futuro.
+- Toolbar compuesta con primitivas shadcn (`Button`, `Separator`) + iconos `lucide-react`.
+- Vistas de salida JSON/HTML del documento.
 
 ## Referencias
 
