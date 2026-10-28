@@ -1,0 +1,71 @@
+---
+/**
+ * Editor test page (/admin/blog/editor-test) — CMS skeleton.
+ * Mounts the Tiptap editor as a React island (client:only avoids SSR of
+ * ProseMirror during the static build). The document preview outputs the
+ * same Tiptap JSON the API stores; image upload arrives in a future change.
+ */
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import EditorTest from '../../../components/admin/EditorTest';
+---
+
+<AdminLayout
+  title="Editor de prueba | WebAstro"
+  description="Página de prueba del editor Tiptap del CMS"
+>
+  <EditorTest client:only="react" />
+</AdminLayout>
+
+<style is:global>
+  /* Typography for runtime-generated Tiptap content (not reachable by Astro
+     scoped styles). Additive page-level styles — global.css is untouched. */
+  .tiptap-content p {
+    margin: 0.5rem 0;
+  }
+  .tiptap-content h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 1.25rem 0 0.5rem;
+  }
+  .tiptap-content h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 1rem 0 0.5rem;
+  }
+  .tiptap-content ul,
+  .tiptap-content ol {
+    margin: 0.5rem 0;
+    padding-left: 1.5rem;
+  }
+  .tiptap-content ul {
+    list-style: disc;
+  }
+  .tiptap-content ol {
+    list-style: decimal;
+  }
+  .tiptap-content blockquote {
+    border-left: 3px solid var(--color-primary);
+    padding-left: 0.75rem;
+    color: var(--color-text-secondary);
+    margin: 0.75rem 0;
+  }
+  .tiptap-content pre {
+    background-color: var(--color-surface-secondary);
+    padding: 0.75rem;
+    border-radius: var(--radius-md);
+    overflow-x: auto;
+    margin: 0.5rem 0;
+  }
+  .tiptap-content img {
+    max-width: 100%;
+    height: auto;
+    margin: 0.75rem 0;
+  }
+  .tiptap-content p.is-editor-empty:first-child::before {
+    content: attr(data-placeholder);
+    color: var(--color-text-muted);
+    float: left;
+    height: 0;
+    pointer-events: none;
+  }
+</style>

@@ -6,12 +6,12 @@ Punto de entrada administrativo público. Expone `/admin` como página estática
 
 ## Requirements
 
-### Requirement: Ruta placeholder de administración
-The system **SHALL** exponer `/admin` como una página estática placeholder sin dashboard, sin widgets y sin llamadas a la API.
+### Requirement: Ruta de entrada del panel de administración
+The system **SHALL** exponer `/admin` como entrada del panel de administración (shell con sidebar, header y área de contenido), construido con Tailwind utility-first, tokens del design system y shadcn/ui, todavía sin datos ni llamadas a la API.
 
-#### Scenario: Placeholder accesible
-- **WHEN** un visitante accede a `/admin`
-- **THEN** recibe una página estática con un mensaje de panel en construcción
+#### Scenario: /admin renderiza el shell
+- **WHEN** un usuario accede a `/admin`
+- **THEN** ve el shell administrativo (sidebar + header + área de contenido)
 
 #### Scenario: Rutas legacy no disponibles
 - **WHEN** un visitante accede a `/admin/dashboard`, `/admin/leads` o `/admin/settings`
@@ -19,4 +19,8 @@ The system **SHALL** exponer `/admin` como una página estática placeholder sin
 
 #### Scenario: Sin datos administrativos
 - **WHEN** se renderiza `/admin`
-- **THEN** no se solicitan estadísticas ni leads y no se muestran datos de ejemplo
+- **THEN** no se solicitan estadísticas, leads ni artículos y no se muestran datos de ejemplo
+
+#### Scenario: Login redirige a /admin
+- **WHEN** el login es exitoso
+- **THEN** `LoginForm.tsx` redirige a `/admin` (sin cambios respecto al estado actual)
