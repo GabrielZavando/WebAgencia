@@ -19,7 +19,9 @@ export class UpdateMediaDto {
   @IsOptional()
   @IsString()
   @MinLength(1, { message: 'El nombre de archivo no puede estar vacío' })
-  @MaxLength(255, { message: 'El nombre de archivo no puede exceder 255 caracteres' })
+  @MaxLength(255, {
+    message: 'El nombre de archivo no puede exceder 255 caracteres',
+  })
   filename?: string;
 
   @ApiPropertyOptional({

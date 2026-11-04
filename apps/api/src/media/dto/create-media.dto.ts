@@ -1,14 +1,13 @@
 import {
   IsString,
   IsNotEmpty,
-  IsOptional,
   IsUrl,
   IsInt,
   Min,
   MinLength,
   MaxLength,
 } from 'class-validator';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateMediaDto {
   @ApiProperty({
@@ -20,7 +19,9 @@ export class CreateMediaDto {
   @IsString()
   @IsNotEmpty({ message: 'El nombre de archivo es requerido' })
   @MinLength(1, { message: 'El nombre de archivo no puede estar vacío' })
-  @MaxLength(255, { message: 'El nombre de archivo no puede exceder 255 caracteres' })
+  @MaxLength(255, {
+    message: 'El nombre de archivo no puede exceder 255 caracteres',
+  })
   filename: string;
 
   @ApiProperty({
