@@ -112,7 +112,7 @@ export class ArticlesRepository {
       title: createArticleDto.title,
       slug: createArticleDto.slug,
       content: createArticleDto.content,
-      cover_url: createArticleDto.cover_url,
+      cover_media_id: createArticleDto.cover_media_id ?? null,
       category_id: createArticleDto.category_id,
       tags: createArticleDto.tags || null,
       status: createArticleDto.status,
@@ -149,8 +149,8 @@ export class ArticlesRepository {
     if (updateArticleDto.content !== undefined) {
       updateData.content = updateArticleDto.content;
     }
-    if (updateArticleDto.cover_url !== undefined) {
-      updateData.cover_url = updateArticleDto.cover_url;
+    if (updateArticleDto.cover_media_id !== undefined) {
+      updateData.cover_media_id = updateArticleDto.cover_media_id;
     }
     if (updateArticleDto.category_id !== undefined) {
       updateData.category_id = updateArticleDto.category_id;

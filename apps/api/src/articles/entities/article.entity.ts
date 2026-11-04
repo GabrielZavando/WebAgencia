@@ -5,7 +5,7 @@ export interface Article {
   title: string;
   slug: string;
   content: TiptapJSON;
-  cover_url: string;
+  cover_media_id: string | null;
   category_id: string;
   tags: string[] | null;
   status: 'draft' | 'published';
