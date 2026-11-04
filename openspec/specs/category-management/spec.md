@@ -6,6 +6,7 @@ Codificar el contrato del CRUD de categorías en `/api/v1/categories` (Firestore
 ## Requirements
 
 ### Requirement: Entidad Category en Firestore
+
 The system **SHALL** persistir categorías en la colección `categories` con campos `id`, `name`, `slug`, `description` (nullable), `created_at` y `updated_at`, con `slug` indexado y único.
 
 #### Scenario: Forma del documento
@@ -80,3 +81,26 @@ The system **SHALL** exponer `DELETE /api/v1/categories/:id` solo para rol `admi
 #### Scenario: Categoría inexistente
 - **WHEN** se elimina un id inexistente
 - **THEN** recibe `404`
+
+### Requirement: Slug único case-insensitive en categorías
+
+The system **SHALL** rechazar la creación o actualización de una categoría si el `slug` ya está en uso por otra categoría (comparación case-insensitive).
+
+#### Scenario: Creación con slug duplicado falla
+- **GIVEN** una categoría con slug `tecnologia`
+- **WHEN** se crea otra con el mismo slug
+- **THEN** recibe `400` con mensaje `"El slug ya existe"`
+
+#### Scenario: Actualización hacia slug duplicado falla
+- **GIVEN** otra categoría con el slug destino
+- **WHEN** se actualiza una categoría hacia ese slug
+- **THEN** recibe `400` con mensaje `"El slug ya existe"`
+
+### Requirement: Eliminar categoría bloqueada si tiene artículos asociados
+
+The system **SHALL** bloquear el borrado de una categoría si tiene al menos un artículo asociado (referencia por `category_id`).
+
+#### Scenario: Categoría con artículos asociados no se puede eliminar
+- **GIVEN** una categoría con 1+ artículos
+- **WHEN** un admin intenta eliminarla
+- **THEN** recibe `400` con mensaje `"La categoría tiene artículos asociados"`
