@@ -7,3 +7,5 @@ dist/
 .opencode/
 playwright-report/
 test-results/
+.env.local
+.env.*.local
