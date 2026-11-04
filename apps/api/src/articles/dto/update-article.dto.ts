@@ -3,7 +3,6 @@ import {
   IsOptional,
   IsEnum,
   IsArray,
-  IsUrl,
   MinLength,
   MaxLength,
   Matches,
@@ -62,12 +61,12 @@ export class UpdateArticleDto {
   content?: TiptapJSON;
 
   @ApiPropertyOptional({
-    description: 'URL de la imagen de portada',
-    example: 'https://ejemplo.com/images/portada-actualizada.jpg',
+    description: 'ID del archivo de portada en la colección media',
+    example: 'media_123456',
   })
   @IsOptional()
-  @IsUrl({}, { message: 'La URL de portada no es válida' })
-  cover_url?: string;
+  @IsString()
+  cover_media_id?: string | null;
 
   @ApiPropertyOptional({
     description: 'ID de la categoría del artículo',

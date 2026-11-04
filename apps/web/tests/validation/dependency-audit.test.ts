@@ -101,7 +101,7 @@ describe('Auditoría de dependencias', () => {
       'vitest',
     ];
 
-    const allAllowed = [...originalDeps, ...ALLOWED_NEW_DEPS, '@vitejs/plugin-react', '@astrojs/check', 'pnpm', '@parcel/watcher', 'esbuild', 'protobufjs', 'apexcharts'];
+    const allAllowed = [...originalDeps, ...ALLOWED_NEW_DEPS, '@vitejs/plugin-react', '@astrojs/check', 'pnpm', '@parcel/watcher', 'esbuild', 'protobufjs', 'apexcharts', '@webastro/shared-types'];
 
     for (const depName of Object.keys(allDeps)) {
       expect(allAllowed).toContain(depName);

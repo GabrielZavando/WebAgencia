@@ -4,7 +4,6 @@ import {
   IsOptional,
   IsEnum,
   IsArray,
-  IsUrl,
   MinLength,
   MaxLength,
   Matches,
@@ -66,13 +65,13 @@ export class CreateArticleDto {
   @IsWithinMaxSize({ message: 'El contenido no puede superar los 5 MB' })
   content!: TiptapJSON;
 
-  @ApiProperty({
-    description: 'URL de la imagen de portada',
-    example: 'https://ejemplo.com/images/portada.jpg',
+  @ApiPropertyOptional({
+    description: 'ID del archivo de portada en la colección media',
+    example: 'media_123456',
   })
-  @IsUrl({}, { message: 'La URL de portada no es válida' })
-  @IsNotEmpty({ message: 'La URL de portada es requerida' })
-  cover_url!: string;
+  @IsOptional()
+  @IsString()
+  cover_media_id?: string | null;
 
   @ApiProperty({
     description: 'ID de la categoría del artículo',
