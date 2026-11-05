@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ArticlesService } from './articles.service';
 import { ArticlesRepository } from './articles.repository';
-import { NotFoundException, BadRequestException } from '@nestjs/common';
+import { NotFoundException, ConflictException } from '@nestjs/common';
 import { CreateArticleDto, ArticleStatus } from './dto/create-article.dto';
 import { TiptapJSON } from '../shared/types/tiptap';
 
@@ -138,6 +138,36 @@ describe('ArticlesService', () => {
     });
   });
 
+  describe('findPublishedBySlug', () => {
+    it('returns a published article by slug', async () => {
+      jest.spyOn(repository, 'findBySlug').mockResolvedValue(mockArticle);
+
+      const result = await service.findPublishedBySlug('test-article');
+
+      expect(repository.findBySlug).toHaveBeenCalledWith('test-article');
+      expect(result).toEqual(mockArticle);
+    });
+
+    it('throws NotFoundException for a draft article', async () => {
+      jest.spyOn(repository, 'findBySlug').mockResolvedValue({
+        ...mockArticle,
+        status: 'draft',
+      });
+
+      await expect(service.findPublishedBySlug('test-article')).rejects.toThrow(
+        NotFoundException,
+      );
+    });
+
+    it('throws NotFoundException when the slug does not exist', async () => {
+      jest.spyOn(repository, 'findBySlug').mockResolvedValue(null);
+
+      await expect(service.findPublishedBySlug('non-existent')).rejects.toThrow(
+        NotFoundException,
+      );
+    });
+  });
+
   describe('create', () => {
     const createDto: CreateArticleDto = {
       title: 'New Article',
@@ -175,11 +205,11 @@ describe('ArticlesService', () => {
       expect(repository.existsBySlug).toHaveBeenCalledWith(createDto.slug);
     });
 
-    it('should throw BadRequestException when slug already exists', async () => {
+    it('should throw ConflictException when slug already exists', async () => {
       jest.spyOn(repository, 'existsBySlug').mockResolvedValue(true);
 
       await expect(service.create(createDto, 'author-123')).rejects.toThrow(
-        BadRequestException,
+        ConflictException,
       );
     });
   });
@@ -208,13 +238,13 @@ describe('ArticlesService', () => {
       ).rejects.toThrow(NotFoundException);
     });
 
-    it('should throw BadRequestException when new slug already exists', async () => {
+    it('should throw ConflictException when new slug already exists', async () => {
       jest.spyOn(repository, 'findById').mockResolvedValue(mockArticle);
       jest.spyOn(repository, 'existsBySlug').mockResolvedValue(true);
 
       await expect(
         service.update('article-123', { slug: 'existing-slug' }),
-      ).rejects.toThrow(BadRequestException);
+      ).rejects.toThrow(ConflictException);
     });
   });
 

@@ -9,6 +9,7 @@ import {
   Matches,
 } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 import { TiptapJSON } from '../../shared/types/tiptap';
 import {
   IsTiptapDocument,
@@ -38,6 +39,9 @@ export class CreateArticleDto {
     example: 'como-optimizar-tu-sitio-web-para-seo',
     pattern: '^[a-z0-9]+(-[a-z0-9]+)*$',
   })
+  @Transform(({ value }: { value: unknown }): unknown =>
+    typeof value === 'string' ? value.trim().toLowerCase() : value,
+  )
   @IsString()
   @IsNotEmpty({ message: 'El slug es requerido' })
   @Matches(/^[a-z0-9]+(-[a-z0-9]+)*$/, {

@@ -92,7 +92,7 @@ export class ArticlesController {
                 },
               ],
             },
-            cover_url: 'https://ejemplo.com/images/portada.jpg',
+            cover_media_id: null,
             category_id: 'cat123',
             tags: ['seo', 'web', 'performance'],
             status: 'published',
@@ -142,6 +142,59 @@ export class ArticlesController {
     };
   }
 
+  @Get('slug/:slug')
+  @ApiOperation({ summary: 'Obtener artículo publicado por slug' })
+  @ApiParam({
+    name: 'slug',
+    description: 'Slug del artículo publicado',
+    example: 'como-optimizar-tu-sitio-web',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Artículo publicado obtenido',
+    schema: {
+      example: {
+        data: {
+          id: 'art123',
+          title: 'Cómo optimizar tu sitio web para SEO',
+          slug: 'como-optimizar-tu-sitio-web',
+          content: {
+            type: 'doc',
+            content: [
+              {
+                type: 'paragraph',
+                content: [{ type: 'text', text: 'Contenido del artículo...' }],
+              },
+            ],
+          },
+          cover_media_id: null,
+          category_id: 'cat123',
+          tags: ['seo', 'web'],
+          status: 'published',
+          author_id: 'user123',
+          created_at: '2026-07-02T00:00:00.000Z',
+          updated_at: '2026-07-02T00:00:00.000Z',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Artículo no encontrado o no publicado',
+    schema: {
+      example: {
+        error: 'Not Found',
+        message: 'Artículo no encontrado',
+        statusCode: 404,
+      },
+    },
+  })
+  async findBySlug(@Param('slug') slug: string): Promise<{ data: Article }> {
+    const article = await this.articlesService.findPublishedBySlug(slug);
+
+    return { data: article };
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Obtener artículo por ID o slug' })
   @ApiParam({
@@ -167,7 +220,7 @@ export class ArticlesController {
               },
             ],
           },
-          cover_url: 'https://ejemplo.com/images/portada.jpg',
+          cover_media_id: null,
           category_id: 'cat123',
           tags: ['seo', 'web', 'performance'],
           status: 'published',
@@ -219,7 +272,7 @@ export class ArticlesController {
               },
             ],
           },
-          cover_url: 'https://ejemplo.com/images/nueva-portada.jpg',
+          cover_media_id: null,
           category_id: 'cat123',
           tags: ['nuevo'],
           status: 'draft',
@@ -286,7 +339,7 @@ export class ArticlesController {
               },
             ],
           },
-          cover_url: 'https://ejemplo.com/images/portada-actualizada.jpg',
+          cover_media_id: null,
           category_id: 'cat123',
           tags: ['actualizado', 'seo'],
           status: 'published',

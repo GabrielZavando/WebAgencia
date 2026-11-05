@@ -8,6 +8,7 @@ import {
   Matches,
 } from 'class-validator';
 import { ApiPropertyOptional } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 import { ArticleStatus } from './create-article.dto';
 import { TiptapJSON } from '../../shared/types/tiptap';
 import {
@@ -34,6 +35,9 @@ export class UpdateArticleDto {
     pattern: '^[a-z0-9]+(-[a-z0-9]+)*$',
   })
   @IsOptional()
+  @Transform(({ value }: { value: unknown }): unknown =>
+    typeof value === 'string' ? value.trim().toLowerCase() : value,
+  )
   @IsString()
   @Matches(/^[a-z0-9]+(-[a-z0-9]+)*$/, {
     message:
