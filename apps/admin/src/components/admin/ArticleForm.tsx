@@ -19,6 +19,7 @@ import { Label } from '@/components/ui/label';
 import { apiClient, ApiError } from '@/lib/api-client';
 import { getAuthHeaders } from '@/lib/auth-headers';
 import { buildExcerpt, slugifyTitle } from '@/lib/tiptap';
+import { notifyPublicRebuild } from '@/lib/rebuild';
 import { Toolbar } from './tiptap/Toolbar';
 
 const EMPTY_DOCUMENT: TiptapJSON = {
@@ -223,6 +224,8 @@ export function ArticleForm({
           options,
         );
       }
+
+      void notifyPublicRebuild();
 
       if (onSuccess) {
         onSuccess();
