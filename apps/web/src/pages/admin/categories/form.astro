@@ -1,0 +1,28 @@
+---
+/**
+ * Formulario de creación/edición de categoría (/admin/categories/form).
+ * Lee el ID desde el query param `?id=` para soportar modo creación (?id=new)
+ * y modo edición (?id=<categoriaId>). Usa una isla React (CategoryForm) para
+ * manejar el estado del formulario y las llamadas a la API.
+ * Ruta estática compatible con output: 'static' (SSG) — no requiere adaptador de servidor.
+ */
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { CategoryForm } from '../../../components/admin/CategoryForm';
+
+const url = new URL(Astro.url);
+const categoryId = url.searchParams.get('id') ?? 'new';
+---
+
+<AdminLayout
+  title={
+    categoryId === 'new'
+      ? 'Nueva categoría | WebAstro CMS'
+      : 'Editar categoría | WebAstro CMS'
+  }
+  description="Formulario para crear o editar una categoría del blog"
+>
+  <CategoryForm
+    categoryId={categoryId}
+    client:only="react"
+  />
+</AdminLayout>

@@ -11,12 +11,21 @@ export class CategoriesRepository {
 
   constructor(private readonly firebaseService: FirebaseService) {}
 
-  async findAll(): Promise<Category[]> {
+  async findAll(page?: number, limit?: number): Promise<Category[]> {
     const firestore = this.firebaseService.getFirestore();
-    const snapshot = await firestore
+    let query = firestore
       .collection(this.collectionName)
-      .orderBy('created_at', 'desc')
-      .get();
+      .orderBy('created_at', 'desc');
+
+    if (limit !== undefined) {
+      query = query.limit(limit);
+    }
+
+    if (page !== undefined && page > 1 && limit !== undefined) {
+      query = query.offset((page - 1) * limit);
+    }
+
+    const snapshot = await query.get();
 
     return snapshot.docs.map((doc: QueryDocumentSnapshot<DocumentData>) => ({
       id: doc.id,

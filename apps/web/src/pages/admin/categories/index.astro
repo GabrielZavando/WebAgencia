@@ -1,0 +1,13 @@
+---
+/**
+ * Vista de listado de categorías (/admin/categories).
+ * Renderiza la tabla de categorías mediante una isla React que consume
+ * la API pública GET /api/v1/categories.
+ */
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { CategoriesTable } from '../../../components/admin/CategoriesTable';
+---
+
+<AdminLayout title="Categorías | WebAstro CMS" description="Gestión de categorías del blog">
+  <CategoriesTable client:only="react" />
+</AdminLayout>

@@ -6,6 +6,7 @@ import {
   Delete,
   Body,
   Param,
+  Query,
   UseGuards,
   HttpCode,
   HttpStatus,
@@ -30,6 +31,45 @@ import { Category } from './entities/category.entity';
 @Controller('categories')
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
+
+  @Get(':id')
+  @ApiOperation({ summary: 'Obtener categoría por ID' })
+  @ApiParam({
+    name: 'id',
+    description: 'ID de la categoría',
+    example: 'cat123',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Categoría obtenida',
+    schema: {
+      example: {
+        data: {
+          id: 'cat123',
+          name: 'Tecnología',
+          slug: 'tecnologia',
+          description: 'Artículos sobre tecnología',
+          created_at: '2026-07-02T00:00:00.000Z',
+          updated_at: '2026-07-02T00:00:00.000Z',
+        },
+      },
+    },
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Categoría no encontrada',
+    schema: {
+      example: {
+        error: 'Not Found',
+        message: 'Categoría no encontrada',
+        statusCode: 404,
+      },
+    },
+  })
+  async findOne(@Param('id') id: string): Promise<{ data: Category }> {
+    const category = await this.categoriesService.findById(id);
+    return { data: category };
+  }
 
   @Get()
   @ApiOperation({ summary: 'Listar categorías' })
@@ -70,8 +110,13 @@ export class CategoriesController {
       },
     },
   })
-  async findAll(): Promise<{ data: Category[] }> {
-    const categories = await this.categoriesService.findAll();
+  async findAll(
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ): Promise<{ data: Category[] }> {
+    const pageNum = page ? parseInt(page, 10) : undefined;
+    const limitNum = limit ? parseInt(limit, 10) : undefined;
+    const categories = await this.categoriesService.findAll(pageNum, limitNum);
     return { data: categories };
   }
 
