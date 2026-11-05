@@ -1,0 +1,26 @@
+---
+/**
+ * Formulario de creación/edición de artículo (/admin/articles/form).
+ * Lee el ID desde el query param `?id=` para soportar modo creación (?id=new)
+ * y modo edición (?id=<articuloId>). Ruta estática compatible con SSG.
+ */
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { ArticleForm } from '../../../components/admin/ArticleForm';
+
+const url = new URL(Astro.url);
+const articleId = url.searchParams.get('id') ?? 'new';
+---
+
+<AdminLayout
+  title={
+    articleId === 'new'
+      ? 'Nuevo artículo | WebAstro CMS'
+      : 'Editar artículo | WebAstro CMS'
+  }
+  description="Formulario para crear o editar un artículo del blog"
+>
+  <ArticleForm
+    articleId={articleId}
+    client:only="react"
+  />
+</AdminLayout>

@@ -179,9 +179,10 @@ export class ArticlesRepository {
 
   async existsBySlug(slug: string): Promise<boolean> {
     const firestore = this.firebaseService.getFirestore();
+    const normalizedSlug = slug.trim().toLowerCase();
     const snapshot = await firestore
       .collection(this.collectionName)
-      .where('slug', '==', slug)
+      .where('slug', '==', normalizedSlug)
       .limit(1)
       .get();
 

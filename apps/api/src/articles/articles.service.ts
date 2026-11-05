@@ -1,7 +1,7 @@
 import {
   Injectable,
   NotFoundException,
-  BadRequestException,
+  ConflictException,
 } from '@nestjs/common';
 import {
   ArticlesRepository,
@@ -49,6 +49,22 @@ export class ArticlesService {
     return article;
   }
 
+  async findPublishedBySlug(slug: string): Promise<Article> {
+    const article = await this.articlesRepository.findBySlug(
+      slug.trim().toLowerCase(),
+    );
+
+    if (!article || article.status !== 'published') {
+      throw new NotFoundException({
+        error: 'Not Found',
+        message: 'Artículo no encontrado',
+        statusCode: 404,
+      });
+    }
+
+    return article;
+  }
+
   async create(
     createArticleDto: CreateArticleDto,
     authorId: string,
@@ -58,7 +74,7 @@ export class ArticlesService {
     );
 
     if (slugExists) {
-      throw new BadRequestException({
+      throw new ConflictException({
         error: 'Conflict',
         message: 'El slug ya está en uso',
         statusCode: 409,
@@ -88,7 +104,7 @@ export class ArticlesService {
       );
 
       if (slugExists) {
-        throw new BadRequestException({
+        throw new ConflictException({
           error: 'Conflict',
           message: 'El slug ya está en uso',
           statusCode: 409,

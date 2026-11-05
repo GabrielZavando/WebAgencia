@@ -537,7 +537,6 @@ paths:
                 - title
                 - slug
                 - content
-                - cover_url
                 - category_id
                 - status
               properties:
@@ -547,11 +546,13 @@ paths:
                   maxLength: 150
                 slug:
                   type: string
+                  pattern: '^[a-z0-9]+(-[a-z0-9]+)*$'
                 content:
+                  $ref: '#/components/schemas/TiptapJSON'
+                cover_media_id:
                   type: string
-                cover_url:
-                  type: string
-                  format: uri
+                  nullable: true
+                  description: ID de media o URL temporal de portada
                 category_id:
                   type: string
                 tags:
@@ -579,6 +580,41 @@ paths:
                         example: "Artículo creado exitosamente"
         "400":
           description: Datos inválidos
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "409":
+          description: El slug ya está en uso
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/v1/articles/slug/{slug}:
+    get:
+      summary: Obtener artículo publicado por slug
+      security: []
+      tags:
+        - Artículos
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Artículo publicado obtenido
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: "#/components/schemas/Article"
+        "404":
+          description: Artículo no encontrado o no publicado
           content:
             application/json:
               schema:
@@ -636,8 +672,10 @@ paths:
                   type: string
                 content:
                   $ref: '#/components/schemas/TiptapJSON'
-                cover_url:
+                cover_media_id:
                   type: string
+                  nullable: true
+                  description: ID de media o URL temporal de portada
                 category_id:
                   type: string
                 tags:
@@ -665,6 +703,12 @@ paths:
                         example: "Artículo actualizado exitosamente"
         "404":
           description: Artículo no encontrado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "409":
+          description: El slug ya está en uso
           content:
             application/json:
               schema:
@@ -947,9 +991,10 @@ components:
           type: string
         content:
           $ref: '#/components/schemas/TiptapJSON'
-        cover_url:
+        cover_media_id:
           type: string
-          format: uri
+          nullable: true
+          description: ID de media o URL temporal de portada
         category_id:
           type: string
         tags:

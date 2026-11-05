@@ -1,0 +1,16 @@
+---
+/**
+ * Listado de artículos (/admin/articles).
+ * La isla React consulta la API con Bearer token para mostrar borradores
+ * y publicados, y permite editar/eliminar.
+ */
+import AdminLayout from '../../../layouts/AdminLayout.astro';
+import { ArticlesTable } from '../../../components/admin/ArticlesTable';
+---
+
+<AdminLayout
+  title="Artículos | WebAstro CMS"
+  description="Gestión de artículos del blog"
+>
+  <ArticlesTable client:only="react" />
+</AdminLayout>
