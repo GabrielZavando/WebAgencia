@@ -7,6 +7,7 @@ const mocks = vi.hoisted(() => ({
   post: vi.fn(),
   patch: vi.fn(),
   getAuthHeaders: vi.fn(),
+  notifyPublicRebuild: vi.fn(),
 }));
 
 vi.mock('@/lib/api-client', () => ({
@@ -32,7 +33,12 @@ vi.mock('@/lib/auth-headers', () => ({
   getAuthHeaders: () => mocks.getAuthHeaders(),
 }));
 
+vi.mock('../../lib/rebuild', () => ({
+  notifyPublicRebuild: mocks.notifyPublicRebuild,
+}));
+
 import { ArticleForm } from './ArticleForm';
+import { notifyPublicRebuild } from '../../lib/rebuild';
 
 const article = {
   id: 'art1',
@@ -69,6 +75,7 @@ describe('ArticleForm', () => {
     });
     mocks.post.mockResolvedValue({ data: article });
     mocks.patch.mockResolvedValue({ data: article });
+    mocks.notifyPublicRebuild.mockResolvedValue(undefined);
     mocks.get.mockImplementation((url: unknown) => {
       if (url === '/api/v1/categories') {
         return Promise.resolve({ data: categories });
@@ -121,6 +128,7 @@ describe('ArticleForm', () => {
       },
     );
     expect(onSuccess).toHaveBeenCalled();
+    expect(notifyPublicRebuild).toHaveBeenCalledTimes(1);
   });
 
   it('loads and updates an existing article in edit mode', async () => {
@@ -160,6 +168,7 @@ describe('ArticleForm', () => {
     );
     expect(mocks.post).not.toHaveBeenCalled();
     expect(onSuccess).toHaveBeenCalled();
+    expect(notifyPublicRebuild).toHaveBeenCalledTimes(1);
   });
 
   it('auto-generates the slug from the title until the user edits it', async () => {
@@ -211,5 +220,35 @@ describe('ArticleForm', () => {
         'El slug ya está en uso',
       );
     });
+  });
+
+  it('no bloquea el guardado si la notificación de revalidación falla', async () => {
+    const onSuccess = vi.fn();
+    mocks.notifyPublicRebuild.mockRejectedValueOnce(new Error('rebuild failed'));
+    mocks.post.mockResolvedValue({ data: article });
+    render(<ArticleForm articleId="new" onSuccess={onSuccess} />);
+
+    await waitFor(() => {
+      expect(screen.getByLabelText(/título/i)).toBeInTheDocument();
+      expect(
+        screen.getByRole('option', { name: 'Tecnología' }),
+      ).toBeInTheDocument();
+    });
+
+    fireEvent.change(screen.getByLabelText(/título/i), {
+      target: { value: 'Mi primer artículo' },
+    });
+    fireEvent.change(screen.getByLabelText(/categoría/i), {
+      target: { value: 'cat1' },
+    });
+
+    fireEvent.click(screen.getByRole('button', { name: /crear artículo/i }));
+
+    await waitFor(() => {
+      expect(mocks.post).toHaveBeenCalledTimes(1);
+    });
+
+    expect(onSuccess).toHaveBeenCalled();
+    expect(notifyPublicRebuild).toHaveBeenCalledTimes(1);
   });
 });

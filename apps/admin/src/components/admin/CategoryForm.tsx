@@ -9,6 +9,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { notifyPublicRebuild } from '../../lib/rebuild';
 
 interface Category {
   id: string;
@@ -121,6 +122,7 @@ export function CategoryForm({
           },
         );
       }
+      void notifyPublicRebuild();
       window.location.href = '/admin/categories';
     } catch (err: any) {
       setError(err.message || 'Error al guardar categoría');
@@ -128,7 +130,6 @@ export function CategoryForm({
       setSaving(false);
     }
   };
-
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-12">

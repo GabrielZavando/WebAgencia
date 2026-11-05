@@ -7,7 +7,7 @@ Autenticación cliente para un único usuario admin. Punto de entrada aislado (`
 ## Requirements
 
 ### Requirement: Una sola ruta de login
-The system **SHALL** exponer una única ruta `/login` que renderiza un formulario de autenticación.
+The system **SHALL** exponer una única ruta `/login`, servida por `apps/admin` como aplicación en modo servidor, que renderiza un formulario de autenticación.
 
 #### Scenario: Página de login accesible
 - **Given** el usuario accede a `/login`
@@ -15,6 +15,12 @@ The system **SHALL** exponer una única ruta `/login` que renderiza un formulari
 - **Then** el foco va automáticamente al primer campo (email)
 - **And** Tab navega ordenadamente entre campos y botón submit
 - **And** el form se puede enviar presionando Enter.
+
+#### Scenario: Login fuera del sitio público
+- **Given** el usuario accede a `/login` en el dominio del sitio público
+- **When** el sitio público es un artefacto estático
+- **Then** esa ruta no existe en `apps/web`
+- **And** el login solo está disponible en el dominio del panel admin
 
 ### Requirement: Sin registro
 The system **SHALL NOT** ofrecer UI ni endpoint de registro de usuarios desde el cliente. The user creation **MUST** occur exclusively en el backend (seed/script).

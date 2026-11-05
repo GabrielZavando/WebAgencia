@@ -1,11 +1,15 @@
 ---
-import MainLayout from '../../layouts/MainLayout.astro';
+import AdminLayout from '../../layouts/AdminLayout.astro';
 import LoginForm from '../../components/auth/LoginForm';
 import logo from '../../assets/img/logo-medium.png';
 import bgImage from '../../assets/img/banner-web.jpg';
 ---
 
-<MainLayout title="Iniciar sesión | Agencia Digital" hideHeader hideFooter forcedTheme="dark">
+<AdminLayout
+  title="Iniciar sesión | Agencia Digital"
+  description="Ingresa a tu panel de administración"
+  forcedTheme="dark"
+>
   <section class="relative min-h-screen flex flex-col overflow-hidden bg-body !p-0 !m-0 !text-left">
     <!-- Fondo con imagen y overlay tokenizado -->
     <div class="absolute inset-0 z-background">
@@ -42,6 +46,4 @@ import bgImage from '../../assets/img/banner-web.jpg';
       </p>
     </footer>
   </section>
-</MainLayout>
-
-
+</AdminLayout>

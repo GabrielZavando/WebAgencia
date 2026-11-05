@@ -19,6 +19,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { apiClient, ApiError } from '@/lib/api-client';
 import { getAuthHeaders } from '@/lib/auth-headers';
+import { notifyPublicRebuild } from '@/lib/rebuild';
 
 interface ArticlesTableProps {
   initialArticles?: Article[];
@@ -95,12 +96,13 @@ export function ArticlesTable({ initialArticles = [] }: ArticlesTableProps) {
     setDeletingId(id);
     setError(null);
 
-    try {
-      const headers = await getAuthHeaders();
-      await apiClient.delete(`/api/v1/articles/${id}`, { headers });
-      setArticles((current) => current.filter((article) => article.id !== id));
-      setConfirmDeleteId(null);
-    } catch (err) {
+      try {
+        const headers = await getAuthHeaders();
+        await apiClient.delete(`/api/v1/articles/${id}`, { headers });
+        setArticles((current) => current.filter((article) => article.id !== id));
+        setConfirmDeleteId(null);
+        void notifyPublicRebuild();
+      } catch (err) {
       setError(
         err instanceof ApiError
           ? err.message

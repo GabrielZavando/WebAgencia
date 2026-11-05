@@ -7,39 +7,28 @@ const pkgPath = join(process.cwd(), 'package.json');
 const srcDir = join(process.cwd(), 'src');
 
 const ALLOWED_NEW_DEPS = [
-  '@astrojs/react',
-  'react',
-  'react-dom',
-  '@types/react',
-  '@types/react-dom',
-  '@testing-library/react',
+  // Base del sitio público (SSG)
+  '@tailwindcss/vite',
+  'astro',
+  'sharp',
+  'tailwindcss',
+  'typescript',
+  '@astrojs/check',
+  // Herramientas de validación y pruebas
+  '@playwright/test',
+  '@vitest/coverage-v8',
+  'jsdom',
+  'vitest',
+  // Tipos compartidos (workspace)
+  '@webastro/shared-types',
+  // Utilidades de pruebas (React se retiró del sitio público, pero estas
+  // utilidades de desarrollo siguen presentes como devDependencies)
   '@testing-library/jest-dom',
-  'tailadmin-react-free',
-  '@heroicons/react',
-  'react-router-dom',
-  'react-hot-toast',
-  'react-toastify',
-  'flatpickr',
-  'jsvectormap',
-  'react-icons',
-  'match-sorter',
-  'sort-by',
-  'firebase',
-  // shadcn/ui base (feat-cms-skeleton) — approved in OpenSpec change
-  'class-variance-authority',
-  'clsx',
-  'tailwind-merge',
-  'lucide-react',
-  'tw-animate-css',
-  'radix-ui',
-  // Tiptap editor v3 (feat-cms-skeleton) — approved in OpenSpec change
-  '@tiptap/react',
-  '@tiptap/starter-kit',
-  '@tiptap/extension-image',
-  '@tiptap/pm',
+  '@testing-library/react',
+  '@vitejs/plugin-react',
 ];
 
-describe('Auditoría de dependencias', () => {
+describe('Auditoría de dependencias (sitio público)', () => {
 
   it('3.1 firebase-admin no está en package.json ni en node_modules', () => {
     const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'));
@@ -85,40 +74,13 @@ describe('Auditoría de dependencias', () => {
     }
   });
 
-  it('3.5 Nuevas dependencias están aprobadas explícitamente', () => {
+  it('3.5 Todas las dependencias están aprobadas explícitamente', () => {
     const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'));
     const allDeps = { ...pkg.dependencies, ...pkg.devDependencies };
-    
-    const originalDeps = [
-      '@tailwindcss/vite',
-      'astro',
-      'sharp',
-      'tailwindcss',
-      'typescript',
-      '@playwright/test',
-      '@vitest/coverage-v8',
-      'jsdom',
-      'vitest',
-    ];
-
-    const allAllowed = [...originalDeps, ...ALLOWED_NEW_DEPS, '@vitejs/plugin-react', '@astrojs/check', 'pnpm', '@parcel/watcher', 'esbuild', 'protobufjs', 'apexcharts', '@webastro/shared-types'];
 
     for (const depName of Object.keys(allDeps)) {
-      expect(allAllowed).toContain(depName);
+      expect(ALLOWED_NEW_DEPS).toContain(depName);
     }
   });
 
-  it('3.6 React dependencies están presentes y versionadas correctamente', () => {
-    const pkg = JSON.parse(readFileSync(pkgPath, 'utf-8'));
-    const allDeps = { ...pkg.dependencies, ...pkg.devDependencies };
-
-    expect(allDeps['@astrojs/react']).toBeDefined();
-    expect(allDeps['react']).toBeDefined();
-    expect(allDeps['react-dom']).toBeDefined();
-    expect(allDeps['@types/react']).toBeDefined();
-    expect(allDeps['@types/react-dom']).toBeDefined();
-
-    const reactVersion = allDeps['react'];
-    expect(reactVersion).toMatch(/\^?18\./);
-  });
 });

@@ -8,6 +8,7 @@ import { UsersModule } from './users/users.module';
 import { CategoriesModule } from './categories/categories.module';
 import { ArticlesModule } from './articles/articles.module';
 import { LeadsModule } from './leads/leads.module';
+import { RebuildModule } from './webhooks/rebuild.module';
 import { HealthController } from './health.controller';
 
 @Module({
@@ -15,8 +16,8 @@ import { HealthController } from './health.controller';
     ThrottlerModule.forRoot([
       {
         name: 'default',
-        ttl: 60000, // 1 minute
-        limit: 100, // 100 requests per minute
+        ttl: 60000,
+        limit: 100,
       },
     ]),
     FirebaseModule,
@@ -26,6 +27,7 @@ import { HealthController } from './health.controller';
     CategoriesModule,
     ArticlesModule,
     LeadsModule,
+    RebuildModule,
   ],
   controllers: [HealthController],
   providers: [

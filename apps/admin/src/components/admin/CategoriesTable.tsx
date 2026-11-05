@@ -17,6 +17,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { apiClient, ApiError } from '@/lib/api-client';
+import { notifyPublicRebuild } from '../../lib/rebuild';
 
 interface Category {
   id: string;
@@ -71,9 +72,10 @@ export function CategoriesTable({
         method: 'DELETE',
         credentials: 'include',
       });
-      setCategories((prev) => prev.filter((c) => c.id !== id));
-      setConfirmDeleteId(null);
-    } catch (err: any) {
+        setCategories((prev) => prev.filter((c) => c.id !== id));
+        setConfirmDeleteId(null);
+        void notifyPublicRebuild();
+      } catch (err: any) {
       setError(
         err instanceof ApiError
           ? err.message || 'Error al eliminar categoría'
