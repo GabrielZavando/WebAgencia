@@ -22,6 +22,120 @@ The system **SHALL** exponer una única ruta `/login`, servida por `apps/admin` 
 - **Then** esa ruta no existe en `apps/web`
 - **And** el login solo está disponible en el dominio del panel admin
 
+### Requirement: Base visual del login con TailAdmin
+
+The system **SHALL** renderizar el formulario de login usando la isla de login de TailAdmin (versión React) como base visual (tarjeta, inputs de email y contraseña, botón submit), manteniendo inalterado el flujo de autenticación (Firebase Auth + `POST /api/v1/auth/login`, redirección a `/admin`, token solo en cookie httpOnly, sin registro, sin recuperación de contraseña).
+
+#### Scenario: Login renderizado con componente de TailAdmin
+- **WHEN** el usuario abre `/login`
+- **THEN** el formulario es renderizado por la isla de login de TailAdmin hidratada con `client:load`
+- **AND** la isla muestra tarjeta de login, campo email, campo contraseña y botón submit
+- **AND** el foco va automáticamente al primer campo (email)
+- **AND** Tab navega ordenadamente entre campos y botón submit
+- **AND** el form se puede enviar presionando Enter
+
+#### Scenario: Envío exitoso redirige a /admin
+- **WHEN** el usuario introduce email y password válidos y hace submit
+- **AND** la autenticación de Firebase (`signInWithEmailAndPassword`) tiene éxito
+- **AND** el backend responde 200 a `POST /api/v1/auth/login` con `{ token, user: { email, role: "admin" }, expiresAt }`
+- **THEN** el navegador redirige a `/admin`
+- **AND** no se guarda el token en `localStorage` (gestión por cookie httpOnly)
+
+#### Scenario: Credenciales inválidas muestran mensaje genérico
+- **WHEN** el usuario introduce email o password incorrectos
+- **AND** Firebase responde `auth/invalid-credential` o el backend responde 401
+- **THEN** aparece un mensaje genérico "Credenciales inválidas"
+- **AND** no se revela si el email existe
+
+#### Scenario: Rate limit deshabilita el botón temporalmente
+- **WHEN** el backend responde 429 tras múltiples intentos
+- **THEN** aparece "Demasiados intentos, espera unos minutos"
+- **AND** el botón submit se deshabilita por 60 segundos
+
+#### Scenario: Error de red muestra mensaje y botón Reintentar
+- **WHEN** el backend no responde y el timeout expira
+- **THEN** aparece "Error de conexión, intenta más tarde"
+- **AND** se muestra un botón "Reintentar"
+
+### Requirement: Redirección automática cuando no hay sesión activa
+
+The system **SHALL** redirigir al usuario a `/login` cuando intente acceder a rutas protegidas (`/`, `/admin/*`) sin tener una sesión activa de Firebase Auth.
+
+#### Scenario: Ruta raíz sin sesión redirige a /login
+- **WHEN** el usuario accede a `/` sin sesión activa de Firebase Auth
+- **THEN** el navegador redirige a `/login`
+
+#### Scenario: Ruta raíz con sesión redirige a /admin
+- **WHEN** el usuario accede a `/` con sesión activa de Firebase Auth
+- **THEN** el navegador redirige a `/admin`
+
+#### Scenario: Ruta /admin/* sin sesión redirige a /login
+- **WHEN** el usuario accede a cualquier ruta bajo `/admin/` sin sesión activa
+- **THEN** el navegador redirige a `/login`
+
+#### Scenario: Ruta /login con sesión activa redirige a /admin
+- **WHEN** el usuario accede a `/login` con sesión activa de Firebase Auth
+- **THEN** el navegador redirige a `/admin`
+
+#### Scenario: Ruta /login sin sesión muestra el formulario
+- **WHEN** el usuario accede a `/login` sin sesión activa
+- **THEN** se muestra el formulario de login de TailAdmin
+
+### Requirement: Estilos del login cargados correctamente
+
+The system **SHALL** cargar los estilos de Tailwind y los tokens CSS del proyecto en la página `/login` para que el formulario de login se renderice con el diseño esperado (tarjeta, inputs, botón).
+
+#### Scenario: global.css importado en el layout admin
+- **WHEN** se inspecciona `apps/admin/src/layouts/AdminLayout.astro`
+- **THEN** contiene un import de `../styles/global.css`
+- **AND** los tokens CSS custom properties (`--color-primary`, `--color-surface`, etc.) están disponibles en el DOM
+
+### Requirement: Las utilidades Tailwind prevalecen sobre el CSS legacy
+
+The system **SHALL** declarar el CSS legacy (reset universal y reset de controles de formulario) dentro de una cascade layer para que las utilidades Tailwind, emitidas en `@layer utilities`, siempre prevalezcan. El CSS sin capa tiene mayor prioridad en la cascada y anula las utilidades, dejando el botón de login transparente y sin padding.
+
+#### Scenario: El reset universal está dentro de una cascade layer
+- **WHEN** se inspecciona `apps/admin/src/styles/global.css`
+- **THEN** la regla `*, *::before, *::after` que declara `margin: 0; padding: 0; border: 0` está contenida en un bloque `@layer`
+
+#### Scenario: El reset de controles de formulario está dentro de una cascade layer
+- **WHEN** se inspecciona `apps/admin/src/styles/global.css`
+- **THEN** la regla `input, button, textarea, select` que declara `background: transparent` está contenida en un bloque `@layer`
+
+#### Scenario: No existen reglas top-level sin capa que sobrescriban utilidades
+- **WHEN** se recorren las reglas de nivel superior de `apps/admin/src/styles/global.css`
+- **THEN** ninguna regla sobre `*`, `html`, `body`, `input`, `button`, `textarea` o `select` queda fuera de una cascade layer
+
+#### Scenario: El botón de login renderiza con sus utilidades Tailwind
+- **WHEN** se abre `/login` en un navegador
+- **THEN** el botón "Iniciar sesión" tiene `padding-block` de 12px, fondo no transparente y una altura de al menos 40px
+- **AND** la tarjeta del login tiene padding interior y borde visible de 1px
+
+### Requirement: La página de login ocupa toda la pantalla
+
+The system **SHALL** renderizar la página `/login` a pantalla completa, sin el padding lateral reservado para el sidebar, con la imagen de fondo visible y el logo con opacidad distinta de cero.
+
+#### Scenario: Sin padding de sidebar en la página de login
+- **WHEN** se abre `/login` en un viewport de escritorio
+- **THEN** el contenedor del layout no aplica `padding-left` para el sidebar
+
+#### Scenario: La imagen de fondo es visible
+- **WHEN** se abre `/login` en un navegador
+- **THEN** el contenedor de la imagen de fondo tiene un `z-index` igual o mayor que el del fondo de la sección, y menor que el del contenido
+
+#### Scenario: El logo es visible
+- **WHEN** se abre `/login` en un navegador
+- **THEN** el logo tiene `opacity` distinta de cero
+
+### Requirement: Sin warning de React por evento onsubmit
+
+The system **SHALL** no usar el atributo nativo `onsubmit` en formularios React del login, evitando el warning "Invalid event handler property 'onsubmit'".
+
+#### Scenario: Formulario usa onSubmit de React
+- **WHEN** se inspecciona `apps/admin/src/components/auth/TailAdminLogin.tsx`
+- **THEN** el elemento `<form>` no contiene el atributo `onsubmit`
+- **AND** el elemento `<form>` contiene `onSubmit={handleSubmit}` que llama a `e.preventDefault()`
+
 ### Requirement: Sin registro
 The system **SHALL NOT** ofrecer UI ni endpoint de registro de usuarios desde el cliente. The user creation **MUST** occur exclusively en el backend (seed/script).
 

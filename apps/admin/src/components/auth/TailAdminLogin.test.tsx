@@ -1,7 +1,7 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
-import LoginForm from './LoginForm';
+import TailAdminLogin from './TailAdminLogin';
 import { apiClient, ApiError } from '../../lib/api-client';
 
 vi.mock('../../lib/api-client', () => ({
@@ -32,20 +32,24 @@ vi.mock('../../lib/firebase', () => ({
   auth: { name: 'mock-auth' },
 }));
 
-describe('LoginForm', () => {
+describe('TailAdminLogin', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   it('renders without errors', () => {
-    render(<LoginForm />);
+    render(<TailAdminLogin />);
     expect(screen.getByRole('textbox', { name: /correo electrónico/i })).toBeInTheDocument();
     expect(screen.getByLabelText(/^contraseña$/i)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /iniciar sesión/i })).toBeInTheDocument();
   });
 
   it('shows email error when email is invalid on submit', async () => {
-    render(<LoginForm />);
+    render(<TailAdminLogin />);
 
     const emailInput = screen.getByRole('textbox', { name: /correo electrónico/i });
     await fireEvent.change(emailInput, { target: { value: 'no-es-email' } });
@@ -57,7 +61,7 @@ describe('LoginForm', () => {
   });
 
   it('shows password error when password is less than 8 characters on submit', async () => {
-    render(<LoginForm />);
+    render(<TailAdminLogin />);
 
     const passwordInput = screen.getByLabelText(/^contraseña$/i);
     await fireEvent.change(passwordInput, { target: { value: 'short' } });
@@ -70,7 +74,7 @@ describe('LoginForm', () => {
 
   it('does not submit if form is invalid', async () => {
     const mockPost = vi.mocked(apiClient.post);
-    render(<LoginForm />);
+    render(<TailAdminLogin />);
 
     const submitButton = screen.getByRole('button', { name: /iniciar sesión/i });
     await fireEvent.click(submitButton);
@@ -87,7 +91,7 @@ describe('LoginForm', () => {
     });
     mockSignInWithEmailAndPassword.mockRejectedValueOnce(error);
 
-    render(<LoginForm />);
+    render(<TailAdminLogin />);
 
     await fireEvent.change(screen.getByRole('textbox', { name: /correo electrónico/i }), { target: { value: 'admin@example.com' } });
     await fireEvent.change(screen.getByLabelText(/^contraseña$/i), { target: { value: 'password123' } });
@@ -104,7 +108,7 @@ describe('LoginForm', () => {
     });
     mockSignInWithEmailAndPassword.mockRejectedValueOnce(error);
 
-    render(<LoginForm />);
+    render(<TailAdminLogin />);
 
     await fireEvent.change(screen.getByRole('textbox', { name: /correo electrónico/i }), { target: { value: 'admin@example.com' } });
     await fireEvent.change(screen.getByLabelText(/^contraseña$/i), { target: { value: 'password123' } });
@@ -117,9 +121,9 @@ describe('LoginForm', () => {
 
   it('handles API error after successful Firebase auth', async () => {
     const mockPost = vi.mocked(apiClient.post);
-    mockPost.mockRejectedValueOnce(new ApiError('HTTP_ERROR', 'Token inválido o expirado', 401));
+    mockPost.mockRejectedValueOnce(new ApiError('HTTP_ERROR', 'Credenciales inválidas', 401));
 
-    render(<LoginForm />);
+    render(<TailAdminLogin />);
 
     await fireEvent.change(screen.getByRole('textbox', { name: /correo electrónico/i }), { target: { value: 'admin@example.com' } });
     await fireEvent.change(screen.getByLabelText(/^contraseña$/i), { target: { value: 'password123' } });
@@ -127,11 +131,11 @@ describe('LoginForm', () => {
 
     await waitFor(() => {
       expect(mockSignInWithEmailAndPassword).toHaveBeenCalled();
-      expect(screen.getByText(/token inválido o expirado/i)).toBeInTheDocument();
+      expect(screen.getByText(/credenciales inválidas/i)).toBeInTheDocument();
     });
   });
 
-  it('submits successfully and sends id_token to API', async () => {
+  it('submits successfully and enters success state (redirect to /admin)', async () => {
     const mockPost = vi.mocked(apiClient.post);
     mockPost.mockResolvedValueOnce({
       data: {
@@ -140,7 +144,7 @@ describe('LoginForm', () => {
       meta: { message: 'Login exitoso' },
     });
 
-    render(<LoginForm />);
+    render(<TailAdminLogin />);
 
     await fireEvent.change(screen.getByRole('textbox', { name: /correo electrónico/i }), { target: { value: 'admin@example.com' } });
     await fireEvent.change(screen.getByLabelText(/^contraseña$/i), { target: { value: 'password123' } });
@@ -150,12 +154,22 @@ describe('LoginForm', () => {
       expect(mockSignInWithEmailAndPassword).toHaveBeenCalledWith(
         { name: 'mock-auth' },
         'admin@example.com',
-        'password123'
+        'password123',
       );
       expect(mockGetIdToken).toHaveBeenCalled();
       expect(mockPost).toHaveBeenCalledWith('/auth/login', {
         id_token: 'mock-firebase-id-token',
       });
     });
+
+    // Component should enter success state before redirect
+    await waitFor(() => {
+      expect(screen.getByText(/iniciando sesión/i)).toBeInTheDocument();
+    });
+
+    // Fast-forward timers to trigger the redirect setTimeout
+    vi.useFakeTimers();
+    vi.advanceTimersByTime(500);
+    vi.useRealTimers();
   });
 });
