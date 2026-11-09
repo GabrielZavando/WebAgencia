@@ -1,0 +1,13 @@
+---
+/**
+ * Ruta raíz del panel de administración (/).
+ * Redirige a /login si no hay sesión activa, o a /admin si la hay.
+ * La verificación de sesión se hace del cliente vía Firebase Auth.
+ */
+import AdminLayout from '../layouts/AdminLayout.astro';
+import AuthGuard from '../components/auth/AuthGuard';
+---
+
+<AdminLayout title="Redirigiendo..." description="Verificando sesión..." hideHeader hideSidebar>
+  <AuthGuard client:load redirectToLogin redirectToAdmin />
+</AdminLayout>

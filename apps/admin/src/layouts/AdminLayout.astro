@@ -7,16 +7,26 @@
  */
 import Sidebar from '../components/admin/Sidebar.astro';
 import Header from '../components/admin/Header.astro';
+import AuthGuard from '../components/auth/AuthGuard';
+import '../styles/global.css';
 
 interface Props {
   title?: string;
   description?: string;
+  hideHeader?: boolean;
+  hideSidebar?: boolean;
 }
 
 const {
   title = 'Administración | WebAstro',
   description = 'Panel de administración WebAstro',
+  hideHeader = false,
+  hideSidebar = false,
 } = Astro.props;
+
+// Detectar si la ruta actual es /login para saltar la verificación de sesión
+// y evitar un bucle de redirección.
+const isLogin = Astro.url.pathname === '/login' || Astro.url.pathname.startsWith('/login/');
 ---
 
 <!DOCTYPE html>
@@ -60,17 +70,18 @@ const {
     </script>
   </head>
   <body>
-    <Sidebar />
+    {!hideSidebar && <Sidebar />}
 
     <div
       id="admin-sidebar-backdrop"
-      class="fixed inset-0 z-30 hidden bg-black/40 lg:hidden"
+      class={`fixed inset-0 z-30 ${!hideSidebar && 'lg:hidden' ? '' : 'hidden'} bg-black/40`}
       aria-hidden="true"
     ></div>
 
-    <div class="flex min-h-screen flex-col lg:pl-64">
-      <Header />
-      <main id="admin-content" class="flex-1 p-4 md:p-6">
+    <div class={`flex min-h-screen flex-col ${isLogin ? '' : 'lg:pl-64'}`}>
+      {!hideHeader && <Header />}
+      <main id="admin-content" class={isLogin ? 'flex-1' : 'flex-1 p-4 md:p-6'}>
+        {!isLogin && <AuthGuard client:load redirectToLogin />}
         <slot />
       </main>
     </div>

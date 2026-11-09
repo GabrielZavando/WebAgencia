@@ -242,6 +242,16 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
+/* --------------------------------------------------------------------------
+   Legacy stylesheet (BEM + resets)
+   --------------------------------------------------------------------------
+   Declared inside @layer components so Tailwind utilities (@layer utilities)
+   always take precedence. Unlayered CSS has higher cascade priority than any
+   layer, which previously neutralised utilities such as py-3, bg-blue-600,
+   rounded-md, border-gray-300 and every spacing utility.
+   -------------------------------------------------------------------------- */
+@layer components {
+
 body.menu-active {
   --nav-hamburger-color: var(--color-nav-hamburger-active);
   --nav-link-color: var(--color-text);
@@ -2617,95 +2627,8 @@ select {
 }
 
 /* =========================
-   LOGIN: residual minimal (solo spinner + error-box)
-   Todo el resto usa clases del sistema (.form-group, .form-label, .form-input, .btn-form, .error-message)
+   Residual utilities (shared across components)
    ========================= */
-
-.login-form {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-lg);
-  width: 100%;
-}
-
-.login-input-wrapper {
-  position: relative;
-  width: 100%;
-}
-
-.login-input-wrapper .form-input {
-  width: 100%;
-  padding-right: 3rem;
-  border-radius: 0;
-}
-
-.login-input-icon {
-  position: absolute;
-  top: 50%;
-  right: 0.75rem;
-  transform: translateY(-50%);
-  color: var(--color-text-muted);
-  font-size: 1.25rem;
-  line-height: 1;
-  z-index: 2;
-  pointer-events: none;
-}
-
-.login-password-toggle.login-input-icon {
-  pointer-events: auto;
-  border: 0;
-  background: transparent;
-  padding: 0.25rem;
-  cursor: pointer;
-}
-
-.login-password-toggle.login-input-icon:hover {
-  color: var(--color-primary);
-}
-
-.login-forgot-wrapper {
-  text-align: right;
-  margin-top: calc(-1 * var(--space-sm));
-  margin-bottom: 0;
-}
-
-.login-forgot-link {
-  color: var(--color-primary);
-  font-size: var(--text-sm);
-  text-decoration: none;
-  transition: color var(--transition-fast);
-}
-
-.login-forgot-link:hover {
-  color: var(--btn-primary-hover);
-  text-decoration: underline;
-}
-
-.login-form-error {
-  padding: 0.75rem 1rem;
-  background: rgba(var(--color-error-rgb), 0.1);
-  border: 1px solid var(--color-error);
-  border-radius: 0;
-  color: var(--color-error);
-  font-weight: 500;
-  text-align: center;
-  font-size: var(--text-sm);
-  margin-bottom: var(--space-md);
-}
-
-.login-btn-spinner {
-  display: inline-block;
-  width: 1rem;
-  height: 1rem;
-  border: 2px solid rgba(var(--color-white-rgb), 0.3);
-  border-top-color: var(--color-white);
-  border-radius: 50%;
-  animation: spin 0.6s linear infinite;
-}
-
-@keyframes spin {
-  to { transform: rotate(360deg); }
-}
 
 .website-url {
   position: absolute;
@@ -2715,7 +2638,11 @@ select {
   overflow: hidden;
 }
 
-/* === Login Animations === */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* === Shared Animations === */
 
 @keyframes logoGlowPulse {
   0%, 100% {
@@ -2755,79 +2682,12 @@ select {
   animation: shake 0.5s ease-in-out;
 }
 
-@keyframes successCheck {
-  from {
-    opacity: 0;
-    transform: scale(0.5);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-.login-success-check {
-  animation: successCheck 0.3s ease-out forwards;
-}
-
-/* === Login Checkbox === */
-
-.login-checkbox-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-md);
-  margin-top: calc(-1 * var(--space-sm));
-  margin-bottom: 0;
-}
-
-.login-checkbox-wrapper {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  cursor: pointer;
-}
-
-.login-checkbox {
-  appearance: none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  width: 1rem;
-  height: 1rem;
-  border: 2px solid var(--color-border);
-  background: var(--color-surface-secondary);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  flex-shrink: 0;
-}
-
-.login-checkbox:checked {
-  background: var(--color-primary);
-  border-color: var(--color-primary);
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 0.75rem;
-}
-
-.login-checkbox:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.3);
-}
-
-.login-checkbox-label {
-  font-size: var(--text-sm);
-  color: var(--color-text-secondary);
-  user-select: none;
-}
-
 /* === Reduced Motion === */
 
 @media (prefers-reduced-motion: reduce) {
   .logo-animate,
   .card-animate,
-  .form-error,
-  .login-success-check {
+  .form-error {
     animation: none;
   }
   
@@ -2852,5 +2712,4 @@ select {
     font-size: 5rem;
   }
 }
-
-
+}
