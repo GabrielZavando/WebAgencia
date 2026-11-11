@@ -37,7 +37,7 @@ The system **SHALL** renderizar el formulario de login usando la isla de login d
 #### Scenario: Envío exitoso redirige a /admin
 - **WHEN** el usuario introduce email y password válidos y hace submit
 - **AND** la autenticación de Firebase (`signInWithEmailAndPassword`) tiene éxito
-- **AND** el backend responde 200 a `POST /api/v1/auth/login` con `{ token, user: { email, role: "admin" }, expiresAt }`
+- **AND** el backend responde 200 a `POST /api/v1/auth/login` con `{ data: { user }, meta: { message } }`
 - **THEN** el navegador redirige a `/admin`
 - **AND** no se guarda el token en `localStorage` (gestión por cookie httpOnly)
 
@@ -52,10 +52,10 @@ The system **SHALL** renderizar el formulario de login usando la isla de login d
 - **THEN** aparece "Demasiados intentos, espera unos minutos"
 - **AND** el botón submit se deshabilita por 60 segundos
 
-#### Scenario: Error de red muestra mensaje y botón Reintentar
+#### Scenario: Error de red muestra mensaje inline
 - **WHEN** el backend no responde y el timeout expira
-- **THEN** aparece "Error de conexión, intenta más tarde"
-- **AND** se muestra un botón "Reintentar"
+- **THEN** aparece "Error de conexión, intenta más tarde" mostrado inline dentro del formulario
+- **AND** no se muestra botón "Reintentar"
 
 ### Requirement: Redirección automática cuando no hay sesión activa
 
@@ -167,34 +167,38 @@ The system **SHALL** validar el formulario antes de enviar:
 - Honeypot anti-bot
 - Turnstile si `PUBLIC_TURNSTILE_SITE_KEY` está configurado
 
+Los errores de formato se muestran inline en el campo correspondiente, al desenfocar el campo (`onBlur`) o al enviar el formulario. El botón de submit **SHALL NOT** deshabilitarse por validación de formato: solo se deshabilita mientras la petición está en curso o durante el rate limit.
+
 #### Scenario: Validación cliente bloquea envío
 - **Given** el usuario introduce email malformado "no-es-email"
 - **When** desenfoca el campo
 - **Then** aparece error inline "Email inválido"
-- **And** el botón submit queda deshabilitado.
+- **And** el envío no procede cuando se intenta enviar el formulario
+- **And** el botón submit permanece habilitado.
 
 ### Requirement: Endpoint consumido
-The system **SHALL** POST a `${PUBLIC_API_URL}/api/v1/auth/login` con `{ email, password, turnstileToken? }`.
+The system **SHALL** POST a `${PUBLIC_API_URL}/api/v1/auth/login` con `{ id_token }`, donde `id_token` es el token de ID emitido por Firebase Auth para el usuario autenticado.
 
 #### Scenario: Login con credenciales válidas
 - **Given** el usuario introduce email válido y password de 8+ caracteres
-- **And** Turnstile genera token
+- **And** Firebase Auth autentica al usuario con `signInWithEmailAndPassword`
 - **When** hace click en "Iniciar sesión"
-- **Then** la API responde 200 con `{ token, user: { email, role: "admin" }, expiresAt }`
+- **Then** el cliente obtiene el `id_token` de Firebase y lo envía en el body
+- **And** la API responde 200 con `{ data: { user }, meta: { message } }`
 - **And** el navegador redirige a `/admin`
 - **And** no se guarda token en localStorage (gestión por cookie).
 
 ### Requirement: Manejo de respuesta
 The system **SHALL** procesar la respuesta del backend:
-- **200**: token JWT recibido; redirigir a `/admin`
+- **200**: recibe `{ data: { user }, meta: { message } }`, donde `user` contiene `id`, `email`, `full_name`, `role`, `avatar_url`, `is_active`, `created_at` y `updated_at`; si `user.role === "admin"` redirige a `/admin`
 - **401**: mensaje genérico "Credenciales inválidas" (no revela si email existe)
 - **429**: "Demasiados intentos, espera unos minutos"
-- **5xx / network**: "Error de conexión, intenta más tarde"
+- **5xx / network**: "Error de conexión, intenta más tarde", mostrado inline en el formulario, sin botón "Reintentar"
 
 #### Scenario: Credenciales inválidas
 - **Given** el usuario introduce email o password incorrectos
 - **When** envía el form
-- **Then** la API responde 401
+- **Then** la autenticación de Firebase falla o la API responde 401
 - **And** aparece mensaje genérico "Credenciales inválidas" (sin distinguir si email existe).
 
 #### Scenario: Rate limit excedido
@@ -204,23 +208,24 @@ The system **SHALL** procesar la respuesta del backend:
 
 #### Scenario: Sin API (network error)
 - **Given** el backend no responde
-- **When** el timeout (15s) expira
-- **Then** aparece "Error de conexión, intenta más tarde" con botón "Reintentar".
+- **When** el timeout expira
+- **Then** aparece "Error de conexión, intenta más tarde" mostrado inline dentro del formulario
+- **And** no se muestra botón "Reintentar".
 
 ### Requirement: Aislamiento de la auth en página dedicada
-The system **SHALL** renderizar `/login` envuelto en `MainLayout` con `hideHeader` y `hideFooter` activos.
+The system **SHALL** renderizar `/login` envuelto en `AdminLayout` con `hideHeader` y `hideSidebar` activos.
 
-#### Scenario: Header y footer ocultos en login
+#### Scenario: Header y sidebar ocultos en login
 - **Given** el usuario está en `/login`
 - **When** inspecciona el layout
-- **Then** el header y footer no son visibles.
+- **Then** el header y el sidebar no son visibles.
 
 ### Requirement: Island Architecture
 The system **SHALL** implementar el formulario como **React Island** (`@astrojs/react`) hidratado con `client:load`. **SHALL NOT** usar `client:idle` (se requiere disponibilidad inmediata).
 
 #### Scenario: Formulario hidratado inmediatamente
 - **Given** la página `/login` carga
-- **When** se inspecciona el componente `<LoginForm />`
+- **When** se inspecciona el componente `<TailAdminLogin />`
 - **Then** tiene directiva `client:load` (no `client:idle`).
 
 ### Requirement: Sin persistencia cliente del token
@@ -232,12 +237,12 @@ The system **SHALL NOT** almacenar el JWT en `localStorage` desde el cliente. El
 - **Then** no existe clave con el token JWT.
 
 ### Requirement: Bundle mínimo
-The system **SHALL** añadir `@astrojs/react` y mantener dependencias de auth al mínimo (sólo `LoginForm.tsx`). No se introducen otras dependencias de auth (no Firebase, no NextAuth, no Auth.js).
+The system **SHALL** mantener las dependencias de auth al mínimo: `@astrojs/react`, `react`, `react-dom` y `firebase` (Firebase Auth es la fuente de identidad y emite el `id_token` que consume la API). No se introducen frameworks de auth adicionales (no NextAuth, no Auth.js).
 
 #### Scenario: Dependencias mínimas de auth
 - **Given** el build está completo
 - **When** se inspecciona `package.json`
-- **Then** las únicas deps nuevas son `@astrojs/react`, `react`, `react-dom` y sus tipos.
+- **Then** las únicas dependencias de auth son `@astrojs/react`, `react`, `react-dom` y `firebase`.
 
 ### Requirement: Tests requeridos
 The system **SHALL** incluir:

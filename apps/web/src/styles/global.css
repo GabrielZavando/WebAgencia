@@ -253,6 +253,16 @@ body.menu-active {
   }
 }
 
+/* --------------------------------------------------------------------------
+   Base reset
+   --------------------------------------------------------------------------
+   Declared inside @layer base so Tailwind utilities (@layer utilities) always
+   take precedence. Unlayered CSS has higher cascade priority than any layer,
+   which previously neutralised every spacing and paint utility declared in
+   the markup (mt-2, px-4, pb-20, mb-12, ...) across the public site.
+   -------------------------------------------------------------------------- */
+@layer base {
+
 *,
 *::before,
 *::after {
@@ -299,11 +309,6 @@ body {
   flex-direction: column;
 }
 
-h1, h2, h3, h4, h5, h6, p {
-  overflow-wrap: break-word;
-  hyphens: none;
-}
-
 input, button, textarea, select {
   background: transparent;
   border-radius: 0;
@@ -316,6 +321,13 @@ button {
 
 button:disabled {
   cursor: not-allowed;
+}
+
+}
+
+h1, h2, h3, h4, h5, h6, p {
+  overflow-wrap: break-word;
+  hyphens: none;
 }
 
 a:focus-visible {

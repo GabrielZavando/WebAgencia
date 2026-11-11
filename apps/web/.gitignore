@@ -9,3 +9,5 @@ playwright-report/
 test-results/
 .env.local
 .env.*.local
+__screenshots__/*
+!__screenshots__/VISUAL-DELTA.md
