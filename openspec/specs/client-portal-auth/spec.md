@@ -161,13 +161,7 @@ The system **SHALL** asumir exactamente **un** usuario con rol `admin` en el sis
 - **Then** `user.role === "admin"` (único valor posible).
 
 ### Requirement: Validación cliente
-The system **SHALL** validar el formulario antes de enviar:
-- `email`: regex email estándar
-- `password`: 8-128 caracteres, no vacío tras trim
-- Honeypot anti-bot
-- Turnstile si `PUBLIC_TURNSTILE_SITE_KEY` está configurado
-
-Los errores de formato se muestran inline en el campo correspondiente, al desenfocar el campo (`onBlur`) o al enviar el formulario. El botón de submit **SHALL NOT** deshabilitarse por validación de formato: solo se deshabilita mientras la petición está en curso o durante el rate limit.
+The system **SHALL** validar el formulario antes de enviar: los errores de formato se muestran inline en el campo correspondiente, al desenfocar el campo (`onBlur`) o al enviar el formulario.
 
 #### Scenario: Validación cliente bloquea envío
 - **Given** el usuario introduce email malformado "no-es-email"
@@ -175,6 +169,24 @@ Los errores de formato se muestran inline en el campo correspondiente, al desenf
 - **Then** aparece error inline "Email inválido"
 - **And** el envío no procede cuando se intenta enviar el formulario
 - **And** el botón submit permanece habilitado.
+
+#### Scenario: Reglas de formato de cada campo
+- **Given** el usuario completa el formulario
+- **When** se validan los campos
+- **Then** `email` debe cumplir un regex de email estándar
+- **And** `password` debe tener entre 8 y 128 caracteres y no estar vacío tras `trim`.
+
+#### Scenario: Protección anti-bot
+- **Given** el formulario de login se renderiza
+- **When** se inspecciona la protección contra bots
+- **Then** el honeypot anti-bot está presente
+- **And** Turnstile se exige solo si `PUBLIC_TURNSTILE_SITE_KEY` está configurado.
+
+#### Scenario: El botón de submit no se deshabilita por validación de formato
+- **Given** el formulario tiene un error de formato
+- **When** el usuario presiona submit
+- **Then** el botón de submit permanece habilitado
+- **And** el botón solo se deshabilita mientras la petición está en curso o durante el rate limit.
 
 ### Requirement: Endpoint consumido
 The system **SHALL** POST a `${PUBLIC_API_URL}/api/v1/auth/login` con `{ id_token }`, donde `id_token` es el token de ID emitido por Firebase Auth para el usuario autenticado.
@@ -189,11 +201,13 @@ The system **SHALL** POST a `${PUBLIC_API_URL}/api/v1/auth/login` con `{ id_toke
 - **And** no se guarda token en localStorage (gestión por cookie).
 
 ### Requirement: Manejo de respuesta
-The system **SHALL** procesar la respuesta del backend:
-- **200**: recibe `{ data: { user }, meta: { message } }`, donde `user` contiene `id`, `email`, `full_name`, `role`, `avatar_url`, `is_active`, `created_at` y `updated_at`; si `user.role === "admin"` redirige a `/admin`
-- **401**: mensaje genérico "Credenciales inválidas" (no revela si email existe)
-- **429**: "Demasiados intentos, espera unos minutos"
-- **5xx / network**: "Error de conexión, intenta más tarde", mostrado inline en el formulario, sin botón "Reintentar"
+The system **SHALL** procesar la respuesta del backend según su código de estado, mostrando el mensaje correspondiente al usuario.
+
+#### Scenario: Login exitoso
+- **Given** el usuario introduce credenciales válidas
+- **When** la API responde 200 con `{ data: { user }, meta: { message } }`
+- **Then** el cliente recibe `user` con `id`, `email`, `full_name`, `role`, `avatar_url`, `is_active`, `created_at` y `updated_at`
+- **And** si `user.role === "admin"` el navegador redirige a `/admin`.
 
 #### Scenario: Credenciales inválidas
 - **Given** el usuario introduce email o password incorrectos
