@@ -9,5 +9,8 @@ playwright-report/
 test-results/
 .env.local
 .env.*.local
-__screenshots__/*
-!__screenshots__/VISUAL-DELTA.md
+# Visual regression evidence: generated locally, large binaries.
+# The `**/` prefix is required because a pattern with an inner slash is
+# anchored to the directory of this .gitignore file.
+**/__screenshots__/**
+!**/__screenshots__/VISUAL-DELTA.md

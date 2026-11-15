@@ -45,7 +45,37 @@ function hasRealFirebaseCredentials(): boolean {
   return !looksDummy;
 }
 
+/**
+ * Reads a single value from the admin `.env`.
+ */
+function readEnvValue(key: string): string | undefined {
+  const envPath = join(process.cwd(), '.env');
+  if (!existsSync(envPath)) return undefined;
+
+  const values = Object.fromEntries(
+    readFileSync(envPath, 'utf-8')
+      .split('\n')
+      .filter((line) => line.includes('=') && !line.trim().startsWith('#'))
+      .map((line) => {
+        const [k, ...rest] = line.split('=');
+        return [k.trim(), rest.join('=').trim()];
+      }),
+  );
+
+  return values[key];
+}
+
 const REAL_FIREBASE = hasRealFirebaseCredentials();
+const ADMIN_EMAIL = readEnvValue('ADMIN_E2E_EMAIL');
+const ADMIN_PASSWORD = readEnvValue('ADMIN_E2E_PASSWORD');
+const HAS_ADMIN_CREDENTIALS = Boolean(ADMIN_EMAIL && ADMIN_PASSWORD);
+
+/**
+ * The API runs on its own origin (PUBLIC_API_URL), so the mock must match any
+ * host. A path-only pattern would be resolved against the Playwright baseURL
+ * and would never intercept the real request.
+ */
+const LOGIN_API_ROUTE = '**/api/v1/auth/login';
 
 test.describe('Login Flow', () => {
   test.beforeEach(async ({ page }) => {
@@ -77,9 +107,9 @@ test.describe('Login Flow', () => {
   });
 
   test('submits successfully and redirects to admin', async ({ page }) => {
-    test.skip(!REAL_FIREBASE, 'Requires real Firebase credentials');
+    test.skip(!HAS_ADMIN_CREDENTIALS, 'Requires admin credentials in apps/admin/.env');
 
-    await page.route('/api/v1/auth/login', async (route) => {
+    await page.route(LOGIN_API_ROUTE, async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -100,25 +130,19 @@ test.describe('Login Flow', () => {
       });
     });
 
-    await page.locator('input[type="email"]').fill('admin@example.com');
-    await page.locator('input[type="password"]').fill('password123');
+    await page.locator('input[type="email"]').fill(ADMIN_EMAIL ?? '');
+    await page.locator('input[type="password"]').fill(ADMIN_PASSWORD ?? '');
     await page.locator('button[type="submit"]').click();
 
     await expect(page).toHaveURL('/admin');
   });
 
   test('shows error message for invalid credentials', async ({ page }) => {
-    test.skip(!REAL_FIREBASE, 'Requires real Firebase credentials');
+    test.skip(!HAS_ADMIN_CREDENTIALS, 'Requires admin credentials in apps/admin/.env');
 
-    await page.route('/api/v1/auth/login', async (route) => {
-      await route.fulfill({
-        status: 401,
-        contentType: 'application/json',
-        json: { message: 'Credenciales inválidas' },
-      });
-    });
-
-    await page.locator('input[type="email"]').fill('admin@example.com');
+    // Firebase rejects the credentials before the API is called, so no session
+    // is created and the login page stays visible with the error message.
+    await page.locator('input[type="email"]').fill(ADMIN_EMAIL ?? '');
     await page.locator('input[type="password"]').fill('wrongpassword');
     await page.locator('button[type="submit"]').click();
 
@@ -127,18 +151,28 @@ test.describe('Login Flow', () => {
   });
 
   test('rate limit disables button', async ({ page }) => {
-    test.skip(!REAL_FIREBASE, 'Requires real Firebase credentials');
+    test.skip(!HAS_ADMIN_CREDENTIALS, 'Requires admin credentials in apps/admin/.env');
 
-    await page.route('/api/v1/auth/login', async (route) => {
+    // The rate limit must be simulated on the Firebase sign-in: a successful
+    // sign-in creates a session and AuthGuard redirects to /admin before the
+    // API response can be rendered.
+    await page.route('**/accounts:signInWithPassword*', async (route) => {
       await route.fulfill({
         status: 429,
         contentType: 'application/json',
-        json: { message: 'Demasiados intentos' },
+        headers: { 'Access-Control-Allow-Origin': '*' },
+        body: JSON.stringify({
+          error: {
+            code: 429,
+            message: 'TOO_MANY_ATTEMPTS_TRY_LATER',
+            errors: [{ message: 'TOO_MANY_ATTEMPTS_TRY_LATER' }],
+          },
+        }),
       });
     });
 
-    await page.locator('input[type="email"]').fill('admin@example.com');
-    await page.locator('input[type="password"]').fill('password123');
+    await page.locator('input[type="email"]').fill(ADMIN_EMAIL ?? '');
+    await page.locator('input[type="password"]').fill(ADMIN_PASSWORD ?? '');
     await page.locator('button[type="submit"]').click();
 
     await expect(page.locator('.form-error')).toContainText('Demasiados intentos');
@@ -168,9 +202,9 @@ test.describe('Login Flow', () => {
   });
 
   test('form can be submitted with Enter key', async ({ page }) => {
-    test.skip(!REAL_FIREBASE, 'Requires real Firebase credentials');
+    test.skip(!HAS_ADMIN_CREDENTIALS, 'Requires admin credentials in apps/admin/.env');
 
-    await page.route('/api/v1/auth/login', async (route) => {
+    await page.route(LOGIN_API_ROUTE, async (route) => {
       await route.fulfill({
         status: 200,
         contentType: 'application/json',
@@ -191,8 +225,8 @@ test.describe('Login Flow', () => {
       });
     });
 
-    await page.locator('input[type="email"]').fill('admin@example.com');
-    await page.locator('input[type="password"]').fill('password123');
+    await page.locator('input[type="email"]').fill(ADMIN_EMAIL ?? '');
+    await page.locator('input[type="password"]').fill(ADMIN_PASSWORD ?? '');
     await page.locator('input[type="password"]').press('Enter');
 
     await expect(page).toHaveURL('/admin');
