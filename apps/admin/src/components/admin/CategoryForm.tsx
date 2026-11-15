@@ -9,6 +9,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { getAuthHeaders } from '@/lib/auth-headers';
 import { notifyPublicRebuild } from '../../lib/rebuild';
 
 interface Category {
@@ -104,24 +105,32 @@ export function CategoryForm({
         return;
       }
 
-      if (isNew) {
-        await fetch(`${import.meta.env.PUBLIC_API_URL || ''}/api/v1/categories`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+    const authHeaders = await getAuthHeaders();
+
+    if (isNew) {
+      await fetch(`${import.meta.env.PUBLIC_API_URL || ''}/api/v1/categories`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...authHeaders,
+        },
+        credentials: 'include',
+        body: JSON.stringify(formData),
+      });
+    } else {
+      await fetch(
+        `${import.meta.env.PUBLIC_API_URL || ''}/api/v1/categories/${categoryId}`,
+        {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            ...authHeaders,
+          },
           credentials: 'include',
           body: JSON.stringify(formData),
-        });
-      } else {
-        await fetch(
-          `${import.meta.env.PUBLIC_API_URL || ''}/api/v1/categories/${categoryId}`,
-          {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
-            body: JSON.stringify(formData),
-          },
-        );
-      }
+        },
+      );
+    }
       void notifyPublicRebuild();
       window.location.href = '/admin/categories';
     } catch (err: any) {
