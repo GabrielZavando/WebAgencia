@@ -17,6 +17,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { apiClient, ApiError } from '@/lib/api-client';
+import { getAuthHeaders } from '@/lib/auth-headers';
 import { notifyPublicRebuild } from '../../lib/rebuild';
 
 interface Category {
@@ -67,15 +68,18 @@ export function CategoriesTable({
   const handleDelete = async (id: string) => {
     setDeletingId(id);
     try {
+      const authHeaders = await getAuthHeaders();
       // Usar fetch directamente para enviar credenciales (cookie de sesión)
+      // e incluir el header Authorization: Bearer <token> del usuario logueado
       await fetch(`${import.meta.env.PUBLIC_API_URL || ''}/api/v1/categories/${id}`, {
         method: 'DELETE',
+        headers: authHeaders,
         credentials: 'include',
       });
-        setCategories((prev) => prev.filter((c) => c.id !== id));
-        setConfirmDeleteId(null);
-        void notifyPublicRebuild();
-      } catch (err: any) {
+      setCategories((prev) => prev.filter((c) => c.id !== id));
+      setConfirmDeleteId(null);
+      void notifyPublicRebuild();
+    } catch (err: any) {
       setError(
         err instanceof ApiError
           ? err.message || 'Error al eliminar categoría'

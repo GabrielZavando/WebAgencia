@@ -245,3 +245,40 @@ The system **SHALL** inicializar Firebase Auth y resolver el token Bearer dentro
 #### Scenario: Sitio público sin Firebase Auth
 - **WHEN** se inspecciona el bundle del sitio público
 - **THEN** no contiene el SDK de Firebase Auth ni el helper de cabeceras de autenticación
+
+### Requirement: Pruebas unitarias Vitest para CategoriesTable
+The system **SHALL** tener pruebas unitarias Vitest para el componente `CategoriesTable` que verifiquen el renderizado de la tabla y el envío del header `Authorization: Bearer <token>` en las llamadas a la API.
+
+#### Scenario: CategoriesTable renderiza listado de categorías
+- **WHEN** se renderiza `CategoriesTable` con categorías iniciales
+- **THEN** se muestra una tabla con Nombre, Slug, Descripción y acciones (Editar, Eliminar)
+
+#### Scenario: CategoriesTable envía token Bearer en DELETE
+- **WHEN** se dispara la eliminación de una categoría
+- **THEN** la llamada `fetch` a `DELETE /api/v1/categories/:id` incluye el header `Authorization: Bearer <token>` obtenido de `getAuthHeaders()`
+
+#### Scenario: CategoriesTable muestra estado de carga y error
+- **WHEN** la API de listado responde con error o está cargando
+- **THEN** se muestra el estado correspondiente (carga o mensaje de error)
+
+### Requirement: Pruebas unitarias Vitest para CategoryForm
+The system **SHALL** tener pruebas unitarias Vitest para el componente `CategoryForm` que verifiquen el renderizado del formulario, la validación del slug y el envío del header `Authorization: Bearer <token>` en POST/PATCH.
+
+#### Scenario: CategoryForm renderiza en modo creación
+- **WHEN** se renderiza `CategoryForm` con `categoryId="new"`
+- **THEN** se muestra el formulario con campos Nombre, Slug, Descripción y botón "Crear categoría"
+
+#### Scenario: CategoryForm valida slug URL-friendly
+- **WHEN** el usuario ingresa un slug con mayúsculas o caracteres especiales
+- **THEN** se muestra un error de validación y no se envía la petición
+
+#### Scenario: CategoryForm envía token Bearer en POST
+- **WHEN** se envía el formulario en modo creación con datos válidos
+- **THEN** la llamada `fetch` a `POST /api/v1/categories` incluye el header `Authorization: Bearer <token>`
+
+### Requirement: Prueba E2E opcional en Playwright para creación de categoría
+The system **SHALL** (opcional) tener una prueba E2E en Playwright que simule la creación completa de una categoría desde la UI.
+
+#### Scenario: E2E crear categoría desde el panel
+- **WHEN** un usuario autenticado navega a `/admin/categories/form?id=new`, completa nombre y slug, y envía el formulario
+- **THEN** se crea la categoría y se redirige al listado `/admin/categories`
