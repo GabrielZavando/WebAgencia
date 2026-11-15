@@ -19,5 +19,9 @@ cache/
 .DS_Store
 Thumbs.db
 
+# Playwright artifacts (generated per app)
+test-results/
+playwright-report/
+
 # TypeScript build artifacts
 *.tsbuildinfo
