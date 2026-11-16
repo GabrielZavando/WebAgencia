@@ -19,6 +19,7 @@ import { Badge } from '@/components/ui/badge';
     aria-label="Abrir menú de navegación"
     aria-controls="admin-sidebar"
     aria-expanded="false"
+    onclick="dispatchEvent(new Event('admin:toggle-sidebar'))"
   >
     <Menu size={20} aria-hidden="true" />
   </Button>
