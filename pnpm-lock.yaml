@@ -163,9 +163,6 @@ importers:
       '@eslint/js':
         specifier: ^9.18.0
         version: 9.39.5
-      '@fission-ai/openspec':
-        specifier: ^1.14.3
-        version: 1.14.3(@types/node@22.20.1)
       '@nestjs/cli':
         specifier: ^11.0.0
         version: 11.0.24(@swc/cli@0.6.0(@swc/core@1.15.46)(chokidar@4.0.3))(@swc/core@1.15.46)(@types/node@22.20.1)(prettier@3.9.5)
@@ -1231,11 +1228,6 @@ packages:
 
   '@firebase/webchannel-wrapper@1.0.6':
     resolution: {integrity: sha512-Vr/Mqu79dMwGRAyGbJ4uN4+BtXB3/mRTdzetD1daWNeG8QaWuzhhbG77GltO5c0yYmYls8i250iX73624GJd7Q==}
-
-  '@fission-ai/openspec@1.14.3':
-    resolution: {integrity: sha512-ALFW1d5bSm6t27Kmcle93SDFuqUc8fLwy5ZdBfIiNffo0Yk9AEOJxw6xDqBv38eMM7l7TeOZBB/7C08luxYGfg==}
-    engines: {node: '>=20.19.0'}
-    hasBin: true
 
   '@fission-ai/openspec@1.15.0':
     resolution: {integrity: sha512-lG/EPEiL22bB70yKJhWWSPk1UQGLnwO7Dp+hNc/jUmBwb0qxPLzHCUkXEfkny4iYDOsgnsNQmc39/g9QcvnBnA==}
@@ -9323,23 +9315,6 @@ snapshots:
       tslib: 2.8.1
 
   '@firebase/webchannel-wrapper@1.0.6': {}
-
-  '@fission-ai/openspec@1.14.3(@types/node@22.20.1)':
-    dependencies:
-      '@inquirer/core': 12.0.4(@types/node@22.20.1)
-      '@inquirer/prompts': 8.7.3(@types/node@22.20.1)
-      brace-expansion: 5.0.12
-      chalk: 5.6.2
-      commander: 14.0.3
-      cross-spawn: 7.0.6
-      diff: 9.0.0
-      ora: 9.4.1
-      picomatch: 4.0.5
-      tinyglobby: 0.2.17
-      yaml: 2.9.0
-      zod: 4.4.3
-    transitivePeerDependencies:
-      - '@types/node'
 
   '@fission-ai/openspec@1.15.0(@types/node@22.20.1)':
     dependencies:

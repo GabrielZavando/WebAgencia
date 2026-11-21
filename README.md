@@ -6,10 +6,10 @@ Monorepo para el sitio web y API de **Agencia Digital Gabriel Zavando**. Combina
 
 | Capa | Tecnología |
 |------|-----------|
-| Frontend | Astro 5 (SSG) + React 18 (islands) + Tailwind CSS 4 |
+| Frontend | Astro 7.2.1 (SSG) + React 18 (islands) + Tailwind CSS 4 |
 | Backend | NestJS 11 + Firebase Auth + Firestore + Supabase PostgreSQL |
 | Gestor de paquetes | pnpm 10 (workspaces) |
-| Metodología | Spec-Driven Development con OpenSpec 1.4 |
+| Metodología | Spec-Driven Development con OpenSpec 1.15.0 |
 
 ## Requisitos
 
@@ -68,7 +68,8 @@ Para la API, copiar las variables de entorno y ver las instrucciones en [apps/ap
 WebAstro2/
 ├── apps/
 │   ├── api/          → API NestJS (usuarios, blog, leads)
-│   └── web/          → Frontend Astro (sitio estático)
+│   ├── admin/        → Panel de administración (CMS, SSR)
+│   └── web/          → Frontend Astro (sitio estático SSG)
 ├── docs/             → Especificaciones y estándares del proyecto
 ├── ai-specs/         → Agentes y skills para desarrollo asistido
 ├── openspec/         → Artefactos OpenSpec (changes y specs)
@@ -82,21 +83,21 @@ WebAstro2/
 | App | Descripción | README |
 |-----|------------|--------|
 | **API** | Backend NestJS — autenticación, gestión de usuarios, blog y captación de leads | [apps/api/README.md](apps/api/README.md) |
-| **Web** | Frontend Astro — sitio web estático con SSR mínimo vía React islands | [apps/web/README.md](apps/web/README.md) |
+| **Admin** | Panel de administración (CMS) — SSR con adaptador Node | — |
+| **Web** | Frontend Astro — sitio web estático SSG | [apps/web/README.md](apps/web/README.md) |
 
 ## Flujo de desarrollo (Spec-Driven Development)
 
-Este proyecto usa **OpenSpec 1.4** para gestionar cambios mediante un flujo de desarrollo guiado por especificaciones:
+Este proyecto usa **OpenSpec 1.15.0** para gestionar cambios mediante un flujo de desarrollo guiado por especificaciones:
 
 ```bash
-/enrich-us <TICKET>        # Enriquecer un ticket vago antes de planificar
-/opsx-explore [tema]       # Modo exploración: pensar, investigar, clarificar
+/opsx-explore [tema]       # Modo exploración: pensar, investigar, clarificar requisitos
 /opsx-propose <nombre>     # Crear un change con proposal, design y tasks
 /opsx-apply <nombre>       # Implementar tareas con TDD (una a la vez)
-/verify <nombre>           # Validar implementación contra escenarios
+/verify <nombre>           # Validar implementación contra escenarios OpenSpec
 /adversarial-review        # Auditoría de calidad de código (7 fases)
 /opsx-archive <nombre>     # Archivar cambio completado y sincronizar specs
-/commit                    # Crear commits convencionales y PR
+/commit                    # Crear commits convencionales y pull request
 ```
 
 Los artefactos OpenSpec viven en `openspec/changes/<nombre>/` y la fuente de verdad para contratos HTTP y modelo de datos está en `docs/api-spec.yml` y `docs/data-model.md`.
