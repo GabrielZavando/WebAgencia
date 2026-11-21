@@ -65,7 +65,7 @@
 
 ```
 Framework: Astro 7.2.1 (web output: 'static' SSG; admin output: 'server' SSR)
-CSS:       Tailwind CSS 4.2.x (plugin @tailwindcss/vite) + global.css (tokens + legacy BEM en migración)
+CSS:       Tailwind CSS 4.3.x (plugin @tailwindcss/vite) + global.css (tokens + legacy BEM en migración)
 Islands:   React 18 vía @astrojs/react — uso mínimo, sólo donde se requiera hidratación cliente
 Build:     Vite (incluido en Astro)
 Tests:     Vitest 4.1.x (unit/validación) + Playwright 1.59.x (E2E)
