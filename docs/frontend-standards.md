@@ -64,20 +64,22 @@
 ## Stack específico del proyecto
 
 ```
-Framework: Astro 5.17.x (output: 'static', SSG, sin adapter)
+Framework: Astro 7.2.1 (web output: 'static' SSG; admin output: 'server' SSR)
 CSS:       Tailwind CSS 4.2.x (plugin @tailwindcss/vite) + global.css (tokens + legacy BEM en migración)
 Islands:   React 18 vía @astrojs/react — uso mínimo, sólo donde se requiera hidratación cliente
 Build:     Vite (incluido en Astro)
 Tests:     Vitest 4.1.x (unit/validación) + Playwright 1.59.x (E2E)
 Package:   pnpm 10 con pnpm.allowBuilds para sharp, @parcel/watcher, esbuild, protobufjs
-Deploy:    Hostinger (FTP) — solo HTML estático de dist/
+Deploy:    VPS con Coolify (web: Static Site, admin: Web Application Node, api: Web Application Nixpacks)
 ```
 
 ## Anti-patterns prohibidos
 
-- ❌ Añadir SSR (`output: 'server'`)
-- ❌ Añadir adapters (Node, Vercel, Cloudflare)
-- ❌ Usar Firebase / Firebase admin (eliminado en v1.7)
+- ❌ Añadir adapters de hosting (Vercel, Cloudflare). El adapter @astrojs/node
+  de apps/admin es una excepción BY DESIGN (output: 'server', SSR por diseño).
+- ❌ Usar firebase-admin (SDK de servidor) en frontends web/admin. El client
+  SDK de Firebase (firebase/auth, firebase/app) es el mecanismo de login del
+  admin y está permitido.
 - ❌ Crear stores globales sin aprobación explícita en OpenSpec
 - ❌ Añadir frameworks UI pesados (Material, Chakra, Antd)
 - ❌ Crear componentes nuevos con BEM en `global.css` (usar Tailwind utility-first)

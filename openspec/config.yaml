@@ -1,20 +1,28 @@
 schema: spec-driven
 
-# Project context (optional)
-# This is shown to AI when creating artifacts.
-# Add your tech stack, conventions, style guides, domain knowledge, etc.
-# Example:
-#   context: |
-#     Tech stack: TypeScript, React, Node.js
-#     We use conventional commits
-#     Domain: e-commerce platform
+# Project context (shown to AI when creating artifacts)
+context: |
+  Monorepo WebAstro (Agencia Digital Gabriel Zavando). Three apps + shared-types,
+  pnpm workspaces. Stack: NestJS 11 (api, Firebase Auth + Firestore via
+  firebase-admin, Supabase PostgreSQL via @supabase/supabase-js for leads only),
+  Astro (web, SSG static; admin, SSR server via @astrojs/node),
+  React 18 islands, Tailwind 4, Vitest, Playwright, Jest. Deployment target:
+  VPS with Coolify (staging). Hostinger is no longer the target. OpenSpec
+  is installed only as root devDependency, single source. No Prisma.
+  TDD strict: failing test before implementation. Conventional commits in English.
 
-# Per-artifact rules (optional)
-# Add custom rules for specific artifacts.
-# Example:
-#   rules:
-#     proposal:
-#       - Keep proposals under 500 words
-#       - Always include a "Non-goals" section
-#     tasks:
-#       - Break tasks into chunks of max 2 hours
+# Per-artifact rules
+rules:
+  proposal:
+    - "Keep proposals under 2 pages; focus on why, not how."
+    - "Identify capabilities (new or modified) from existing openspec/specs/ before inventing new ones."
+    - "Every change must declare at least one capability or set skip_specs: true."
+  specs:
+    - "One spec file per capability at specs/<capability-path>/spec.md."
+    - "Requirements use SHALL/MUST; scenarios use #### (4 hashtags) WHEN/THEN."
+    - "Every requirement must have at least one scenario."
+    - "New capabilities: first section is ## Purpose (50+ characters)."
+  tasks:
+    - "Each tracked task is a checkbox: - [ ] X.Y description."
+    - "Each task states how to verify completion."
+    - "TDD order: red test first, then implementation, then green verification."
