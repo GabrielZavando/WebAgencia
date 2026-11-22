@@ -23,9 +23,9 @@ ASPIRACIONALES.
 
 #### Scenario: Project context lists real stack versions
 - **WHEN** a developer reads `openspec/project.md`
-- **THEN** it lists Astro 7.2.1, NestJS 11, OpenSpec 1.15.0, pnpm 10,
-  firebase-admin, and @supabase/supabase-js with exact versions matching
-  the real package.json files
+- **THEN** it lists Astro 7.4.13, Node >=26.13.1, NestJS 11, OpenSpec 1.15.0,
+  pnpm 10, firebase-admin, and @supabase/supabase-js with exact versions
+  matching the real package.json files
 
 ### Requirement: OpenSpec config context is populated
 
@@ -50,8 +50,12 @@ target match the real package.json files and the confirmed Coolify target.
 
 #### Scenario: README frontend version is correct
 - **WHEN** a developer reads the README stack table
-- **THEN** it states Astro 7.2.1 (not Astro 5) and OpenSpec 1.15.0
+- **THEN** it states Astro 7.4.13 (not Astro 5) and OpenSpec 1.15.0
   (not OpenSpec 1.4)
+
+#### Scenario: README Node version is correct
+- **WHEN** a developer reads the README requirements section
+- **THEN** it states Node.js >= 26.13.1, matching the root `engines.node`
 
 #### Scenario: README deployment target is Coolify
 - **WHEN** a developer reads the README deployment section
@@ -80,7 +84,7 @@ design), and align hosting target to Coolify.
 
 #### Scenario: Frontend standards Astro version is correct
 - **WHEN** a developer reads `docs/frontend-standards.md` stack section
-- **THEN** it states Astro 7.2.x (not Astro 5.17.x)
+- **THEN** it states Astro 7.4.x, matching `apps/web/package.json`
 
 #### Scenario: Frontend standards allow SSR for admin
 - **WHEN** a developer reads `docs/frontend-standards.md` anti-patterns
@@ -104,10 +108,10 @@ devDependency from `apps/api/package.json`, keeping root
 
 ### Requirement: Anti-drift test validates documentation against package.json
 
-The system SHALL add a TDD anti-drift test under
-`apps/web/tests/validation/` following the `dependency-audit.test.ts`
-precedent, asserting that versions and stack declared in documentation
-match the real package.json files.
+The system SHALL maintain a TDD anti-drift test under
+`apps/web/tests/validation/` asserting that versions declared in
+documentation, the root `engines.node` constraint, and the CI Node pin
+match the real `package.json` files and workflow configuration.
 
 #### Scenario: Anti-drift test exists
 - **WHEN** a developer runs the validation suite
@@ -130,3 +134,34 @@ match the real package.json files.
 #### Scenario: Anti-drift gate rejects stale test counts in config
 - **WHEN** openspec/config.yaml is read
 - **THEN** the test confirms no test count assertions (e.g. "N tests green") are present
+
+#### Scenario: Anti-drift gate validates Node engine and CI runtime
+- **WHEN** the anti-drift test reads root `package.json`, the CI workflows,
+  `README.md`, and `docs/base-standards.md`
+- **THEN** it asserts `engines.node` is `>=26.13.1`, the CI workflows pin
+  `node-version: 26`, and the docs declare the same Node and Astro versions
+
+### Requirement: Runtime engine and CI Node version stay aligned
+
+The system SHALL run on Node 26.13.1 (current LTS) across local development
+and CI, declaring that baseline in the root `engines.node`, the CI workflows,
+and a version file consumable by Node version managers.
+
+#### Scenario: Root engine declares Node 26.13.1
+- **WHEN** a developer reads the root `package.json`
+- **THEN** `engines.node` is `>=26.13.1`
+
+#### Scenario: CI workflows use Node 26
+- **WHEN** a developer reads `.github/workflows/ci.yml` and
+  `.github/workflows/deploy.yml`
+- **THEN** both declare `node-version: 26`
+
+#### Scenario: Node version file pins the LTS
+- **WHEN** a developer reads `.nvmrc` at the repo root
+- **THEN** it contains `26.13.1`
+
+#### Scenario: Astro resolves to the latest 7.x patch
+- **WHEN** a developer inspects `apps/web/package.json` and
+  `apps/admin/package.json`
+- **THEN** both declare `astro` `^7.4.13`, and `apps/admin` declares
+  `@astrojs/node` `^11.1.14`
