@@ -64,7 +64,7 @@
 ## Stack específico del proyecto
 
 ```
-Framework: Astro 7.2.1 (web output: 'static' SSG; admin output: 'server' SSR)
+Framework: Astro 7.4.13 (web output: 'static' SSG; admin output: 'server' SSR)
 CSS:       Tailwind CSS 4.3.x (plugin @tailwindcss/vite) + global.css (tokens + legacy BEM en migración)
 Islands:   React 18 vía @astrojs/react — uso mínimo, sólo donde se requiera hidratación cliente
 Build:     Vite (incluido en Astro)

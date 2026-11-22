@@ -29,10 +29,10 @@ Package manager: pnpm 10 workspaces (`pnpm-workspace.yaml`).
 
 | Layer | Technology | Version | Source |
 |-------|-----------|---------|--------|
-| Runtime | Node.js | >=22.12 | `package.json:19` |
+| Runtime | Node.js | >=26.13.1 | `package.json:19` |
 | Package manager | pnpm | >=10 | `package.json:20` |
 | OpenSpec | `@fission-ai/openspec` | ^1.15.0 | `package.json:16` |
-| Frontend framework | Astro | ^7.2.1 | `apps/web/package.json:21` |
+| Frontend framework | Astro | ^7.4.13 | `apps/web/package.json:21` |
 | Frontend CSS | Tailwind CSS | ^4.2.4 | `apps/web/package.json:20,23` |
 | Frontend islands | React | ^18.3.1 | `apps/admin/package.json:28-29` |
 | Backend framework | NestJS | ^11.0.1 | `apps/api/package.json:24-28` |
