@@ -28,7 +28,7 @@
 
 ## Testing backend
 
-- Unit tests para lógica de dominio y servicios (Jest)
+- Unit tests para lógica de dominio y servicios (Jest 30 + ts-jest 29.4)
 - Integration tests para repositorios y adapters
 - E2E tests para flujos críticos de negocio
 - Mocks solo para servicios externos (Firebase, Supabase)
@@ -60,7 +60,7 @@ Supabase SDK: @supabase/supabase-js (para PostgreSQL)
 Base de datos 1: Firebase Firestore (SDK admin)
 Base de datos 2: Supabase PostgreSQL (via Supabase SDK)
 Contenedor: Docker + Docker Compose
-Tests: Jest
+Tests: Jest 30.x (ts-jest 29.4.x)
 Validation: class-validator + class-transformer
 Idiomas:
   - Código: English

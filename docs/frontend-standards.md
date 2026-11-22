@@ -41,7 +41,7 @@
 
 ## Testing frontend
 
-- **Unit / validación**: Vitest (`globals: true`, `environment: 'jsdom'`)
+- **Unit / validación**: Vitest 5.x (`globals: true`, `environment: 'jsdom'`) con jsdom 31.x y @testing-library/jest-dom 8.x
 - **E2E**: Playwright (inicia `pnpm dev` automáticamente)
 - **Validación de build**: `pnpm test:validation` (requiere `dist/`)
 - Tests de validación estructurales en `tests/validation/*.test.ts`:
@@ -68,7 +68,7 @@ Framework: Astro 7.4.13 (web output: 'static' SSG; admin output: 'server' SSR)
 CSS:       Tailwind CSS 4.3.x (plugin @tailwindcss/vite) + global.css (tokens + legacy BEM en migración)
 Islands:   React 18 vía @astrojs/react — uso mínimo, sólo donde se requiera hidratación cliente
 Build:     Vite (incluido en Astro)
-Tests:     Vitest 4.1.x (unit/validación) + Playwright 1.59.x (E2E)
+Tests:     Vitest 5.1.x (unit/validación) + jsdom 31.x + @testing-library/jest-dom 8.x + Playwright 1.59.x (E2E)
 Package:   pnpm 10 con pnpm.allowBuilds para sharp, @parcel/watcher, esbuild, protobufjs
 Deploy:    VPS con Coolify (web: Static Site, admin: Web Application Node, api: Web Application Nixpacks)
 ```

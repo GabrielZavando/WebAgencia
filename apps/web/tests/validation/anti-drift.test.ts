@@ -29,6 +29,7 @@ const adminPkg = readPkg('apps/admin/package.json');
 
 const readme = readDoc('README.md');
 const baseStandards = readDoc('docs/base-standards.md');
+const backendStandards = readDoc('docs/backend-standards.md');
 const frontendStandards = readDoc('docs/frontend-standards.md');
 const configYaml = readDoc('openspec/config.yaml');
 const nvmrc = readDocIfExists('.nvmrc');
@@ -37,6 +38,14 @@ const deployWorkflow = readDocIfExists('.github/workflows/deploy.yml');
 
 const openspecVersionRoot = rootPkg.devDependencies['@fission-ai/openspec'];
 const astroVersionWeb = webPkg.dependencies.astro;
+
+/**
+ * Extracts the major version from a semver range (e.g. "^5.1.1" -> "5").
+ * Used to compare documented majors against the real manifests without
+ * pinning patch versions in the documentation.
+ */
+const majorOf = (range: string): string =>
+  range.replace(/^[^0-9]*/, '').split('.')[0];
 
 /**
  * Scans a YAML text (line-by-line, no parser) and returns true only if the
@@ -155,6 +164,22 @@ describe('Anti-drift: documentation versions match package.json', () => {
     expect(readme).toContain(`Astro ${astroVersionWeb.replace('^', '')}`);
     expect(rootPkg.engines.node).toBe('>=26.13.1');
     expect(readme).toMatch(/Node\.js\**\s*>=\s*26\.13\.1/);
+  });
+
+  it('docs/frontend-standards.md declares the installed Vitest, jsdom and jest-dom majors', () => {
+    expect(frontendStandards).toMatch(
+      new RegExp(`Vitest ${majorOf(webPkg.devDependencies.vitest)}\\.`),
+    );
+    expect(frontendStandards).toContain(
+      `jsdom ${majorOf(webPkg.devDependencies.jsdom)}.`,
+    );
+    expect(frontendStandards).toContain(
+      `jest-dom ${majorOf(webPkg.devDependencies['@testing-library/jest-dom'])}`,
+    );
+  });
+
+  it('docs/backend-standards.md declares the installed Jest major', () => {
+    expect(backendStandards).toContain(`Jest ${majorOf(apiPkg.devDependencies.jest)}`);
   });
 
   it('docs/base-standards.md does not reference Prisma in the API stack', () => {

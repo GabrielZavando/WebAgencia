@@ -42,8 +42,8 @@ Package manager: pnpm 10 workspaces (`pnpm-workspace.yaml`).
 | Backend validation | class-validator + class-transformer | ^0.15.1 + ^0.5.1 | `apps/api/package.json:30-31` |
 | Backend API docs | @nestjs/swagger + swagger-ui-express | ^11.4.5 + ^5.0.1 | `apps/api/package.json:27,38` |
 | Backend rate limiting | @nestjs/throttler | ^6.5.0 | `apps/api/package.json:28` |
-| Testing (backend) | Jest | ^29.7.0 | `apps/api/package.json:58` |
-| Testing (frontend) | Vitest | ^4.1.2 | `apps/web/package.json:35` |
+| Testing (backend) | Jest | ^30.5.2 | `apps/api/package.json:57` |
+| Testing (frontend) | Vitest | ^5.1.1 | `apps/web/package.json:35` |
 | E2E (frontend) | Playwright | ^1.59.1 | `apps/web/package.json:28` |
 
 No Prisma dependency exists in any `package.json`. The API stack uses
