@@ -6,14 +6,14 @@ Monorepo para el sitio web y API de **Agencia Digital Gabriel Zavando**. Combina
 
 | Capa | Tecnología |
 |------|-----------|
-| Frontend | Astro 7.2.1 (SSG) + React 18 (islands) + Tailwind CSS 4 |
+| Frontend | Astro 7.4.13 (SSG) + React 18 (islands) + Tailwind CSS 4 |
 | Backend | NestJS 11 + Firebase Auth + Firestore + Supabase PostgreSQL |
 | Gestor de paquetes | pnpm 10 (workspaces) |
 | Metodología | Spec-Driven Development con OpenSpec 1.15.0 |
 
 ## Requisitos
 
-- **Node.js** >= 22.12
+- **Node.js** >= 26.13.1
 - **pnpm** >= 10
 - **Docker** y Docker Compose (opcional, para la API)
 - **Cuenta de Firebase** (proyecto configurado para Auth y Firestore)

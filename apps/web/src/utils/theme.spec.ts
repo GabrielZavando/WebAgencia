@@ -1,6 +1,18 @@
 import { vi, describe, it, expect, beforeEach } from 'vitest'
 import { getInitialTheme, setTheme, toggleTheme } from './theme'
 
+// Mock de localStorage para entornos Vitest/jsdom recientes
+const localStorageMock = (() => {
+  let store: Record<string, string> = {}
+  return {
+    getItem: (key: string) => store[key] || null,
+    setItem: (key: string, value: string) => { store[key] = value.toString() },
+    removeItem: (key: string) => { delete store[key] },
+    clear: () => { store = {} },
+  }
+})()
+Object.defineProperty(window, 'localStorage', { value: localStorageMock })
+
 describe('Theme Utils (Landing)', () => {
   beforeEach(() => {
     // Limpieza de DOM y localStorage

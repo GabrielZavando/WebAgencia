@@ -84,7 +84,7 @@ Si aparece un fix o cambio nuevo después de `/apply` y antes de `/archive`:
 Repo: Monorepo pnpm (un solo repo, contexto SDD compartido en la raíz)
 Layout: apps/api (NestJS) + apps/web (Astro SSG) + apps/admin (Astro SSR). Contexto agentico en raíz: docs/, ai-specs/, openspec/, .opencode/
 Stack API:        NestJS 11 + Firebase Auth + Firestore (firebase-admin) + Supabase PostgreSQL (@supabase/supabase-js, leads only) + Swagger + Docker
-Stack Frontend:   Astro 7.2.1 (web SSG + admin SSR) + React 18 (islands) + Tailwind 4 + Playwright + Vitest
+Stack Frontend:   Astro 7.4.13 (web SSG + admin SSR) + React 18 (islands) + Tailwind 4 + Playwright + Vitest
 Arquitectura API: Clean Architecture (Modules + Services + Repositories)
 Dominio:       API ligera para usuarios/roles, blog y captación de leads desde el sitio web
 Cliente:       Agencia Digital Gabriel Zavando

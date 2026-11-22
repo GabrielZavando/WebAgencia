@@ -17,14 +17,23 @@ const readDoc = (relPath: string) => {
   return readFileSync(docPath, 'utf-8');
 };
 
+const readDocIfExists = (relPath: string): string => {
+  const docPath = join(ROOT, relPath);
+  return existsSync(docPath) ? readFileSync(docPath, 'utf-8') : '';
+};
+
 const rootPkg = readPkg('package.json');
 const apiPkg = readPkg('apps/api/package.json');
 const webPkg = readPkg('apps/web/package.json');
+const adminPkg = readPkg('apps/admin/package.json');
 
 const readme = readDoc('README.md');
 const baseStandards = readDoc('docs/base-standards.md');
 const frontendStandards = readDoc('docs/frontend-standards.md');
 const configYaml = readDoc('openspec/config.yaml');
+const nvmrc = readDocIfExists('.nvmrc');
+const ciWorkflow = readDocIfExists('.github/workflows/ci.yml');
+const deployWorkflow = readDocIfExists('.github/workflows/deploy.yml');
 
 const openspecVersionRoot = rootPkg.devDependencies['@fission-ai/openspec'];
 const astroVersionWeb = webPkg.dependencies.astro;
@@ -142,8 +151,10 @@ describe('Anti-drift: documentation versions match package.json', () => {
     expect(readme).toContain(`OpenSpec ${openspecVersionRoot.replace('^', '')}`);
   });
 
-  it('README declares the correct Astro version matching apps/web/package.json', () => {
+  it('README declares the correct Astro and Node versions matching package.json', () => {
     expect(readme).toContain(`Astro ${astroVersionWeb.replace('^', '')}`);
+    expect(rootPkg.engines.node).toBe('>=26.13.1');
+    expect(readme).toMatch(/Node\.js\**\s*>=\s*26\.13\.1/);
   });
 
   it('docs/base-standards.md does not reference Prisma in the API stack', () => {
@@ -158,8 +169,9 @@ describe('Anti-drift: documentation versions match package.json', () => {
     expect(baseStandards).toMatch(/@supabase\/supabase-js/);
   });
 
-  it('docs/frontend-standards.md declares the correct Astro version', () => {
+  it('docs/frontend-standards.md and docs/base-standards.md declare the correct Astro version', () => {
     expect(frontendStandards).toContain(`Astro ${astroVersionWeb.replace('^', '')}`);
+    expect(baseStandards).toContain(`Astro ${astroVersionWeb.replace('^', '')}`);
   });
 
   it('docs/frontend-standards.md does not prohibit SSR (apps/admin uses output: server by design)', () => {
@@ -191,8 +203,14 @@ describe('Anti-drift: documentation versions match package.json', () => {
     expect(openspecVersionRoot).toBeDefined();
   });
 
-  it('openspec/project.md exists', () => {
+  it('openspec/project.md exists and runtime config pins Node 26.13.1', () => {
     expect(existsSync(join(ROOT, 'openspec', 'project.md'))).toBe(true);
+    expect(rootPkg.engines.node).toBe('>=26.13.1');
+    expect(nvmrc.trim()).toBe('26.13.1');
+    expect(ciWorkflow).toContain('node-version: 26');
+    expect(deployWorkflow).toContain('node-version: 26');
+    expect(adminPkg.dependencies.astro).toBe(astroVersionWeb);
+    expect(adminPkg.devDependencies['@astrojs/node']).toBe('^11.1.14');
   });
 
   it('openspec/config.yaml has a populated context field', () => {

@@ -53,7 +53,7 @@
 ## Stack específico del proyecto
 
 ```
-Runtime: Node.js 20 LTS
+Runtime: Node.js 26 LTS
 Framework: NestJS 11
 SDK Cliente: firebase-admin (para Firestore y Firebase Auth)
 Supabase SDK: @supabase/supabase-js (para PostgreSQL)
