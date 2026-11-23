@@ -3,10 +3,10 @@ schema: spec-driven
 # Project context (shown to AI when creating artifacts)
 context: |
   Monorepo WebAstro (Agencia Digital Gabriel Zavando). Three apps + shared-types,
-  pnpm workspaces. Stack: NestJS 11 (api, Firebase Auth + Firestore via
+  pnpm workspaces. Stack: NestJS 12 (api, Firebase Auth + Firestore via
   firebase-admin, Supabase PostgreSQL via @supabase/supabase-js for leads only),
   Astro (web, SSG static; admin, SSR server via @astrojs/node),
-  React 18 islands, Tailwind 4, Vitest, Playwright, Jest. Deployment target:
+  React 19 islands, Firebase 13.4.0 client, Tailwind 4, Vitest, Playwright, Jest. Deployment target:
   VPS with Coolify (staging). Hostinger is no longer the target. OpenSpec
   is installed only as root devDependency, single source. No Prisma.
   TDD strict: failing test before implementation. Conventional commits in English.

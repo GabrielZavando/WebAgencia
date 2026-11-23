@@ -10,8 +10,8 @@ document, not against outdated documentation.
 ## Product purpose
 
 WebAstro is the digital presence and API for **Agencia Digital Gabriel Zavando**.
-It combines a public-facing Astro site, an Angular-based admin panel (SSR), and
-a NestJS REST API for users, blog, and lead capture. The monorepo is managed
+It combines a public-facing Astro site, a React-based admin panel rendered by
+Astro SSR, and a NestJS REST API for users, blog, and lead capture. The monorepo is managed
 with pnpm workspaces and governed by OpenSpec Spec-Driven Development.
 
 ## Monorepo topology
@@ -29,22 +29,24 @@ Package manager: pnpm 10 workspaces (`pnpm-workspace.yaml`).
 
 | Layer | Technology | Version | Source |
 |-------|-----------|---------|--------|
-| Runtime | Node.js | >=26.13.1 | `package.json:19` |
-| Package manager | pnpm | >=10 | `package.json:20` |
-| OpenSpec | `@fission-ai/openspec` | ^1.15.0 | `package.json:16` |
-| Frontend framework | Astro | ^7.4.13 | `apps/web/package.json:21` |
-| Frontend CSS | Tailwind CSS | ^4.2.4 | `apps/web/package.json:20,23` |
-| Frontend islands | React | ^18.3.1 | `apps/admin/package.json:28-29` |
-| Backend framework | NestJS | ^11.0.1 | `apps/api/package.json:24-28` |
-| Backend Auth SDK | firebase | ^12.15.0 | `apps/api/package.json:33` |
-| Backend Admin SDK | firebase-admin | ^14.1.0 | `apps/api/package.json:34` |
-| Backend Supabase SDK | @supabase/supabase-js | ^2.110.8 | `apps/api/package.json:29` |
-| Backend validation | class-validator + class-transformer | ^0.15.1 + ^0.5.1 | `apps/api/package.json:30-31` |
-| Backend API docs | @nestjs/swagger + swagger-ui-express | ^11.4.5 + ^5.0.1 | `apps/api/package.json:27,38` |
-| Backend rate limiting | @nestjs/throttler | ^6.5.0 | `apps/api/package.json:28` |
-| Testing (backend) | Jest | ^30.5.2 | `apps/api/package.json:57` |
-| Testing (frontend) | Vitest | ^5.1.1 | `apps/web/package.json:35` |
-| E2E (frontend) | Playwright | ^1.59.1 | `apps/web/package.json:28` |
+| Runtime | Node.js | >=26.13.1 | `package.json` |
+| Package manager | pnpm | >=10 | `package.json` |
+| OpenSpec | `@fission-ai/openspec` | ^1.15.0 | `package.json` |
+| Frontend framework | Astro | ^7.4.13 | `apps/web/package.json`, `apps/admin/package.json` |
+| Frontend CSS | Tailwind CSS | ^4.3.5 | `apps/web/package.json`, `apps/admin/package.json` |
+| Frontend islands | React | ^19.3.1 | `apps/admin/package.json` |
+| Frontend Firebase client | firebase | ^13.4.0 | `apps/admin/package.json` |
+| Backend framework | NestJS | ^12.6.0 | `apps/api/package.json` |
+| Backend language | TypeScript | ^6.0.3 | `apps/api/package.json` |
+| Backend Firebase client | firebase | ^13.4.0 | `apps/api/package.json` |
+| Backend Admin SDK | firebase-admin | ^14.5.1 | `apps/api/package.json` |
+| Backend Supabase SDK | @supabase/supabase-js | ^2.119.2 | `apps/api/package.json` |
+| Backend validation | class-validator + class-transformer | ^0.15.1 + ^0.5.1 | `apps/api/package.json` |
+| Backend API docs | @nestjs/swagger + swagger-ui-express | ^12.1.2 + ^5.0.1 | `apps/api/package.json` |
+| Backend rate limiting | @nestjs/throttler | ^6.8.0 | `apps/api/package.json` |
+| Testing (backend) | Jest | ^30.5.2 | `apps/api/package.json` |
+| Testing (frontend) | Vitest | ^5.1.1 | `apps/web/package.json`, `apps/admin/package.json` |
+| E2E (frontend) | Playwright | ^1.65.1 | `apps/web/package.json`, `apps/admin/package.json` |
 
 No Prisma dependency exists in any `package.json`. The API stack uses
 `firebase-admin` (Firestore) and `@supabase/supabase-js` (Supabase PostgreSQL
