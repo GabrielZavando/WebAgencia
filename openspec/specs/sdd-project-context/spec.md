@@ -157,6 +157,24 @@ match the real `package.json` files and workflow configuration.
   React major is 19, and the documented Firebase major is 13, matching
   the manifests
 
+#### Scenario: Anti-drift gate validates TypeScript majors per app
+- **WHEN** the anti-drift test reads the API, web, and admin package.json
+  files and the standards documents
+- **THEN** it asserts the TypeScript major in each manifest matches the
+  major declared in the corresponding standards document, and that the API
+  and frontend TypeScript majors agree with the verified toolchain matrix
+
+#### Scenario: Anti-drift gate validates ESLint ecosystem majors
+- **WHEN** the anti-drift test reads `apps/api/package.json`,
+  `docs/backend-standards.md`, and `openspec/project.md`
+- **THEN** it asserts the declared ESLint major, `@eslint/js` range, and
+  `typescript-eslint` range match the installed manifests
+
+#### Scenario: Anti-drift gate records the TypeScript 7 blocker
+- **WHEN** the anti-drift test reads `openspec/project.md`
+- **THEN** it asserts the project context records why TypeScript 7 is not
+  adopted and which dependency peer ranges block it
+
 ### Requirement: Runtime engine and CI Node version stay aligned
 
 The system SHALL run on Node 26.13.1 (current LTS) across local development
@@ -185,9 +203,9 @@ and a version file consumable by Node version managers.
 ### Requirement: Core framework majors are upgraded
 
 The system SHALL run the API on NestJS 12.x, the admin app on React 19.x,
-and both apps on Firebase client 13.x, with the API on TypeScript 6.0.x and
-web/admin remaining on their current Astro 7.4.x and TypeScript 5.9.x
-toolchains.
+and both apps on Firebase client 13.x, with the API on TypeScript 6.0.x,
+web/admin on the highest TypeScript major their Astro checker accepts, and
+the API lint stack on ESLint 10.x.
 
 #### Scenario: NestJS 12 is installed
 - **WHEN** a developer inspects `apps/api/package.json`
@@ -212,10 +230,28 @@ toolchains.
 - **THEN** `firebase` declares 13.4.x and the modular `firebase/app` and
   `firebase/auth` usage compiles and tests pass
 
+#### Scenario: API TypeScript stays on the verified major
+- **WHEN** a developer inspects `apps/api/package.json`
+- **THEN** `typescript` declares the 6.0.x major, matching the highest major
+  accepted by `@nestjs/schematics`, `ts-jest`, and `typescript-eslint`
+
+#### Scenario: Web and admin TypeScript follow the Astro checker range
+- **WHEN** a developer inspects `apps/web/package.json` and
+  `apps/admin/package.json`
+- **THEN** both declare the same TypeScript major accepted by the installed
+  `@astrojs/check` peer range, and both builds and test suites pass
+
+#### Scenario: API lint stack is on ESLint 10
+- **WHEN** a developer inspects `apps/api/package.json`
+- **THEN** `eslint` and `@eslint/js` declare the 10.x major, `globals`
+  declares 17.x, `typescript-eslint` declares the version whose peer range
+  includes ESLint 10, and the API lint command reports zero errors
+
 #### Scenario: Toolchain split is intentional
 - **WHEN** a developer inspects the workspace TypeScript versions
-- **THEN** `apps/api` uses TypeScript 6.0.x while `apps/web` and
-  `apps/admin` stay on TypeScript 5.9.x
+- **THEN** `apps/api` keeps TypeScript 6.0.x, while `apps/web` and
+  `apps/admin` use the same major their installed `@astrojs/check` accepts,
+  and TypeScript 7 remains blocked by the recorded peer ranges
 
 ### Requirement: Framework upgrade passes quality gates
 
@@ -256,22 +292,61 @@ project documentation and SDD context.
 
 #### Scenario: Backend standards declare the new majors
 - **WHEN** a developer reads `docs/backend-standards.md`
-- **THEN** it states NestJS 12.x and the API TypeScript 6.0.x toolchain
+- **THEN** it states NestJS 12.x, the API TypeScript 6.0.x toolchain, and
+  the ESLint 10.x toolchain
 
 #### Scenario: Frontend standards declare the new majors
 - **WHEN** a developer reads `docs/frontend-standards.md`
-- **THEN** it states React 19.x and Firebase client 13.x
+- **THEN** it states React 19.x, Firebase client 13.x, and the TypeScript
+  major installed in `apps/web` and `apps/admin`
 
 #### Scenario: Base standards and README are aligned
 - **WHEN** a developer reads `docs/base-standards.md` and `README.md`
-- **THEN** both state NestJS 12 and React 19
+- **THEN** both state NestJS 12 and React 19 and identify the TypeScript and
+  ESLint toolchain versions
 
 #### Scenario: SDD context is aligned
 - **WHEN** a developer reads `openspec/config.yaml` and
   `openspec/project.md`
 - **THEN** both state NestJS 12, React 19, and Firebase 13
 
+#### Scenario: Project context records the toolchain matrix and blocker
+- **WHEN** a developer reads the stack table in `openspec/project.md`
+- **THEN** it lists the exact installed TypeScript range per app, the ESLint
+  and `typescript-eslint` ranges, and the dependency peer ranges that block
+  TypeScript 7
+
 #### Scenario: No stale framework majors remain
 - **WHEN** a developer searches current-stack documentation
-- **THEN** no current-stack section declares NestJS 11, React 18, or
-  Firebase 12
+- **THEN** no current-stack section declares NestJS 11, React 18, Firebase 12,
+  ESLint 9, or TypeScript 7 as the installed stack
+
+### Requirement: Tooling upgrade preserves quality gates
+
+The system SHALL keep all existing quality gates green after the TypeScript
+and ESLint upgrade without changing API contracts, persistence behavior, or
+production source code.
+
+#### Scenario: Lint gate passes without source edits
+- **WHEN** the API is linted after the ESLint 10 upgrade
+- **THEN** the command reports zero errors and no files under `apps/api/src`
+  are modified as part of the upgrade
+
+#### Scenario: Build gate passes
+- **WHEN** a developer runs the monorepo build after the upgrade
+- **THEN** the build exits 0 for `@webastro/api`, `@webastro/web`,
+  `@webastro/admin`, and `@webastro/shared-types`
+
+#### Scenario: Test gates pass
+- **WHEN** a developer runs the workspace and API end-to-end suites
+- **THEN** the API reports 204 unit tests, web 81 tests, admin 79 tests, and
+  the API e2e suite 13 tests, all passing
+
+#### Scenario: Spec gate passes
+- **WHEN** a developer runs OpenSpec strict validation for all specs and
+  changes
+- **THEN** validation exits 0
+
+#### Scenario: Contracts are unchanged
+- **WHEN** the upgrade is complete
+- **THEN** `docs/api-spec.yml` and `docs/data-model.md` require no changes
