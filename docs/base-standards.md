@@ -85,6 +85,7 @@ Repo: Monorepo pnpm (un solo repo, contexto SDD compartido en la raíz)
 Layout: apps/api (NestJS) + apps/web (Astro SSG) + apps/admin (Astro SSR). Contexto agentico en raíz: docs/, ai-specs/, openspec/, .opencode/
 Stack API:        NestJS 12 + Firebase Auth (client 13.4.0) + Firestore (firebase-admin) + Supabase PostgreSQL (@supabase/supabase-js, leads only) + Swagger + Docker
 Stack Frontend:   Astro 7.4.13 (web SSG + admin SSR) + React 19 (islands) + Tailwind 4 + Playwright + Vitest
+Tooling:          TypeScript 6.0.3 (api, web, admin cuando @astrojs/check lo permite) | ESLint 10 (api)
 Arquitectura API: Clean Architecture (Modules + Services + Repositories)
 Dominio:       API ligera para usuarios/roles, blog y captación de leads desde el sitio web
 Cliente:       Agencia Digital Gabriel Zavando

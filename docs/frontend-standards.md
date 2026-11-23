@@ -67,6 +67,7 @@
 Framework: Astro 7.4.13 (web output: 'static' SSG; admin output: 'server' SSR)
 CSS:       Tailwind CSS 4.3.x (plugin @tailwindcss/vite) + global.css (tokens + legacy BEM en migración)
 Islands:   React 19.3.1 vía @astrojs/react — uso mínimo, sólo donde se requiera hidratación cliente
+Language:  TypeScript 6.0.3 (web y admin)
 Firebase client 13.4.0 (admin login)
 Build:     Vite (incluido en Astro)
 Tests:     Vitest 5.1.x (unit/validación) + jsdom 31.x + @testing-library/jest-dom 8.x + Playwright 1.59.x (E2E)

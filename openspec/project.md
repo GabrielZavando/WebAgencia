@@ -38,6 +38,8 @@ Package manager: pnpm 10 workspaces (`pnpm-workspace.yaml`).
 | Frontend Firebase client | firebase | ^13.4.0 | `apps/admin/package.json` |
 | Backend framework | NestJS | ^12.6.0 | `apps/api/package.json` |
 | Backend language | TypeScript | ^6.0.3 | `apps/api/package.json` |
+| Frontend language | TypeScript | ^6.0.3 | `apps/web/package.json`, `apps/admin/package.json` |
+| Backend lint tooling | ESLint + typescript-eslint + @eslint/js + globals | ^10.15.0 + ^8.73.0 + ^10.0.1 + ^17.14.0 | `apps/api/package.json` |
 | Backend Firebase client | firebase | ^13.4.0 | `apps/api/package.json` |
 | Backend Admin SDK | firebase-admin | ^14.5.1 | `apps/api/package.json` |
 | Backend Supabase SDK | @supabase/supabase-js | ^2.119.2 | `apps/api/package.json` |
@@ -47,6 +49,20 @@ Package manager: pnpm 10 workspaces (`pnpm-workspace.yaml`).
 | Testing (backend) | Jest | ^30.5.2 | `apps/api/package.json` |
 | Testing (frontend) | Vitest | ^5.1.1 | `apps/web/package.json`, `apps/admin/package.json` |
 | E2E (frontend) | Playwright | ^1.65.1 | `apps/web/package.json`, `apps/admin/package.json` |
+
+### TypeScript 7 blocker
+
+TypeScript 7.0.2 is published but NOT adopted. Its adoption is blocked by
+these peer ranges:
+
+- `typescript-eslint` 8.73.0 requires `typescript >=4.8.4 <6.1.0`
+- `@nestjs/schematics` 12.0.16 requires `typescript ^6.0.0`
+- `ts-jest` 29.4.15 requires `typescript >=4.3 <7`
+- `@astrojs/check` 0.9.x requires `typescript ^5.0.0 || ^6.0.0`
+
+TypeScript 7 also rejects the API's `moduleResolution: node10` and
+`ignoreDeprecations`, so an ESM/`nodenext` migration is a prerequisite for any
+future TypeScript 7 upgrade.
 
 No Prisma dependency exists in any `package.json`. The API stack uses
 `firebase-admin` (Firestore) and `@supabase/supabase-js` (Supabase PostgreSQL

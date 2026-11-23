@@ -6,7 +6,8 @@ context: |
   pnpm workspaces. Stack: NestJS 12 (api, Firebase Auth + Firestore via
   firebase-admin, Supabase PostgreSQL via @supabase/supabase-js for leads only),
   Astro (web, SSG static; admin, SSR server via @astrojs/node),
-  React 19 islands, Firebase 13.4.0 client, Tailwind 4, Vitest, Playwright, Jest. Deployment target:
+  React 19 islands, Firebase 13.4.0 client, Tailwind 4, TypeScript 6.0.3
+  (api, web, admin), ESLint 10 (api), Vitest, Playwright, Jest. Deployment target:
   VPS with Coolify (staging). Hostinger is no longer the target. OpenSpec
   is installed only as root devDependency, single source. No Prisma.
   TDD strict: failing test before implementation. Conventional commits in English.
