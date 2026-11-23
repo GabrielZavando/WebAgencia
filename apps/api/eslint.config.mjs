@@ -17,7 +17,7 @@ export default tseslint.config(
         ...globals.node,
         ...globals.jest,
       },
-      ecmaVersion: 5,
+      ecmaVersion: 'latest',
       sourceType: 'module',
       parserOptions: {
         projectService: true,
@@ -27,6 +27,10 @@ export default tseslint.config(
   },
   {
     rules: {
+      // ESLint 10 enables no-useless-assignment in `eslint:recommended`.
+      // Deferred: fixing the finding in apps/api/src is out of scope for
+      // upgrade-typescript-eslint (config-only migration, no source edits).
+      'no-useless-assignment': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-floating-promises': 'warn',
       '@typescript-eslint/no-unsafe-argument': 'warn'

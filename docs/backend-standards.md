@@ -56,6 +56,7 @@
 Runtime: Node.js 26 LTS
 Framework: NestJS 12.x
 Language: TypeScript 6.0.3 (api)
+Tooling:   ESLint 10.x + typescript-eslint 8.73.x (flat config)
 SDK Cliente: firebase-admin 14.x (Firestore y Firebase Auth); Firebase client 13.4.0 (declarado en la API, actualmente sin uso)
 Supabase SDK: @supabase/supabase-js (para PostgreSQL)
 Base de datos 1: Firebase Firestore (SDK admin)

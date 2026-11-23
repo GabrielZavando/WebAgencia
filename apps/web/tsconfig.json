@@ -12,7 +12,6 @@
     "module": "ESNext",
     "target": "ES2022",
     "esModuleInterop": true,
-    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     }

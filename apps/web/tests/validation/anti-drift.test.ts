@@ -224,6 +224,38 @@ describe('Anti-drift: documentation versions match package.json', () => {
     expect(projectMd).toContain(adminPkg.dependencies.firebase);
   });
 
+  it('docs declare the installed TypeScript major for API and frontend', () => {
+    const apiTs = apiPkg.devDependencies.typescript;
+    const webTs = webPkg.devDependencies.typescript;
+    const adminTs = adminPkg.devDependencies.typescript;
+
+    expect(majorOf(apiTs)).toBe('6');
+    expect(majorOf(webTs)).toBe(majorOf(adminTs));
+    expect(majorOf(webTs)).toBe('6');
+
+    expect(backendStandards).toContain(`TypeScript ${apiTs.replace('^', '')}`);
+    expect(frontendStandards).toContain(`TypeScript ${webTs.replace('^', '')}`);
+    expect(projectMd).toContain(webTs);
+    expect(projectMd).toContain(adminTs);
+  });
+
+  it('docs declare the installed ESLint ecosystem majors', () => {
+    const eslintMajor = majorOf(apiPkg.devDependencies.eslint);
+
+    expect(eslintMajor).toBe('10');
+    expect(majorOf(apiPkg.devDependencies['@eslint/js'])).toBe('10');
+
+    expect(backendStandards).toContain(`ESLint ${eslintMajor}`);
+    expect(projectMd).toContain(apiPkg.devDependencies.eslint);
+    expect(projectMd).toContain(apiPkg.devDependencies['@eslint/js']);
+    expect(projectMd).toContain(apiPkg.devDependencies['typescript-eslint']);
+  });
+
+  it('project context records the TypeScript 7 blocker', () => {
+    expect(projectMd).toMatch(/TypeScript 7/);
+    expect(projectMd).toMatch(/typescript-eslint/);
+  });
+
   it('docs/frontend-standards.md does not prohibit SSR (apps/admin uses output: server by design)', () => {
     expect(prohibitsSsr(frontendStandards)).toBe(false);
   });
