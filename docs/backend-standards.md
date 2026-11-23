@@ -17,6 +17,7 @@
 - Colecciones: `users`, `roles`, `articles`, `categories`
 - Documentos con IDs auto-generados o UUIDs
 - Índices compuestos en campos frecuentemente consultados (slug, status, category_id)
+- Índices compuestos versionados en `apps/api/firestore.indexes.json`; desplegar con `firebase deploy --only firestore-indexes` (desde `apps/api/`)
 - Timestamps del servidor para created_at y updated_at
 
 ### Supabase PostgreSQL (Leads/Prospectos)
