@@ -54,8 +54,9 @@
 
 ```
 Runtime: Node.js 26 LTS
-Framework: NestJS 11
-SDK Cliente: firebase-admin (para Firestore y Firebase Auth)
+Framework: NestJS 12.x
+Language: TypeScript 6.0.3 (api)
+SDK Cliente: firebase-admin 14.x (Firestore y Firebase Auth); Firebase client 13.4.0 (declarado en la API, actualmente sin uso)
 Supabase SDK: @supabase/supabase-js (para PostgreSQL)
 Base de datos 1: Firebase Firestore (SDK admin)
 Base de datos 2: Supabase PostgreSQL (via Supabase SDK)

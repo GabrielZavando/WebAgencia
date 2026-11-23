@@ -32,6 +32,7 @@ const baseStandards = readDoc('docs/base-standards.md');
 const backendStandards = readDoc('docs/backend-standards.md');
 const frontendStandards = readDoc('docs/frontend-standards.md');
 const configYaml = readDoc('openspec/config.yaml');
+const projectMd = readDoc('openspec/project.md');
 const nvmrc = readDocIfExists('.nvmrc');
 const ciWorkflow = readDocIfExists('.github/workflows/ci.yml');
 const deployWorkflow = readDocIfExists('.github/workflows/deploy.yml');
@@ -197,6 +198,30 @@ describe('Anti-drift: documentation versions match package.json', () => {
   it('docs/frontend-standards.md and docs/base-standards.md declare the correct Astro version', () => {
     expect(frontendStandards).toContain(`Astro ${astroVersionWeb.replace('^', '')}`);
     expect(baseStandards).toContain(`Astro ${astroVersionWeb.replace('^', '')}`);
+  });
+
+  it('docs declare the installed NestJS, React and Firebase majors', () => {
+    const nestMajor = majorOf(apiPkg.dependencies['@nestjs/core']);
+    const reactMajor = majorOf(adminPkg.dependencies.react);
+    const firebaseMajor = majorOf(adminPkg.dependencies.firebase);
+
+    expect(nestMajor).toBe('12');
+    expect(reactMajor).toBe('19');
+    expect(firebaseMajor).toBe('13');
+
+    expect(backendStandards).toContain(`NestJS ${nestMajor}`);
+    expect(frontendStandards).toContain(`React ${reactMajor}`);
+    expect(frontendStandards).toContain(`Firebase client ${firebaseMajor}`);
+    expect(baseStandards).toContain(`NestJS ${nestMajor}`);
+    expect(baseStandards).toContain(`React ${reactMajor}`);
+    expect(readme).toContain(`NestJS ${nestMajor}`);
+    expect(readme).toContain(`React ${reactMajor}`);
+    expect(configYaml).toContain(`NestJS ${nestMajor}`);
+    expect(configYaml).toContain(`React ${reactMajor}`);
+    expect(configYaml).toContain(`Firebase ${firebaseMajor}`);
+    expect(projectMd).toContain(apiPkg.dependencies['@nestjs/core']);
+    expect(projectMd).toContain(adminPkg.dependencies.react);
+    expect(projectMd).toContain(adminPkg.dependencies.firebase);
   });
 
   it('docs/frontend-standards.md does not prohibit SSR (apps/admin uses output: server by design)', () => {

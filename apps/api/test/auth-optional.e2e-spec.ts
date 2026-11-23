@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, Module } from '@nestjs/common';
-import * as request from 'supertest';
+import request from 'supertest';
 import { App } from 'supertest/types';
 import { FirebaseService } from '../src/firebase/firebase.service';
 import { ArticlesService } from '../src/articles/articles.service';
