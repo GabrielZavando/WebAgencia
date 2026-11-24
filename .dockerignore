@@ -1,0 +1,55 @@
+# Root .dockerignore — applies to all image builds launched from the monorepo root.
+# Keep: pnpm-workspace.yaml, pnpm-lock.yaml, package.json, packages/, apps sources & configs.
+
+# Dependencies (reinstalled inside builders with pnpm --frozen-lockfile)
+node_modules
+**/node_modules
+
+# VCS and CI
+.git
+.gitignore
+.github
+
+# Build outputs (rebuilt inside builders)
+**/dist
+**/coverage
+**/.astro
+**/tsconfig.tsbuildinfo
+playwright-report
+test-results
+
+# Environment files with secrets (examples are kept)
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+
+# Agentic / docs / openspec context (not needed inside images)
+docs
+openspec
+ai-specs
+.opencode
+*.md
+!README.md
+
+# Tests and tooling configs not needed at runtime
+**/tests
+**/*.spec.ts
+**/*.test.ts
+**/*.test.tsx
+playwright*.config.ts
+vitest.config.ts
+jest.config*.json
+
+# IDE / OS artifacts
+.vscode
+.idea
+.DS_Store
+*.log
+*.swp
+*.swo
+
+# Docker-in-docker leftovers
+docker-compose.override.yml

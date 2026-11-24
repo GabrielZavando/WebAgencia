@@ -35,7 +35,10 @@ pnpm -F @webastro/web build    # solo Web (astro build → dist/ SSG)
 
 ## 4. API (NestJS)
 
-- Contenedor Docker definido en `apps/api/docker/` (`docker-compose.yml`).
+- Contenedorización en la raíz del monorepo: Dockerfiles por app
+  (`apps/web/Dockerfile`, `apps/admin/Dockerfile`, `apps/api/Dockerfile`,
+  contexto de build = raíz) orquestados por `docker-compose.yml` raíz.
+  Ver `docs/deployment.md`.
 - Swagger disponible en `/api/v1/docs` tras el build.
 - Variables de entorno: ver `apps/api/.env.example` (Firebase, Firestore, CORS, Throttler).
 - Despliegue objetivo: Cloud Run o máquina con Docker. Health check en `/health` o `/api/v1/health`.

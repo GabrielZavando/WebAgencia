@@ -1,0 +1,68 @@
+# =============================================================================
+# WebAstro Monorepo — orquestación local de las 3 aplicaciones
+# Uso:  cp .env.example .env  &&  docker compose up --build
+# Sin servicios de base de datos: Firebase y Supabase son servicios externos.
+# Puertos host -> contenedor: 4321 -> web (nginx), 4322 -> admin (4321), 3000 -> api.
+# =============================================================================
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        PUBLIC_API_URL: ${PUBLIC_API_URL:-}
+        PUBLIC_SITE_URL: ${PUBLIC_SITE_URL:-}
+        PUBLIC_TURNSTILE_SITE_KEY: ${PUBLIC_TURNSTILE_SITE_KEY:-}
+        PUBLIC_GTM_ID: ${PUBLIC_GTM_ID:-}
+        PUBLIC_FIREBASE_API_KEY: ${PUBLIC_FIREBASE_API_KEY:-}
+        PUBLIC_FIREBASE_AUTH_DOMAIN: ${PUBLIC_FIREBASE_AUTH_DOMAIN:-}
+        PUBLIC_FIREBASE_PROJECT_ID: ${PUBLIC_FIREBASE_PROJECT_ID:-}
+        PUBLIC_FIREBASE_STORAGE_BUCKET: ${PUBLIC_FIREBASE_STORAGE_BUCKET:-}
+        PUBLIC_FIREBASE_MESSAGING_SENDER_ID: ${PUBLIC_FIREBASE_MESSAGING_SENDER_ID:-}
+        PUBLIC_FIREBASE_APP_ID: ${PUBLIC_FIREBASE_APP_ID:-}
+        PUBLIC_FIREBASE_MEASUREMENT_ID: ${PUBLIC_FIREBASE_MEASUREMENT_ID:-}
+    ports:
+      - "4321:80"
+
+  admin:
+    build:
+      context: .
+      dockerfile: apps/admin/Dockerfile
+      args:
+        PUBLIC_API_URL: ${PUBLIC_API_URL:-}
+        PUBLIC_SITE_URL: ${PUBLIC_SITE_URL:-}
+        PUBLIC_TURNSTILE_SITE_KEY: ${PUBLIC_TURNSTILE_SITE_KEY:-}
+        PUBLIC_FIREBASE_API_KEY: ${PUBLIC_FIREBASE_API_KEY:-}
+        PUBLIC_FIREBASE_AUTH_DOMAIN: ${PUBLIC_FIREBASE_AUTH_DOMAIN:-}
+        PUBLIC_FIREBASE_PROJECT_ID: ${PUBLIC_FIREBASE_PROJECT_ID:-}
+        PUBLIC_FIREBASE_STORAGE_BUCKET: ${PUBLIC_FIREBASE_STORAGE_BUCKET:-}
+        PUBLIC_FIREBASE_MESSAGING_SENDER_ID: ${PUBLIC_FIREBASE_MESSAGING_SENDER_ID:-}
+        PUBLIC_FIREBASE_APP_ID: ${PUBLIC_FIREBASE_APP_ID:-}
+        PUBLIC_FIREBASE_MEASUREMENT_ID: ${PUBLIC_FIREBASE_MEASUREMENT_ID:-}
+    environment:
+      PORT: 4321
+      HOST: 0.0.0.0
+    ports:
+      - "4322:4321"
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      PORT: 3000
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:4321,http://localhost:4322}
+      FIREBASE_PROJECT_ID: ${FIREBASE_PROJECT_ID:-}
+      FIREBASE_CLIENT_EMAIL: ${FIREBASE_CLIENT_EMAIL:-}
+      FIREBASE_PRIVATE_KEY: ${FIREBASE_PRIVATE_KEY:-}
+      FIREBASE_STORAGE_BUCKET: ${FIREBASE_STORAGE_BUCKET:-}
+      SUPABASE_URL: ${SUPABASE_URL:-}
+      SUPABASE_PUBLISHABLE_KEY: ${SUPABASE_PUBLISHABLE_KEY:-}
+      SUPABASE_SECRET_KEY: ${SUPABASE_SECRET_KEY:-}
+      SUPABASE_JWKS_URL: ${SUPABASE_JWKS_URL:-}
+      REVALIDATION_WEBHOOK_TOKEN: ${REVALIDATION_WEBHOOK_TOKEN:-}
+      COOLIFY_REBUILD_WEBHOOK_URL: ${COOLIFY_REBUILD_WEBHOOK_URL:-}
+    ports:
+      - "3000:3000"
