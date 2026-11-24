@@ -21,6 +21,9 @@ const ALLOWED_NEW_DEPS = [
   'vitest',
   // Tipos compartidos (workspace)
   '@webastro/shared-types',
+  // Animaciones Tailwind (importado por src/styles/global.css; antes resolvía
+  // solo por hoisting desde apps/admin, el build aislado lo requiere declarado)
+  'tw-animate-css',
   // Utilidades de pruebas (React se retiró del sitio público, pero estas
   // utilidades de desarrollo siguen presentes como devDependencies)
   '@testing-library/jest-dom',
