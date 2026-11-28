@@ -104,6 +104,8 @@ COPY --from=builder --chown=node:node /repo/packages/shared-types /repo/packages
 
 # Session storage writes under node_modules/.astro (fsLite default of the
 # @astrojs/node adapter); the non-root user needs write access there.
+RUN apk add --no-cache curl
+
 USER node
 
 WORKDIR /repo/apps/admin
