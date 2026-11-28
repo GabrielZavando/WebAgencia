@@ -65,6 +65,8 @@ FROM nginx:alpine AS runner
 COPY apps/web/nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=builder /repo/apps/web/dist /usr/share/nginx/html
 
+RUN apk add --no-cache curl
+
 EXPOSE 80
 
 CMD ["nginx", "-g", "daemon off;"]
